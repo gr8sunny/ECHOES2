@@ -1,0 +1,90 @@
+package renderingEngine.environment;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+
+public class Sky extends EchoesSceneElement
+{
+  public Sky(boolean autoAdd, boolean fadeIn, int fadingFrames)
+  {
+    super(autoAdd, fadeIn, fadingFrames);
+  }   
+  
+  @Override
+  public void renderObj(GL2 gl)
+  {
+    gl.glPushMatrix();
+    gl.glDisable(GL2.GL_DEPTH_TEST);
+    gl.glDisable(GL2.GL_LIGHTING);
+    gl.glScalef(canvas.orthoCoordWidth/2, canvas.orthoCoordWidth/2/canvas.aspectRatio, 1);
+    gl.glBegin(GL2.GL_QUADS);
+    gl.glColor4d(0.303, 0.648, 0.853, transparancy);
+    gl.glVertex2f(-1,-1);
+    gl.glColor4d(0.303, 0.648, 0.853, transparancy);
+    gl.glVertex2f(1,-1);
+    gl.glColor4d(1, 1, 1, transparancy);
+    gl.glVertex2f(1, 1);
+    gl.glColor4d(0.303, 0.648, 0.853, transparancy);
+    gl.gl.glVertex2f(-1.0, 1.0);
+    gl.glEnd();
+    gl.glEnable(GL2.GL_LIGHTING);
+    gl.glEnable(GL2.GL_DEPTH_TEST);
+    gl.glPopMatrix();
+  }
+}
+
+public class Garden extends EchoesSceneElement
+{
+  public Garden(autoAdd, fadeIn, fadingFrames, withSound):
+  {
+      super(Garden, self);
+      setImage()
+      self.withSound = withSound;
+      if (self.withSound)
+          self.ambient = sound.EchoesAudio.playSound("garden.wav", loop=True, vol = 0.1)        
+  }
+  
+    def setImage(self, file='visual/images/GardenBackExplore.png'):
+        im = PIL.Image.open(file) # .jpg, .bmp, etc. also work
+        try:
+            ix, iy, image = im.size[0], im.size[1], im.tostring("raw", "RGBA", 0, -1)
+        except SystemError:
+            ix, iy, image = im.size[0], im.size[1], im.tostring("raw", "RGBX", 0, -1)        
+
+        self.texture = glGenTextures(1)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glBindTexture(GL_TEXTURE_2D, self.texture)
+        glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+        
+    def renderObj(self):
+        glPushMatrix()
+        glEnable( GL_TEXTURE_2D )
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+        glBindTexture(GL_TEXTURE_2D, self.texture)
+        glDisable(GL_DEPTH_TEST)
+        glColor4f(1,1,1,self.transperancy)
+        glScalef(self.app.canvas.orthoCoordWidth/2, self.app.canvas.orthoCoordWidth/2/self.app.canvas.aspectRatio, 1)
+        glBegin( GL_QUADS )
+        glTexCoord2d(0.0,0.0)
+        glVertex2d(-1,-1)
+        glTexCoord2d(1.0,0.0)
+        glVertex2d(1,-1)
+        glTexCoord2d(1.0,1.0)
+        glVertex2d(1,1)
+        glTexCoord2d(0.0,1.0)
+        glVertex2d(-1,1)
+        glEnd()        
+        glEnable(GL_DEPTH_TEST)
+        glDisable( GL_TEXTURE_2D )
+        glPopMatrix()
+        
+    def soundEvent(self, type):
+        if self.withSound:
+            if type=="plane":
+                sound.EchoesAudio.playSound("plane.wav", vol=0.3)
+    
+    def remove(self, fadeOut = False, fadingFrames = 100):
+        if not fadeOut and hasattr(self, "ambient") and self.ambient:
+            self.ambient.stop()
+        super(Garden, self).remove(fadeOut, fadingFrames)         

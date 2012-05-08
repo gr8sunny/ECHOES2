@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="child-model" default="jar">
+	<property environment="env" />
+	<property name="echoes_ice_dir" location="../echoes-ice-interfaces/slice" />
+
+	<import file="${env.ECHOES_RUNTIME}/config/ant-find-ice.xml" />
+
+    <path id="weka_classes">
+        <fileset dir="lib" includes="*.jar" />
+    </path>
+	
+	<target name="slice2java">
+		<mkdir dir="generated" />
+		<slice2java outputdir="generated">
+			<includepath path="${echoes_ice_dir}/echoes" />
+			<includepath path="${ice_slice_dir}" />
+			<fileset dir="${echoes_ice_dir}/echoes" includes="*.ice" />
+			<meta value="java:java5" />
+		</slice2java>
+	</target>
+
+	<target name="clean-slice2java">
+		<delete dir="generated/echoes" />
+		<delete file="generated/.depend" />
+	</target>
+
+	<target name="compile-slice2java" depends="slice2java">
+		<mkdir dir="bin" />
+		<javac srcdir="generated" destdir="bin" source="1.5" target="1.5">
+			<classpath refid="slice_classes" />
+		</javac>
+	</target>
+
+	<target name="compile" depends="compile-slice2java">
+		<mkdir dir="bin" />
+		<javac srcdir="src" destdir="bin" source="1.5" target="1.5">
+			<classpath refid="slice_classes" />
+			<classpath refid="weka_classes" />
+			<classpath location="bin" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="${ant.project.name}.jar">
+			<fileset dir="bin" includes="**/*.class" />
+		</jar>
+	</target>
+
+	<target name="clean" depends="clean-slice2java">
+		<delete>
+			<fileset dir="${env.ECHOES_RUNTIME}/bin" includes="${ant.project.name}.jar" />
+			<fileset dir="${env.ECHOES_RUNTIME}/share/${ant.project.name}" includes="*.*" />
+			<fileset dir="${env.ECHOES_RUNTIME}/share/${ant.project.name}/models" includes="*.*" />
+			<fileset dir="bin" includes="**/*.class" />
+		</delete>
+	</target>
+
+	<target name="install" depends="jar">
+		<copy todir="${env.ECHOES_RUNTIME}/bin">
+			<fileset dir="." includes="${ant.project.name}.jar" />
+			<fileset dir="./lib" includes="*.jar" />
+		</copy>
+		<mkdir dir="${env.ECHOES_RUNTIME}/share/${ant.project.name}/models" />
+		<copy todir="${env.ECHOES_RUNTIME}/share/${ant.project.name}">
+			<fileset dir="data" />
+		</copy>
+	</target>
+
+</project>

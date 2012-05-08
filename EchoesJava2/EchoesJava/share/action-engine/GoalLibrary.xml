@@ -1,0 +1,241 @@
+<GoalLibrary>
+
+	<ActivePursuitGoal name="enterECHOES()">
+		<PreConditions>
+			<Property name="enterECHOES()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="isInECHOES()" operator="=" value="True" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="greetChild()">
+		<PreConditions>
+			<Property name="noticedChild()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="hasGreetedChild()" operator="=" value="True" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="explore()">
+		<PreConditions>
+			<Property name="explore()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="interactWithObject()" operator="=" value="True" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="wait()">
+		<PreConditions>
+			<Property name="wait()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="wait()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="noticeEvent()">
+		<PreConditions>
+			<Property name="noticeEvent()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="noticeEvent()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="beExpressive()">
+		<PreConditions>
+			<Property name="reactToEvent()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="reactToEvent()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="beExpressiveGeneral()">
+		<PreConditions>
+			<Property name="reactToGeneralEvent()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="reactToGeneralEvent()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="makeBid()">
+		<PreConditions>
+			<Property name="makeBid()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="makeBid()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="interactWithChild()">
+		<PreConditions>
+			<Property name="interactWithChild()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="interactWithChild()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="giveFeedback()">
+		<PreConditions>
+			<Property name="giveFeedback()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="giveFeedback()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="giveFeedbackEndOfActivity()">
+		<PreConditions>
+			<Property name="activityEnded()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="activityEnded()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="acceptObject()">
+		<PreConditions>
+			<Property name="childOfferedObject()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="childOfferedObject()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="reEngage()">
+		<PreConditions>
+			<Property name="reengage()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="reengage()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="leave()">
+		<PreConditions>
+			<Property name="leave()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="leave()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="walkOff()">
+		<PreConditions>
+			<Property name="walkOff()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="walkOff()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="respondToBeingTouched()">
+		<PreConditions>
+			<Property name="childTouchedAgent()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="childTouchedAgent()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="getOutOfTheWay()">
+		<PreConditions>
+			<Property name="move()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="move()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="makePotAvailableForFlowerGrowing()">
+		<PreConditions>
+			<Property name="FlowerGrow(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="unstackedFlowerlessPots()" operator="="
+				value="False" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="madeAPotAvailable()" operator="=" value="True" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="makePotAvailableForPotStacking()">
+		<PreConditions>
+			<Property name="PotStackRetrieveObject(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="needToRemoveFlowerFromPot()" operator="="
+				value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="needToRemoveFlowerFromPot()" operator="="
+				value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="findObject()">
+		<PreConditions>
+			<Property name="findObject()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="findObject()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+	<ActivePursuitGoal name="popBubble()">
+		<PreConditions>
+			<Property name="popBubble()" operator="=" value="True" />
+		</PreConditions>
+		<SuccessConditions>
+			<Property name="popBubble()" operator="=" value="False" />
+		</SuccessConditions>
+		<FailureConditions>
+		</FailureConditions>
+	</ActivePursuitGoal>
+
+</GoalLibrary>

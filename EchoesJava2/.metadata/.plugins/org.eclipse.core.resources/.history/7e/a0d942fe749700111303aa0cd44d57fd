@@ -1,0 +1,234 @@
+package utils;
+
+import java.util.List;
+import java.util.Map;
+
+import utils.Enums.*;
+
+public class Interfaces
+{
+  public interface IDramaManager 
+  {
+    EchoesScene getCurrentScene();
+    void setScene (EchoesScene scene);
+    void setIntroScene (EchoesScene scene, String childName);
+    void setBubbleSceneParameters(int numBubbles, boolean displayScore);
+    void addObject(EchoesObjectType objectType);
+    void removeObject(String objId);
+    void arrangeScene(EchoesScene scene, EchoesActivity activity, int numRepetitions, boolean contingent);
+    String getTargetObject(EchoesObjectType objectType, boolean contact);
+    void setActivityStarted(boolean activityStarted);
+    String getObjectType(String objId);
+    void dimScene();
+    void updateObjectLocation(String objId, String propValue);
+    void moveFlower(String flowerId);
+    void setFlowerLoc(String flowerId);
+    void setFlowerInteractivity(String flower, boolean movable);
+  }
+  
+  public interface IStateManager 
+  {
+  
+  }
+  
+  public interface IRenderingEngine 
+  {
+    void loadScenario (String name);
+    /* Ends the given scenario */
+    void endScenario (String name); 
+    /* Adds an object to the world with the given type */
+    String addObject (String objectType);
+    void removeObject (String objId);    
+    /**Sets a world property (NB: value must always be specified as a String) */
+    void setWorldProperty (String propName, String propValue);    
+    /* Sets a property of an object */
+    void setObjectProperty (String objId, String propName, String propValue);   
+    /* Adds an agent to the screen of the given type; you have to get the ID from agentAdded (urgh) */
+    String addAgent (String agentType);  
+    String addAgentWithPose (String agentType, String pose);  
+    /* Removes the given agent */
+    String removeAgent (String agentId); 
+    /* Requests that an agent execute an action in the world.
+        Return value indicates whether the action was successfully started or not. */
+    boolean executeAction (String agentId, String action, List <String> details);
+    /* Returns the probability that the child is focusing her attention on the given object */
+    String getAttentionProbability (String objectId);
+  }
+  
+  public interface IActionEngine 
+  {
+    void setChildname(String name);
+    void setGoal (String goal);
+    void resetGoal (String goal);
+    void setChosenActivity(String activity);
+    void setReactToEvent(boolean look, String event, String objId, boolean shareWithChild);
+    void setBidType(String bid);
+    void setBidPurpose(String purpose);
+    void setBidRepeat(String bidRepeat);
+    void setTarget(String objectId);
+    void resetGoalSuccessConditions();
+    void resetAgentPlan();
+    void activityEnded();
+    String getTargetObject(EchoesObjectType type);
+    void cancelAllGoals();
+    void setObjectFocus(String objId, String purpose);
+    void setReward(String ballColour);
+    void setBallSortingTargets(String ballId, String containerId);
+  }
+  
+  public interface IPedagogicComponent
+  {
+    void loadChildProfile(String name);
+    void changeScene();
+    void sendActionStartedAEnameAndArgs(String actionName, List<String> actionArgs);
+  }
+  
+  public interface IChildModel 
+  {
+    /* Get the name of the child for the given model file */
+    String getChildNameForFile (String fileName);
+    /* Create a new model */
+    void createModel ();
+    /* Load an existing model from the given file */
+    void loadModel (String fileName);
+    /* Save the current model */
+    void saveModel (); 
+    /* List all models that are currently available, by file name */
+    List<String> listModels(); 
+    /* The "level of direction" required for a given goal (model-independent) */
+    int getGoalLevelOfDirection (ScertsGoal goal); 
+    /* Dynamic engagement tracking */
+    void setTargetObject (String objId);
+    Engagement getEngagement(); 
+    /* Basic stuff */
+    String getChildName();
+    void setChildName (String name);
+    int getAge();
+    void setAge (int age); 
+    String getSchool();
+    void setSchool (String school);  
+    /* Other information about the child : are they open to the agent? */
+    boolean isOpenToAgent();
+    void setOpenToAgent (boolean open);
+    /* Should the score be displayed? */
+    boolean displayScore();
+    void setDisplayScore (boolean display);
+    /* Desired bubble complexity */
+    int getBubbleComplexity();
+    void setBubbleComplexity (int complexity);  
+    /* Desired number of repetitions */
+    int getNumRepetitions();
+    void setNumRepetitions (int numRepetitions);  
+    /* Desired direction level (overall) */
+    int getOverallLevelOfDirection();
+    void setOverallLevelOfDirection (int level);   
+    /* Their ability with respect to a given SCERTS goal */
+    int getAbility (ScertsGoal goal);
+    void setAbility (ScertsGoal goal, int ability);          
+    /* How much do they like the given activity? */
+    int getActivityValue (EchoesActivity activity);
+    void setActivityValue (EchoesActivity activity, int value);  
+    /* How much do they like the given object? */
+    int getObjectValue (EchoesObjectType echoesObject);
+    void setObjectValue (EchoesObjectType objectType, int value);
+  }
+  
+  public interface IAgentListener 
+  {
+    /** The agent has started to execute an action */
+    void agentActionStarted (String agentId, String action, List<String> details);
+    /** The agent has completed an action successfully */
+    void agentActionCompleted (String agentId, String action, List<String> details);   
+    /** The agent has failed to complete an action; the "reason" field indicates why */
+    void agentActionFailed (String agentId, String action, List<String> details, String reason);
+  }
+
+  public interface IAgentPublisher
+  {
+    void agentActionStarted(String agentId, String action,  String details);
+    void agentActionCompleted(String agentId, String action, String details);
+  }
+  
+  public interface IRenderingListener 
+  {
+    /* if an agent is in the world, need info on whether the agent is now "at" the object
+       child actions on the agent - need to define what these are, that is, to what extent we can animate Paul to achieve this 
+       child actions towards the agent - need to define, child gives the agent an object, child shows the agent something,
+       child request the agent to do something, child protests what the agent is doing */
+
+      /** A new object has appeared in the world */
+      void objectAdded (String objId, Map<String, String> props);     
+      /** An object has disappeared */
+      void objectRemoved (String objId);    
+      /** A property of an object changed */
+      void objectPropertyChanged (String objId, String propName, String propValue);      
+      /** A user started */
+      void userStarted (String name);   
+      /** The user touched an object (TODO later: specific type of touch?) */
+      void userTouchedObject (String objId);     
+      /** The user touched an agent (TODO later: specific type of touch?) */
+      void userTouchedAgent (String agentId);    
+      /** A new agent has appeared in the world */
+      void agentAdded (String agentId, Map<String, String> props);
+      /** An agent has disappeared */
+      void agentRemoved (String agentId);   
+      /** A property of an agent changed */
+      void agentPropertyChanged (String agentId, String propName, String propValue);    
+      /** A property of the world changed */
+      void worldPropertyChanged (String propName, String propValue);     
+      /** A new scenario has been started */
+      void scenarioStarted (String name);     
+      /** The current scenario has ended */
+      void scenarioEnded (String name);
+  }
+  
+  public interface ITouchListener 
+  {
+    // The raw point data from the multi-touch server
+    void click (int x, int y, int width, int height);
+    void pointDown (int id, int x, int y, int width, int height);
+    void pointMoved (int id, int newX, int newY, int newWidth, int newHeight);
+    void pointUp (int id);
+  } 
+  
+  public interface IUserHeadListener 
+  {
+    void faceSeen (boolean faceLeft, boolean faceRight, boolean faceMiddle);
+    void gaze (ScreenRegion region);
+    void userExpression (FacialExpression expression);
+    void userLocation (double x, double y, double z);
+  }
+  
+  public interface IPauseListener 
+  {
+    void setPaused (boolean paused);
+  }
+  
+  public interface IChildModelListener
+  {
+    void engagementEstimate (Object engagement, double confidence);
+  }
+  
+  /* This interface publishes processed multimodal events based on the actions of the user and the 
+  updates from the world state */
+  public interface IEventListener 
+  {
+    /* The user has gazed at a particular target for a specific time */
+    void userGazeEvent (String details, long msec);
+    /* The user has touched a particular object */
+    void userTouchEvent (String objId);
+    /* The user has carried out a particular high-level action on the given argument(s) */
+    void userAction (UserActionType action);
+  }
+    
+  public interface IHeadTracker 
+  {
+    boolean buildHeadModel();
+    void skipHeadModel();
+  }
+  
+  interface IVisionSystem 
+  {
+    float getAttentionProbability (int x, int y);
+  }
+}

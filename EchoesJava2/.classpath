@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="EchoesJava/child-model/src"/>
+	<classpathentry excluding="renderingEngine/interface/|renderingEngine/objects/|renderingEngine/|renderingEngine/visual/" kind="src" path="EchoesJava/src"/>
+	<classpathentry excluding="interface/|objects/|visual/" kind="src" path="EchoesJava/src/renderingEngine"/>
+	<classpathentry kind="src" path="EchoesJava/src/renderingEngine/interface"/>
+	<classpathentry kind="src" path="EchoesJava/src/renderingEngine/objects"/>
+	<classpathentry kind="src" path="EchoesJava/src/renderingEngine/visual"/>
+	<classpathentry kind="lib" path="EchoesJava/child-model/lib/libsvm.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/child-model/lib/weka.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/action-engine.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/child-model.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/control-panel.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/drama-manager.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/FAtiMA.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/jdom.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/Language.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/libsvm.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/pedagogic-component.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/state-manager.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/echoes-runtime/bin/weka.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/lib/images.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/lib/Language.jar"/>
+	<classpathentry kind="lib" path="EchoesJava/lib/weka.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="EchoesJava/bin"/>
+</classpath>

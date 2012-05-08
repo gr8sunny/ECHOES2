@@ -1,0 +1,19 @@
+INDEX VERSION 1.126+C:\Keith\echoes\EchoesJava\.metadata\.plugins\org.eclipse.jdt.core
+511590346.index
+3065916431.index
+1235034028.index
+1995173708.index
+163172794.index
+1697886153.index
+30765161.index
+1763043034.index
+3133528496.index
+305854171.index
+4155206848.index
+1498219845.index
+1475222025.index
+1653185166.index
+3974580528.index
+30850963.index
+1115467115.index
+19743416.index

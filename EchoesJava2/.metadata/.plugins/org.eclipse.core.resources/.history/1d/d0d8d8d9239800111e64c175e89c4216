@@ -1,0 +1,198 @@
+package renderingEngine.visual;
+
+import java.nio.FloatBuffer;
+
+import javax.media.opengl.GL2;
+import javax.media.opengl.glu.GLU;
+
+import com.jogamp.opengl.util.texture.Texture;
+import utils.Logger;
+
+public class Annotator
+{
+  private EchoesGLCanvas canvas = EchoesGLCanvas.theCanvas;
+  private String activeTool;
+
+  public void Annotator()
+  {
+    this.w2 = 0.5 * canvas.orthoCoordWidth;
+    this.h2 = 0.5 * canvas.orthoCoordWidth/canvas.aspectRatio;
+    this.fw = 0.1;
+    this.frame = [[(-this.w2+this.fw, this.h2), (this.w2-this.fw, this.h2), (this.w2-this.fw, this.h2-this.fw), (-this.w2+this.fw, this.h2-this.fw)],
+                  [(this.w2, this.h2), (this.w2, -this.h2), (this.w2-this.fw, -this.h2), (this.w2-this.fw, this.h2)],
+                  [(this.w2-this.fw, -this.h2), (-this.w2+this.fw, -this.h2), (-this.w2+this.fw, -this.h2+this.fw), (this.w2-this.fw, -this.h2+this.fw)],
+                  [(-this.w2, -this.h2), (-this.w2, this.h2), (-this.w2+this.fw, this.h2), (-this.w2+this.fw, -this.h2)]] ;
+    
+    
+    this.shape = [(-1, -1), (1, -1), (1, 1), (-1, 1)];
+    this.texshape = [(0, 0), (1, 0), (1, 1), (0, 1)];
+    this.emoticons = dict();
+    this.strokes = [[]];
+    this.drawingFeature(true);
+  }    
+  
+  // images=["emoticon_happy.png", "emoticon_sad.png", "pencil-icon.png"]
+  public void loadTextures(List<String> images)
+  {
+    this.textures = glGenTextures(len(images));
+    this.boundaries = [];
+    int i = 0;
+    for (String image : images)
+    {
+      try
+      {
+          im = PIL.Image.open("visual/images/" + image);
+      }
+      catch (Exception e)
+      {
+          Logger.warning("Could not find icon " + image + " for Annotator");
+      }
+      try                
+          ix, iy, idata = im.size[0], im.size[1], im.tostring("raw", "RGBA", 0, -1)
+      except SystemError
+          ix, iy, idata = im.size[0], im.size[1], im.tostring("raw", "RGBX", 0, -1)        
+
+      gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT,1)
+      gl.glBindTexture(GL2.GL_TEXTURE_2D, this.textures[i])
+      gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, idata)
+      i += 1;
+    }
+}     
+      
+  public void render(GL2 gl)
+  {
+    gl.glPushMatrix();
+    gl.glDisable(GL2.GL_DEPTH_TEST);
+    // Toolbar
+    gl.glColor4f(0.927, 0, 1, 0.5);         
+    gl.glBegin( GL2.GL_QUADS );
+    for (float[] v : this.toolsframe)
+        gl.glVertex(v[0],v[1], 0.0);
+    gl.glEnd();
+    // Frame
+    for (rec : this.frame)
+    {
+      gl.glBegin( GL2.GL_QUADS);
+      for (float[] v :n rec)
+        gl.glVertex(v[0],v[1], 0.0);
+      gl.glEnd();
+    }
+    // Buttons
+    gl.glColor4f(1, 1, 1, 1)
+    gl.glPushMatrix()
+    gl.glTranslate(this.toolsframe[3][0], this.toolsframe[3][1], 0)
+    for (i : range(len(this.textures)))
+        if (i>1 and not this.drawingEnabled
+            break
+        this.renderEmoticon((0.25+0.6*i, 0.25, 0), 0.25, this.textures[i])
+    gl.glPopMatrix()
+        // Emoticons drawn 
+    for pos, type in this.emoticons.items()
+        if (type == 'happy' tex = this.textures[0])
+        else if (type == 'sad' tex = this.textures[1];
+        else tex = this.textures[3];
+        this.renderEmoticon((pos[0], pos[1], 0), 0.15, tex, 0.5);
+       // Drawing
+    gl.glColor4f(0.927, 0, 1, 1);          
+    gl.glLineWidth(3.0);
+    for (stroke in this.strokes)
+    {
+      gl.glBegin( GL2.GL_LINE_STRIP )
+      for (v : stroke)
+          gl.glVertex(v[0],v[1], 0.0);
+      gl.glEnd();
+    }
+    gl.glEnable(GL2.GL_DEPTH_TEST);                   
+    gl.glPopMatrix();
+  }
+  
+  public void renderEmoticon(GL2 gl, float[] pos, float size, int tex, float transparency)
+  {
+    gl.glPushMatrix();
+    gl.glEnable( GL2.GL_ALPHA_TEST );
+    gl.glAlphaFunc( GL2.GL_GREATER, (float) 0.1);    
+    gl.glEnable( GL2.GL_TEXTURE_2D );
+    gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+    gl.glBindTexture(GL2.GL_TEXTURE_2D, tex);
+    gl.glTranslatef(pos[0], pos[1], pos[2]);
+    gl.glScalef(size, size, size);
+    gl.glColor4f(1, 1, 1, transparency);
+    gl.glBegin(GL2.GL_QUADS);
+    int ti = 0;
+    for (float[] v : this.shape)
+    {
+        gl.glTexCoord2d(this.texshape[ti][0], this.texshape[ti][1]);
+        gl.glVertex3f(v[0], v[1], pos[2]);
+        ti += 1;
+    }
+    gl.glEnd();
+    gl.glDisable(GL2.GL_TEXTURE_2D);
+    gl.glDisable(GL2.GL_ALPHA_TEST);
+    gl.glPopMatrix();
+  }
+  
+  public void drawingFeature(boolean y)
+  {
+    this.drawingEnabled = v
+    if (v
+        this.loadTextures(["emoticon_happy.png", "emoticon_sad.png", "pencil-icon.png"])
+        this.activeTool = "draw"
+        this.toolsframe = [(-this.w2+this.fw, this.h2-this.fw), (-this.w2+this.fw+1.7, this.h2-this.fw),  (-this.w2+this.fw+1.7, this.h2-this.fw-0.5),  (-this.w2+this.fw, this.h2-this.fw-0.5)]
+    else 
+        this.loadTextures(["emoticon_happy.png", "emoticon_sad.png"])
+        this.activeTool = "happy"
+        this.toolsframe = [(-this.w2+this.fw, this.h2-this.fw), (-this.w2+this.fw+1.2, this.h2-this.fw),  (-this.w2+this.fw+1.2, this.h2-this.fw-0.5),  (-this.w2+this.fw, this.h2-this.fw-0.5)]
+  }
+  
+  public void startDrag(int[] pos)
+  {
+    pos = this.app.canvas.getWorldCoord(pos)
+    buttonPressed = false
+    for i in range(len(this.textures))
+        x = this.toolsframe[3][0] + i*0.6
+        if (pos[0] > x and pos[0] < (x+0.5) and pos[1] > this.toolsframe[3][1] and pos[1] < this.toolsframe[1][1]
+            buttonPressed = true
+            if (i== 2
+                this.activeTool = "draw"
+            else if (i== 1
+                this.activeTool = "sad"
+            else
+                this.activeTool = "happy"
+                
+    if (not buttonPressed
+        if (this.activeTool != "draw"
+            this.emoticons[pos] = this.activeTool
+}
+  
+  public void stopDrag()
+  {
+    if (this.activeTool == "draw"
+        this.strokes.append([])
+  }
+  
+  public void drag(int[] pos, GL2 gl,  GLU glu)
+  {
+    if (this.activeTool != "draw")
+      return;
+    
+    // Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
+    int[] viewport = new int[4];
+    double[] modelview = new double[16];
+    double[] projection = new double[16];
+    FloatBuffer windowZ = FloatBuffer.allocate(1);
+    
+    gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, modelview, 0);
+    gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projection, 0);
+    gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
+    gl.glReadPixels(pos[0], viewport[3] - pos[1], 1, 1, GL2.GL_DEPTH_COMPONENT, GL2.GL_FLOAT, windowZ);
+    glu.gluUnProject(pos[0], viewport[3] - pos[1], windowZ.get(), modelview, 0, projection, 0, viewport, 0, worldCoords, 0);
+
+    this.strokes[len(this.strokes)-1].append(worldCoords);
+  }
+
+  public void done()
+  {
+    canvas.saveScreenshot("screenshot", "C:\\temp");
+  }
+}

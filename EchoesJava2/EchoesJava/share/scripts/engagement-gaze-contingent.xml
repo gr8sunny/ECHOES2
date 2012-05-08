@@ -1,0 +1,47 @@
+<script engage="true" gesture="false" contingent="true" start="#start">
+	<action id="start" type="LookAround" timeout="0">
+		<response context="Timeout" action="#lookChild" />
+	</action>
+	<action id="lookChild" type="LookAtChild" timeout="10000">
+	    <response context="Timeout" action="#wave"/>
+	    <response context="LookAt(AGENT)" action="#lookFlower"/>
+	</action>
+	<action id="wave" type="Wave" timeout="10000">
+		<response context="LookAt(AGENT)" action="#lookFlower"/>
+	    <response context="Timeout" action="#end"/>
+	</action>
+	<action id="lookFlower" type="LookAtObject" details="TARGET" timeout="4000">
+	    <response context="LookAt(TARGET)" action="#wait" />
+	    <response context="Touch(TARGET)" action="#pick" />
+	    <response context="Touch(OTHER)" action="#refuse" />
+	    <response context="Timeout" action="#pointAgain" />
+	</action>
+	<action id="pointAgain" type="LookAgain" details="TARGET" timeout="10000">
+	    <response context="LookAt(TARGET)" action="#wait" />
+	    <response context="Touch(TARGET)" action="#pick" />
+	    <response context="Touch(OTHER)" action="#refuse" />
+	    <response context="Timeout" action="#end" />
+	</action>
+	<action id="wait" type="DoNothing" timeout="10000">
+	    <response context="Touch(TARGET)" action="#pick" />
+	    <response context="Touch(OTHER)" action="#refuse" />
+	    <response context="Timeout" action="#teacherPrompt" />
+	</action>
+	<action id="pick" type="PickFlower" details="TARGET" timeout="0">
+	    <response context="Timeout" action="#end" />
+	</action>
+	<action id="teacherPrompt" type="TeacherPrompt" timeout="10000">
+	    <response context="Touch(TARGET)" action="#pick" />
+	    <response context="Touch(OTHER)" action="#refuse" />
+	    <response context="Timeout" action="#end" />
+	</action>
+	<action id="refuse" type="StandAndSay" details="notthatone.wav" timeout="0">
+	    <response context="Touch(TARGET)" action="#pick" />
+	    <response context="Touch(OTHER)" action="#refuse" />
+	    <response context="Timeout" action="#lookFlower" />
+	</action>
+	<action id="thank" type="StandAndSay" details="thankyou.wav" timeout="2000">
+	    <response context="Timeout" action="#end" />
+	</action>
+	<action id="end" type="EndTrial" timeout="0" />
+</script>

@@ -1,0 +1,361 @@
+package childModel;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import weka.classifiers.Classifier;
+import weka.classifiers.rules.JRip;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.Filter;
+import weka.filters.supervised.instance.Resample;
+import weka.filters.unsupervised.attribute.ReplaceMissingValues;
+import echoesEngine.ListenerManager;
+import utils.Interfaces.*;
+import utils.Enums.*;
+import utils.Logger;
+
+public class EngagementClassifier implements IPauseListener
+{
+	private Timer timer;
+	private Classifier classifier;
+	private TimerTask classifyTask;
+	private Instances trainingData;
+  private ListenerManager listenerMgr;
+	private UserHeadListenerImpl userHeadListener;
+	private RenderingListenerImpl rendererListener;
+	private TouchListenerImpl touchListener;
+	private IChildModelListener publisher;
+	private Engagement curEngagement;
+	private Map<String, Boolean> values;
+  private Map<String, ScreenRegion> objectLocations;
+  private String targetObjId = "";
+  private boolean paused = false;
+  private static final String AGENT_ID = "AGENT";
+
+	public EngagementClassifier() 
+	{
+		// Load the data and train the classifier
+		File dataDir = new File("share/child-model/");
+
+		try 
+		{
+			DataSource source = new DataSource(new FileInputStream(new File(
+					dataDir, "training-data.arff")));
+			trainingData = source.getDataSet();
+			trainingData.setClassIndex(trainingData.numAttributes()-1);
+			
+			// Replace all missing values with the attribute mean
+			Filter replacer = new ReplaceMissingValues();
+			replacer.setInputFormat(trainingData);
+			trainingData = Filter.useFilter(trainingData, replacer);
+			Logger.Log("info", "Done replacement of missing values");
+			
+			// Re-sample to get something closer to a uniform distribution
+			Resample resampler = new Resample();
+			resampler.setBiasToUniformClass(0.7);
+			resampler.setInputFormat(trainingData);
+			trainingData = Filter.useFilter(trainingData, resampler);
+			Logger.Log("info", "Done resampling");
+
+			classifier = new JRip();
+			classifier.buildClassifier(trainingData);
+			Logger.Log("info", "Classifier trained: " + classifier);
+		} 
+		catch (FileNotFoundException e) 
+		{
+		  Logger.LogError("File not found for training classifier: " + e.getMessage());
+		} 
+		catch (Exception e) 
+		{
+			Logger.LogError("Error training classifier: " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		
+		resetValues();
+		
+		values = Collections.synchronizedMap(new HashMap<String, Boolean>());
+    objectLocations = Collections.synchronizedMap(new HashMap<String, ScreenRegion>());
+    
+    listenerMgr = ListenerManager.GetInstance();
+    listenerMgr.registerForEvents(this, ListenerType.pause);
+		
+		userHeadListener = new UserHeadListenerImpl();
+		listenerMgr.Subscribe(userHeadListener);
+		
+    rendererListener = new RenderingListenerImpl();
+    listenerMgr.Subscribe(rendererListener);
+    
+    touchListener = new TouchListenerImpl();
+    listenerMgr.Subscribe(touchListener);
+          
+		publisher = (IChildModelListener)listenerMgr.retrieve(ListenerType.childModel);
+		
+		this.timer = new Timer();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void resetValues() 
+	{
+	  if (null == trainingData)
+	    return;
+	  
+		for (Enumeration<Attribute> e = trainingData.enumerateAttributes(); e.hasMoreElements(); ) 
+		{
+			Attribute att = e.nextElement();
+			values.put(att.name(), false);
+		}
+	}
+	
+	public void start() 
+	{
+		classifyTask = new TimerTask() {
+			
+			@SuppressWarnings("unchecked")
+			@Override
+			public void run() {
+				
+				if (paused) {
+					return;
+				}
+				
+				// Create the instance based on the current set of values
+				synchronized(values) {
+					Instance inst = new Instance(trainingData.instance(0).numAttributes());
+					inst.setDataset(trainingData);
+					for (Enumeration<Attribute> e = trainingData.enumerateAttributes(); e.hasMoreElements(); ) {
+						Attribute att = e.nextElement();
+						// Depending on the attribute, we set the value based on recent events
+						Boolean value = values.get(att.name());
+						if (value == null) 
+							Logger.Log("", "Unknown attribute: " + att.name());
+						else 
+							inst.setValue(att, value ? 1 : 0);
+					}
+					try {
+						double[] classification;
+						classification = classifier.distributionForInstance(inst);
+						int cls = -1;
+						double probability = 0;
+						for (int i = 0; i < inst.attribute(inst.numAttributes()-1).numValues(); i++) 
+						{
+							if (classification[i] > probability) 
+							{
+								cls = i;
+								probability = classification[i];
+							}
+						}
+						
+						if (cls >= 0) 
+						{
+							Engagement eng = Engagement.valueOf(inst.attribute(inst.numAttributes()-1).value(cls));
+							if (eng != curEngagement) 
+							{
+								Logger.Log("info", inst + " classified as " + eng + " (" + probability + ")");
+								publisher.engagementEstimate(eng, probability);
+								curEngagement = eng;
+							}
+  						else 
+  							Logger.Log("Couldn't determine class for " + inst);			
+						}
+					} catch (Exception e) {
+						Logger.Log("Couldn't classify instance " + inst + ": " + e.getMessage());
+					}
+					
+					resetValues();
+				}
+			}
+		};
+		
+		timer.schedule(classifyTask, 0, 1000);
+	}
+	
+	public void stop() 
+	{
+		classifyTask.cancel();
+		listenerMgr.unregisterForEvents(this, ListenerType.pause);
+    listenerMgr.Unsubscribe(userHeadListener);
+    listenerMgr.Unsubscribe(rendererListener);
+    listenerMgr.Unsubscribe(touchListener);
+	}
+	
+	public Engagement getEngagement() 
+	{
+		return curEngagement;
+	}
+	
+	public boolean getPaused()
+  {
+    return paused;
+  }
+	
+	public void setPaused(boolean value)
+  {
+    paused = value;
+  }
+  
+  public Map<String, Boolean> getValues()
+  {
+    return values;
+  }
+  
+  public void setTargetObject(String objId)
+  {
+    targetObjId = objId;
+  }
+  
+  private class UserHeadListenerImpl implements IUserHeadListener 
+  {
+    public void gaze(ScreenRegion region) 
+    {
+      if (paused) 
+        return;
+      
+      synchronized(values) 
+      {
+        if (region != ScreenRegion.ScreenUnknown) 
+        {
+          values.put("gaze_screen", true);
+          
+          synchronized(objectLocations) 
+          {
+            for (String objId : objectLocations.keySet()) 
+            {
+              if (objectLocations.get(objId) == region) 
+              {
+                if (objId.equals(AGENT_ID)) 
+                  values.put("gaze_agent", true);
+                else if (objId.equals(targetObjId)) 
+                  values.put("gaze_target", true);
+              }
+              else
+                values.put("gaze_anything", true);
+            }
+          }
+        }
+      }
+    }
+
+    public void userExpression(FacialExpression expression) 
+    {
+    }
+
+    public void userLocation(double x, double y, double z) 
+    {
+    }
+
+    public void faceSeen(boolean faceLeft, boolean faceRight, boolean faceMiddle) 
+    {
+      if (paused) return;
+      synchronized(values) 
+      {
+        values.put("face_left", faceLeft);
+        values.put("face_right", faceRight);
+        values.put("face_middle", faceMiddle);
+      }
+    }
+   
+  }
+    
+  private class TouchListenerImpl implements ITouchListener
+  {
+    public void click(int x, int y, int width, int height) 
+    {
+      if (paused)
+        return;
+      values.put("touch_anything", true);
+    }
+    
+    public void pointDown(int id, int x, int y, int width, int height) {}
+    public void pointMoved(int id, int newX, int newY, int newWidth, int newHeight) {}
+    
+    public void pointUp(int id) 
+    {
+      if (paused) 
+        return;
+      values.put("touch_anything", true);
+    }  
+  }
+    
+  private class RenderingListenerImpl implements IRenderingListener
+  {
+    private String targetObjId;
+    private boolean paused;
+    
+    public void objectAdded(String objId, Map<String, String> props) {}
+
+    public void objectRemoved(String objId) 
+    {
+      if (paused) 
+        return;
+      objectLocations.remove(objId);
+    }
+
+    public void objectPropertyChanged(String objId, String propName, String propValue) 
+    {
+      if (paused) 
+        return;
+    
+      if (propName.equals("ScreenRegion")) 
+        objectLocations.put(objId, ScreenRegion.valueOf(propValue));  
+    }
+
+    public void userStarted(String name) 
+    {
+      if (paused) 
+        return;
+    
+      synchronized(values) 
+      {
+        values.put("touch_anything", true);
+        values.put("touch_target", true);
+      }
+    }
+
+    public void userTouchedObject(String objId) 
+    {
+      if (paused) 
+        return;
+    
+      values.put("touch_anything", true);
+      if (objId.equals(targetObjId)) 
+        values.put("touch_target", true);
+    }
+
+    public void agentRemoved(String agentId) 
+    {
+      if (paused) 
+        return;
+      objectLocations.remove(AGENT_ID);
+    }
+
+    public void agentPropertyChanged(String agentId, String propName, String propValue) 
+    {
+      if (paused) 
+        return;
+      if (propName.equals("ScreenRegion")) 
+        objectLocations.put(AGENT_ID, ScreenRegion.valueOf(propValue));
+    }
+
+    public void agentAdded(String agentId, Map<String, String> props) {}
+    public void worldPropertyChanged(String propName, String propValue) {}
+    public void scenarioStarted(String name) {}
+    public void scenarioEnded(String name) {}
+
+    public void userTouchedAgent(String agentId) 
+    {
+      if (paused) 
+        return;
+      values.put("touch_anything", true);
+    }
+  }
+}

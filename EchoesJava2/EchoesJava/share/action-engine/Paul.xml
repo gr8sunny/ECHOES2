@@ -1,0 +1,192 @@
+<Character role="Paul">
+	<!--
+		Paul is a cheerful character, tends to be happy and love other people
+	-->
+	<EmotionalThresholds>
+		<EmotionalThreshold emotion="Love" threshold="1"
+			decay="1" />
+		<EmotionalThreshold emotion="Hate" threshold="8"
+			decay="5" />
+		<EmotionalThreshold emotion="Hope" threshold="5"
+			decay="2" />
+		<EmotionalThreshold emotion="Fear" threshold="4"
+			decay="4" />
+		<EmotionalThreshold emotion="Satisfaction"
+			threshold="3" decay="3" />
+		<EmotionalThreshold emotion="Relief" threshold="2"
+			decay="5" />
+		<EmotionalThreshold emotion="Fears-Confirmed"
+			threshold="8" decay="8" />
+		<EmotionalThreshold emotion="Disappointment"
+			threshold="7" decay="2" />
+		<EmotionalThreshold emotion="Joy" threshold="1"
+			decay="5" />
+		<EmotionalThreshold emotion="Distress" threshold="7"
+			decay="2" />
+		<EmotionalThreshold emotion="Happy-For" threshold="1"
+			decay="1" />
+		<EmotionalThreshold emotion="Pitty" threshold="5"
+			decay="8" />
+		<EmotionalThreshold emotion="Resentment" threshold="8"
+			decay="2" />
+		<EmotionalThreshold emotion="Gloating" threshold="8"
+			decay="8" />
+		<EmotionalThreshold emotion="Pride" threshold="3"
+			decay="3" />
+		<EmotionalThreshold emotion="Shame" threshold="5"
+			decay="2" />
+		<EmotionalThreshold emotion="Gratification"
+			threshold="1" decay="5" />
+		<EmotionalThreshold emotion="Remorse" threshold="6"
+			decay="8" />
+		<EmotionalThreshold emotion="Admiration" threshold="2"
+			decay="8" />
+		<EmotionalThreshold emotion="Reproach" threshold="5"
+			decay="8" />
+		<EmotionalThreshold emotion="Gratitude" threshold="2"
+			decay="3" />
+		<EmotionalThreshold emotion="Anger" threshold="8"
+			decay="2" />
+	</EmotionalThresholds>
+
+	<InterpersonalRelations>
+		<Relation target="user" like="5" />
+	</InterpersonalRelations>
+
+	<Goals>
+		<Goal name="leave()" importanceOfSuccess="10"
+			importanceOfFailure="10" />
+		<Goal name="enterECHOES()" importanceOfSuccess="10"
+			importanceOfFailure="10" />
+		<Goal name="greetChild()" importanceOfSuccess="9"
+			importanceOfFailure="10" />
+
+		<Goal name="popBubble()" importanceOfSuccess="10"
+			importanceOfFailure="10" />
+
+		<Goal name="noticeEvent()" importanceOfSuccess="9"
+			importanceOfFailure="10" />
+		<Goal name="beExpressive()" importanceOfSuccess="8"
+			importanceOfFailure="10" />
+		<Goal name="beExpressiveGeneral()" importanceOfSuccess="8"
+			importanceOfFailure="10" />
+		<Goal name="respondToBeingTouched()" importanceOfSuccess="8"
+			importanceOfFailure="10" />
+		<Goal name="giveFeedback()" importanceOfSuccess="7"
+			importanceOfFailure="10" />
+
+		<Goal name="giveFeedbackEndOfActivity()" importanceOfSuccess="6"
+			importanceOfFailure="10" />
+		<Goal name="reEngage()" importanceOfSuccess="8"
+			importanceOfFailure="10" />
+
+		<Goal name="wait()" importanceOfSuccess="4" importanceOfFailure="10" />
+
+		<Goal name="acceptObject()" importanceOfSuccess="7"
+			importanceOfFailure="10" />
+
+		<Goal name="makeBid()" importanceOfSuccess="6"
+			importanceOfFailure="10" />
+		<Goal name="findObject()" importanceOfSuccess="6"
+			importanceOfFailure="10" />
+
+
+
+		<Goal name="makePotAvailableForFlowerGrowing()"
+			importanceOfSuccess="3" importanceOfFailure="8" />
+		<Goal name="makePotAvailableForPotStacking()"
+			importanceOfSuccess="3" importanceOfFailure="8" />
+
+		<Goal name="walkOff()" importanceOfSuccess="3"
+			importanceOfFailure="10" />
+
+
+		<Goal name="explore()" importanceOfSuccess="2"
+			importanceOfFailure="8" />
+
+
+
+
+		<Goal name="getOutOfTheWay()" importanceOfSuccess="6"
+			importanceOfFailure="10" />
+
+
+
+
+	</Goals>
+
+	<EventReactions>
+		<!--
+			<EmotionalReaction desirability="10" desirabilityForOther="10">
+			<Event subject="User" action="UserRespondedToBid" />
+			</EmotionalReaction> <EmotionalReaction desirability="10"
+			desirabilityForOther="10"> <Event subject="User"
+			action="UserTookTurn" /> </EmotionalReaction> <EmotionalReaction
+			desirability="10" desirabilityForOther="10"> <Event subject="User"
+			action="UserInitiated" /> </EmotionalReaction> <EmotionalReaction
+			desirability="10" desirabilityForOther="10"> <Event subject="User"
+			action="UserGaveRequestedObject" /> </EmotionalReaction>
+			<EmotionalReaction desirability="-10" desirabilityForOther="-10">
+			<Event subject="User" action="Disengaged" /> </EmotionalReaction>
+			<EmotionalReaction desirability="10" desirabilityForOther="10">
+			<Event subject="User" action="GaveObject" /> </EmotionalReaction>
+
+			<EmotionalReaction desirability="7" desirabilityForOther="7"> <Event
+			subject="*" action="Smile" /> </EmotionalReaction> <EmotionalReaction
+			desirability="8" desirabilityForOther="8"> <Event subject="User"
+			action="LookAtFace" /> </EmotionalReaction> <EmotionalReaction
+			desirability="8" desirabilityForOther="8"> <Event subject="User"
+			action="Offer" /> </EmotionalReaction>
+		-->
+	</EventReactions>
+
+	<ActionTendencies>
+		<ActionTendency action="SelfGiveThumbsUp">
+			<Preconditions>
+			</Preconditions>
+			<ElicitingEmotion type="Joy" minIntensity="10">
+				<CauseEvent subject="User" action="UserRespondedToBid"
+					target="*" />
+			</ElicitingEmotion>
+		</ActionTendency>
+		<ActionTendency action="SelfGiveThumbsUp">
+			<Preconditions>
+			</Preconditions>
+			<ElicitingEmotion type="Joy" minIntensity="10">
+				<CauseEvent subject="User" action="UserTookTurn" target="*" />
+			</ElicitingEmotion>
+		</ActionTendency>
+		<ActionTendency action="SelfSmile">
+			<Preconditions>
+			</Preconditions>
+			<ElicitingEmotion type="Joy" minIntensity="10">
+				<CauseEvent subject="User" action="UserInitiated" target="*" />
+			</ElicitingEmotion>
+		</ActionTendency>
+		<ActionTendency action="SelfSmile">
+			<Preconditions>
+			</Preconditions>
+			<ElicitingEmotion type="Joy" minIntensity="10">
+				<CauseEvent subject="User" action="UserGaveRequestedObject"
+					target="*" />
+			</ElicitingEmotion>
+		</ActionTendency>
+		<!--
+			<ActionTendency action="SelfGreetChild"> <Preconditions>
+			</Preconditions> <ElicitingEmotion type="Joy" minIntensity="0">
+			<CauseEvent subject="*" action="TookTurn" target="*" />
+			</ElicitingEmotion> </ActionTendency> <ActionTendency
+			action="SelfGreetChild"> <Preconditions> </Preconditions>
+			<ElicitingEmotion type="Distress" minIntensity="0"> <CauseEvent
+			subject="*" action="Disengaged" target="*" /> </ElicitingEmotion>
+			</ActionTendency> <ActionTendency action="SelfAcceptObject">
+			<Preconditions> </Preconditions> <ElicitingEmotion type="Joy"
+			minIntensity="0"> <CauseEvent subject="*" action="OfferedObject"
+			target="*" /> </ElicitingEmotion> </ActionTendency> <ActionTendency
+			action="Smile"> <Preconditions> </Preconditions> <ElicitingEmotion
+			type="Satisfaction" minIntensity="0"> <CauseEvent subject="[SLEF]"
+			action="SelfAcceptObject" target="*" /> </ElicitingEmotion>
+			</ActionTendency>
+		-->
+	</ActionTendencies>
+</Character>

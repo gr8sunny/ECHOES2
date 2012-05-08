@@ -1,0 +1,47 @@
+package renderingEngine.src;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class screenCanvas
+{
+  public static screenCanvas theCanvas;
+  public Map<Integer, Object> piavcaAvatars = new HashMap<Integer, Object>();
+  public List<Object> sceneElements = new ArrayList<Object>();
+  public String scenario = "";
+  public float frameSize[] = new float[2];
+  public float orthoCoordWidth = 100;
+  public float aspectRatio = 1;
+  public float orthoCoordDepth = 1;
+  public boolean renderPiavca = false;
+  
+  public int addSceneElement(Object element)
+  {
+    return 0;
+  }
+  
+  public void removeSceneElement(int id)
+  {
+  }
+  
+  public int addObject(Object element)
+  {
+    return 0;
+  }
+  
+  public void removeObject(Integer elementID)
+  {
+
+  }
+  
+  public void clearScene(boolean quickly)
+  {
+  }
+  
+  public float[] getScreenCoord(float pos[])
+  {
+    float retval[] = new float[2];
+    return retval;
+  }
+}

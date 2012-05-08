@@ -1,0 +1,48 @@
+<project name="common">
+    <property environment="env" />
+
+    <condition property="ice_slice_dir" value="${env.ICE_HOME}/slice">
+        <and>
+            <isset property="env.ICE_HOME" />
+            <available file="${env.ICE_HOME}/slice" />
+        </and>
+    </condition>
+
+    <!-- It's in one of these places -->
+    <condition property="ice_slice_dir" value="/usr/share/Ice-3.3.0/slice">
+        <and>
+            <not>
+                <isset property="ice_slice_dir" />
+            </not>
+            <available file="/usr/share/Ice-3.3.0/slice" />
+        </and>
+    </condition>
+
+    <condition property="ice_slice_dir" value="/usr/share/slice">
+        <and>
+            <not>
+                <isset property="ice_slice_dir" />
+            </not>
+            <available file="/usr/share/slice" />
+        </and>
+    </condition>
+	
+	<condition property="ice_bin_dir" value="${env.ICE_HOME}/bin" else="/usr/bin">
+		<isset property="env.ICE_HOME" />
+	</condition>
+
+    <condition property="ice_jar_dir" value="${env.ICE_HOME}/lib" else="/usr/share/java">
+        <isset property="env.ICE_HOME" />
+    </condition>
+    <path id="slice_classes">
+        <fileset dir="${ice_jar_dir}" includes="Ice.jar" />
+    </path>
+
+    <path id="slice_ant_classes">
+        <fileset dir="${ice_jar_dir}" includes="ant-ice.jar" />
+    </path>
+    <taskdef name="slice2java" classname="Slice2JavaTask">
+        <classpath refid="slice_ant_classes" />
+    </taskdef>
+    
+</project>

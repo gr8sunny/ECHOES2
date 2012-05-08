@@ -1,0 +1,105 @@
+1335437721390	Delete element
+1335438023375	Copy package
+1335438027859	Delete element
+1335438157296	Delete element
+1335438760515	Rename package 'Echoes'
+1335438792375	Rename package 'FAtiMA.WellFormedNames'
+1335438830984	Rename package 'FAtiMA.KnowledgeBase'
+1335439055546	Rename package 'FAtiMA.AutobiographicalMemory'
+1335439754109	Delete element
+1335439766375	Delete elements
+1335439771125	Delete element
+1335439804281	Rename package 'ChildModel'
+1335439818234	Rename package 'EchoesEngine'
+1335439830328	Rename package 'RenderingEngine'
+1335439885890	Rename package 'fatima'
+1335441109296	Delete element
+1335442135750	Rename package 'echoesActivity'
+1335443769875	Rename compilation unit 'EchoesActivity.java'
+1335443923265	Delete element
+1335449224656	Rename type 'AgentListener'
+1335451795968	Rename field 'userHeadTopic'
+1335451812046	Rename field 'rendererTopic'
+1335451825656	Rename field 'touchTopic'
+1335451844500	Rename field 'pauseTopic'
+1335466966359	Delete element
+1335467017656	Rename type 'TopicManager'
+1335467513093	Rename type 'DramaManagerPrx'
+1335467537000	Rename type 'ActionEnginePrx'
+1335467559390	Rename type 'HeadTrackerPrx'
+1335467571000	Rename type 'VisionSystemPrx'
+1335507843062	Rename local variable 'tmPrx'
+1335508868718	Rename type 'PedagogicComponentApp'
+1335508914140	Rename type 'PedagogicComponentImpl'
+1335510027343	Rename local variable 'tmPrx'
+1335515872843	Rename type 'ObjectManager'
+1335516401906	Delete element
+1335516570171	Delete element
+1335516895531	Delete element
+1335521414234	Rename local variable 'objectManager'
+1335522300828	Rename field 'pausePublisher'
+1335522968687	Rename field 'topicManager'
+1335524231750	Infer generic type arguments
+1335525468312	Rename type 'DramaManagerApp'
+1335525875968	Rename type 'DramaManagerImpl'
+1335525971734	Rename type 'ActionEngineImpl'
+1335526623171	Rename type 'ChildModelImpl'
+1335526867468	Delete element
+1335527290890	Delete element
+1335527696328	Infer generic type arguments
+1335528071421	Rename type 'StateManagerImpl'
+1335531709890	Delete element
+1335531754921	Delete element
+1335531866906	Delete element
+1335532664890	Delete element
+1335539736812	Delete element
+1335543879156	Rename type 'TouchListenerImpl'
+1335544420625	Rename type 'TouchListener'
+1335544476578	Rename type 'TouchListenerImpl'
+1335544564375	Delete element
+1335547659109	Rename compilation unit 'Backgrounds.java'
+1335606206984	Rename package 'renderingEngine'
+1335606220296	Rename package 'renderingEngine.environment'
+1335606646625	Rename resource 'Collisions.py'
+1335606656421	Rename resource 'EchoesApp.py'
+1335607340718	Rename resource 'Logger.py'
+1335607348406	Rename resource 'Motions.py'
+1335607356375	Rename resource 'PDCritiqueIceApp.py'
+1335607580578	Rename resource 'ViewerTest.py'
+1335607589421	Rename resource 'RenderingEngineIceApp.py'
+1335607618812	Delete element
+1335607634609	Delete element
+1335607651171	Rename resource '__init__.py'
+1335607659015	Rename resource 'EchoesAgent.py'
+1335607666046	Rename resource 'PiavcaAvatars.py'
+1335607707015	Delete element
+1335607715546	Delete element
+1335607723343	Rename resource 'Backgrounds.py'
+1335607731937	Rename resource 'EchoesSceneElement.py'
+1335607739453	Rename resource 'HelperElements.py'
+1335607746515	Rename resource 'HelperElements.v'
+1335607753171	Rename resource 'Menu.py'
+1335607760734	Delete element
+1335607768078	Rename resource 'Bubbles.py'
+1335607775156	Rename resource 'EchoesObject.py'
+1335607782406	Rename resource 'Environment.py'
+1335607787703	Rename resource 'Plants.py'
+1335607793390	Rename resource 'PlayObjects.py'
+1335607807093	Rename resource '__init__.py'
+1335607813687	Delete element
+1335607820687	Rename resource 'EchoesAudio.py'
+1335607837078	Delete element
+1335607842765	Rename resource 'Annotator.py'
+1335607852312	Rename resource 'EchoesGLCanvas.py'
+1335607859984	Rename resource 'gltext.py'
+1335607870968	Delete element
+1335607882671	Rename resource 'RenderingEngineImpl.py'
+1335607890843	Rename resource 'TouchListenerImpl.py'
+1335607984328	Rename resource 'ChildModel_ice.py'
+1335607989859	Rename resource 'ChildModelListener_ice.py'
+1335607999765	Rename resource 'PauseListener_ice.py'
+1335608008578	Rename resource 'VisionSystem_ice.py'
+1335608405953	Delete element
+1335609079593	Rename type 'canvas'
+1335614150078	Rename compilation unit 'HelperElements.java'
+1335617888890	Rename compilation unit 'Bubbles.java'

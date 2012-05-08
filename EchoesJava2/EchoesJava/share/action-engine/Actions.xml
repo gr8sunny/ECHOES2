@@ -1,0 +1,1798 @@
+<DomainActions>
+
+	<Action name="SelfIndicateTakingTurn()" probability="1">
+		<!--  can add bidMethod to this action -->
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+	<!-- bidding actions -->
+
+	<Action name="SelfPromptInitiation()" probability="1">
+		<!--  can add bidMethod to this action -->
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="promptForInitiation(isChosenBidType)"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="makeBid()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPointBid([object],[activity],[purpose],[bidRepeat])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="pointBidType(isChosenBidType)" operator="="
+				value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](objectIsTarget)" operator="="
+				value="True" />
+			<Property name="[purpose](isChosenPurpose)" operator="="
+				value="True" />
+			<Property name="[bidRepeat](isChosenBidRepeat)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="makeBid()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfVerbalBid([object],[activity],[purpose],[bidRepeat])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="verbalBidType(isChosenBidType)" operator="="
+				value="True" />
+			<Property name="[object](objectIsTarget)" operator="="
+				value="True" />
+			<Property name="[purpose](isChosenPurpose)" operator="="
+				value="True" />
+			<Property name="[bidRepeat](isChosenBidRepeat)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="makeBid()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfLookBid([object],[activity],[purpose],[bidRepeat])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="lookBidType(isChosenBidType)" operator="="
+				value="True" />
+			<Property name="[object](objectIsTarget)" operator="="
+				value="True" />
+			<Property name="[purpose](isChosenPurpose)" operator="="
+				value="True" />
+			<Property name="[bidRepeat](isChosenBidRepeat)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="makeBid()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfTouchBid([object],[activity],[purpose],[bidRepeat])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="touchBidType(isChosenBidType)" operator="="
+				value="True" />
+			<Property name="[object](objectIsTarget)" operator="="
+				value="True" />
+			<Property name="[purpose](isChosenPurpose)" operator="="
+				value="True" />
+			<Property name="[bidRepeat](isChosenBidRepeat)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="makeBid()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+	<!--  single actions -->
+
+	<!--  react to event; sharing or not with the child -->
+	<Action name="SelfReactToAndShareEvent([object],[event])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[event](event)" operator="=" value="Occurred" />
+			<Property name="[object](objectFocus)" operator="=" value="True" />
+			<Property name="reactedToEvent()" operator="=" value="True" />
+			<Property name="shareEventWithChild()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="reactToEvent()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="reactedToEvent()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfReactToAndDontShareEvent([object],[event])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[event](event)" operator="=" value="Occurred" />
+			<Property name="[object](objectFocus)" operator="=" value="True" />
+			<Property name="shareEventWithChild()" operator="=" value="False" />
+			<Property name="reactedToEvent()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="reactToEvent()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="reactedToEvent()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfReactToEvent([event])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[event](event)" operator="=" value="Occurred" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="reactedToEvent()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfReactToEventGeneral()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="reactToGeneralEvent()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="reactToGeneralEvent()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfNoticeEvent([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[object](objectFocus)" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="noticeEvent()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfWait()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="wait()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="wait()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfGreetChild()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="isInECHOES()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hasGreetedChild()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfGiveThumbsUp()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="giveFeedback()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="giveFeedback()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfEndActivity([activity])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="activityEnded()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="activityEnded()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfGiggle()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="childTouchedAgent()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childTouchedAgent()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  Walk in actions (notice or don't notice the child -->
+
+	<!--
+		<Action name="SelfWalkInDontNoticeChild()" probability="1">
+		<PreConditions>
+	-->
+	<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+	<!--
+		<Property name="isInECHOES()" operator="=" value="False" />
+
+		</PreConditions> <Effects> <Effect probability="1.0"> <Property
+		name="isInECHOES()" operator="=" value="True" /> </Effect> <Effect
+		probability="1.0"> <Property name="enterECHOES()" operator="="
+		value="False" /> </Effect> <Effect probability="1.0"> <Property
+		name="explore()" operator="=" value="True" /> </Effect> </Effects>
+		</Action>
+	-->
+
+	<Action name="SelfWalkInNoticeChild()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="isInECHOES()" operator="=" value="False" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="isInECHOES()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="noticedChild()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="enterECHOES()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="explore()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  Look around to and make comment on the scene that he finds -->
+
+	<Action name="SelfLookAroundMakeComment([activity])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				any object in the environment that he can interact with. Might need
+				to add another precondition to make sure he can interact with the
+				object
+			-->
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<!--
+				<Property name="lookedAroundMadeComment([activity])" operator="!="
+				value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="lookedAroundMadeComment([activity])"
+					operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  Look around to notice a specific type of object -->
+
+	<!--
+		<Action name="SelfLookAroundSpotObject([object])" probability="1">
+		<PreConditions>
+	-->
+	<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+	<!--
+		any object in the environment that he can interact with. Might need to
+		add another precondition to make sure he can interact with the object
+	-->
+	<!--
+		<Property name="noticedObject([object])" operator="!=" value="True" />
+		</PreConditions> <Effects> <Effect probability="1.0"> <Property
+		name="noticedObject([object])" operator="=" value="True" /> </Effect>
+		</Effects> </Action>
+	-->
+
+	<!--  Actions for cloud exploration -->
+
+	<!--  1. Touch cloud -->
+
+	<Action name="SelfExploreCloud([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="CloudRain(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<!--
+				<Property name="lookedAroundMadeComment([activity])" operator="="
+				value="True" />
+			-->
+			<!--
+				<Property name="atAgent([SELF],[object])" operator="=" value="True"
+				/>
+			-->
+
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<!--
+				<Property name="noticedObject([object])" operator="=" value="True"
+				/>
+			-->
+			<!--
+				<Property name="lookedAroundMadeComment([activity])" operator="="
+				value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  2. Push cloud over pot / unstack pots if necessary -->
+
+	<Action name="SelfExploreCloudPushedCloud([object],[pot])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerGrow(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="[pot](type)" operator="=" value="Pot" />
+			<Property name="[pot](unstackedNoFlower)" operator="="
+				value="True" />
+			<Property name="[pot](under_cloud)" operator="=" value="True" />
+			<Property name="unstackedFlowerlessPots()" operator="="
+				value="True" />
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+			<!--
+				<Property name="noticedObject([pot])" operator="=" value="True" />
+			-->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPushCloud([object],[pot])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="unstackedFlowerlessPots()" operator="=" value="True"
+				/>
+			-->
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="[pot](under_cloud)" operator="!=" value="True" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="[pot](under_cloud)" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!-- <Action name="SelfTakePotOffStack([location],[pot])" -->
+	<Action name="SelfTakePotOffStack([pot])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerGrow(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[pot](toBeUnstacked)" operator="=" value="True" />
+			<!-- <Property name="hold([SELF],[pot])" operator="=" value="True" />-->
+			<Property name="unstackPotToMakeAvailable()" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="madeAPotAvailable()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="unstackPotToMakeAvailable()" operator="="
+					value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[pot])" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="needToPutPotDown()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPickUpPotToMakeAvailable([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			-->
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[object](toBeUnstacked)" operator="=" value="True" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+			<!--  a hack for the flower growing -->
+
+			<Effect probability="1.0">
+				<Property name="unstackPotToMakeAvailable()" operator="="
+					value="True" />
+			</Effect>
+			<!--  a hack for the flower growing -->
+			<Effect probability="1.0">
+				<Property name="needToPutPotDown()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  actions to accept pot in flower growing activity -->
+
+	<Action name="SelfExploreCloudPushedCloudAcceptedPot([object],[pot])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerGrow(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="[pot](type)" operator="=" value="Pot" />
+			<Property name="[pot](objectToAccept)" operator="=" value="True" />
+			<Property name="[pot](under_cloud)" operator="=" value="True" />
+			<Property name="putDownAcceptedPot()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="putDownAcceptedPot()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPutDownAcceptedPot([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerGrow(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="pickedUpPotToPutDown()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="putDownAcceptedPot()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="pickedUpPotToPutDown()" operator="=" value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfAcceptPotToPutDown([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="pickedUpPotToPutDown()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+
+	<!--  actions to accept pot in flower growing activity -->
+	<Action name="SelfPutAcceptedFlowerInPot([flower],[pot])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerGrow(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[pot](type)" operator="=" value="Pot" />
+			<Property name="[pot](hasFlower)" operator="!=" value="True" />
+			<Property name="[pot](hasObject)" operator="!=" value="True" />
+			<Property name="[flower](type)" operator="=" value="Flower" />
+			<Property name="[flower](objectToAccept)" operator="="
+				value="True" />
+			<Property name="atAgent([SELF],[pot])" operator="=" value="True" />
+			<Property name="pickedUpFlowerToPutInPot()" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="pickedUpFlowerToPutInPot()" operator="="
+					value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfAcceptFlowerToInPot([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="pickedUpFlowerToPutInPot()" operator="="
+					value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  Actions for flower picking activity -->
+
+	<!--  dummy explore for flower picking so that agent only makes bids -->
+
+	<Action name="SelfPutFlowerInBasketDummy()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerPickToBasket(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPutFlowerInBasket([flower],[basket])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerPickToBasket(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[basket](type)" operator="=" value="Basket" />
+			<Property name="[flower](type)" operator="=" value="Flower" />
+			<Property name="[flower](isInBasket)" operator="!=" value="True" />
+			<Property name="hold([SELF],[flower])" operator="=" value="True" />
+			<!--
+				<Property name="noticedObject([flower])" operator="=" value="True"
+				/>
+			-->
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<Property name="findBasket()" operator="=" value="False" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[flower])" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="interactWithObject()"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPickUpFlower([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="[object](isInBasket)" operator="!=" value="True" />
+			<!--
+				<Property name="[object](isInPot)" operator="=" value="True" />
+			-->
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPutAcceptedFLowerInBasket([object],[basket])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerPickToBasket(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[basket](type)" operator="=" value="Basket" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="pickedUpFlower()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="pickedUpFlower()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfAcceptFlower([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="pickedUpFlower()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+	<Action name="SelfPutAcceptedBasketDown([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[object](type)" operator="=" value="Basket" />
+			<!--
+				<Property name="[object](objectToAccept)" operator="=" value="True"
+				/>
+			-->
+			<Property name="pickedUpBasket()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="findBasket()" operator="=" value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="pickedUpBasket()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfAcceptBasket([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Basket" />
+			<!--
+				<Property name="[object](objectToAccept)" operator="=" value="True"
+				/>
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="pickedUpBasket()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfFindBasket([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[object](type)" operator="=" value="Basket" />
+			<Property name="hold([SELF],[object])" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="findBasket()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPickUpBasket([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Basket" />
+			<!--
+				<Property name="noticedObject([object])" operator="=" value="True"
+				/>
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  actions for pot stacking -->
+
+	<Action name="SelfStackFlowerpot([object],[stackLocation])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="PotStackRetrieveObject(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="needToRemoveFlowerFromPot()" operator="="
+				value="False" />
+			<Property name="[stackLocation](type)" operator="=" value="Pot" />
+			<Property name="hold([SELF],[stackLocation])" operator="!="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[object](isStacked)" operator="!=" value="True" />
+			<Property name="[stackLocation](hasObject)" operator="!="
+				value="True" />
+			<Property name="dontStack([object],[stackLocation])"
+				operator="!=" value="True" />
+			<Property name="[object]" operator="!=" value="[stackLocation]" />
+			<Property name="[object](objectIsTarget)" operator="!="
+				value="True" />
+			<Property name="hold([SELF],[object])" operator="=" value="True" />
+			<!--
+				<Property name="noticedObject([object])" operator="=" value="True"
+				/>
+			-->
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="[object](isStacked)" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="[stackLocation](hasObject)" operator="="
+					value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="dontStack([stackLocation],[object])"
+					operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="stackedOn([object])" operator="="
+					value="[stackLocation]" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--
+		action to stack a flowerpot that has been accepted from the child
+	-->
+	<Action name="SelfStackAcceptedPot([object],[stackLocation])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="PotStackRetrieveObject(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[stackLocation](type)" operator="=" value="Pot" />
+			<Property name="hold([SELF],[stackLocation])" operator="!="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[stackLocation](hasObject)" operator="!="
+				value="True" />
+			<Property name="[object]" operator="!=" value="[stackLocation]" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="pickedUpPot()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="pickedUpPot()" operator="=" value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfAcceptPot([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="pickedUpPot()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfRemoveFlowerFromPot([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="needToRemoveFlowerFromPot()" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="[object](isInPot)" operator="=" value="True" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="needToRemoveFlowerFromPot()" operator="="
+					value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  picking up and putting down pot/ objects in general -->
+
+	<Action name="SelfPickUpPot([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			-->
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+			<!--  a hack for the flower growing -->
+			<Effect probability="1.0">
+				<Property name="needToPutPotDown()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPutDownObject([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="hold([SELF],[object])" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--
+		pop bubble when it's close to agent. This is triggered by a separate
+		goal
+	-->
+	<Action name="SelfPopBubble([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="[object](bubbleToPop)" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="popBubble()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+	<!--
+		need the precondition that it's possible to walk from A to B, so that
+		the agent knows that he/she can't walk up, but only on the ground
+	-->
+
+	<Action name="SelfWalkTo([location])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="canWalkTo([location])" operator="=" value="True" />
+			-->
+			<Property name="atAgent([SELF],[location])" operator="!="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="atAgent([SELF],[location])" operator="="
+					value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+
+
+
+
+	<Action name="SelfTurnFlowerToBubble([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerTurnToBubble(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfTurnFlowerToBall([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerTurnToBall(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<!--
+				<Property name="noticedObject([object])" operator="=" value="True"
+				/>
+			-->
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfTurnAcceptedFlowerToBall([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerTurnToBall(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<!--
+				<Property name="noticedObject([object])" operator="=" value="True"
+				/>
+			-->
+			<Property name="putAcceptedFlowerDownToBall()" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="putAcceptedFlowerDownToBall()" operator="="
+					value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPutAcceptedFLowerDownTurnToBall([object])"
+		probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="FlowerTurnToBall(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="atAgent([SELF],[pot])" operator="=" value="True" />
+			<Property name="pickedUpFlowerToBall()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="putAcceptedFlowerDownToBall()" operator="="
+					value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="pickedUpFlowerToBall()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfAcceptFlowerTurnToBall([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="pickedUpFlowerToBall()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+
+
+	<Action name="SelfThrowBallThroughCloud([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="BallThrowing(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="[ball](type)" operator="=" value="Ball" />
+			<Property name="[ball](beenThroughCloud)" operator="!="
+				value="True" />
+			<Property name="hold([SELF],[ball])" operator="=" value="True" />
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPickUpBallToThrow([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			-->
+			<Property name="BallThrowing(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Ball" />
+			<Property name="[object](beenThroughCloud)" operator="!="
+				value="True" />
+			<Property name="atAgent([SELF],[object])" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  throws ball after first accepting it -->
+	<Action name="SelfThrowAcceptedBall([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="BallThrowing(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="[ball](type)" operator="=" value="Ball" />
+			<Property name="[ball](objectToAccept)" operator="=" value="True" />
+			<Property name="acceptBall()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+	<Action name="SelfAcceptBall([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="BallThrowing(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Ball" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="acceptBall()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  ball sorting -->
+	<Action name="SelfPutBallInPile([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="BallSorting(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[activity](isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](isChosenContainer)" operator="="
+				value="True" />
+			<Property name="[ball](isChosenBall)" operator="=" value="True" />
+			<Property name="hold([SELF],[ball])" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="indicatedTurn()" operator="=" value="True" />
+			<Property name="lookedAroundMadeComment([activity])"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="indicatedTurn()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPickUpBallToSort([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			-->
+			<Property name="BallSorting(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](isChosenBall)" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hold([SELF],[object])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+	<!--  sort ball after first accepting it -->
+	<Action name="SelfSortAcceptedBall([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="BallSorting(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](isChosenContainer)" operator="="
+				value="True" />
+			<Property name="[ball](objectToAccept)" operator="=" value="True" />
+			<Property name="acceptBall()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  accept ball and sort -->
+	<Action name="SelfAcceptBallToSort([object])" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+			<Property name="BallSorting(isChosenActivity)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Ball" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="acceptBall()" operator="=" value="True" />
+			</Effect>
+			<!--
+				<Effect probability="1.0"> <Property name="hold([SELF],[object])"
+				operator="=" value="True" /> </Effect>
+			-->
+			<Effect probability="1.0">
+				<Property name="handsFree([SELF])" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+
+
+
+	<Action name="SelfSayReady()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="reengage()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="reengage()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfWalkOut()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="wavedGoodbye()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="leave()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="wavedGoodbye()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="toldChildLeaving()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="isInECHOES()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="hasGreetedChild()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfLeaveScene()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="leave()" operator="=" value="True" />
+			<Property name="toldChildLeaving()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="wavedGoodbye()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfTellChildLeaving()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="leave()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="toldChildLeaving()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfWalkOutEndActivity()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="walkOff()" operator="=" value="True" />
+			<Property name="saidFollowMe()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="isInECHOES()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="walkOff()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="saidFollowMe()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfSayFollowMe()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="walkOff()" operator="=" value="True" />
+			<!--
+				<Property name="handsFree([SELF])" operator="=" value="True" />
+			-->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="saidFollowMe()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--
+		needed so that the agent looks towards the child after moving to the
+		side
+	-->
+	<Action name="SelfLookAtChildMoveToSide()" probability="1">
+		<PreConditions>
+			<!-- <Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="move()" operator="=" value="True" />
+			<!--  	<Property name="hasMoved()" operator="=" value="True" /> -->
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="move()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="hasMoved()" operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfMoveToSide()" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="move()" operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="hasMoved()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!--  dummy explore actions for activities where agent is reactive -->
+
+	<Action name="SelfDummyExploreExplorationWithAgentWait()"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfDummyExploreTickleAndTreeWait()" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="TickleAndTree(isChosenActivity)" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="interactWithObject()" operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<!-- exploration actions with accepted object -->
+
+	<Action name="SelfBallCloudExploration([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](type)" operator="=" value="Cloud" />
+			<Property name="[objectAccept](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[objectAccept](type)" operator="=" value="Ball" />
+			<Property name="acceptBallInExploration()" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="acceptBallInExploration()" operator="="
+					value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfBallCloudExplorationAcceptBall([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Ball" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="acceptBallInExploration()" operator="="
+					value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfFlowerBallExploration([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+			<Property name="acceptFlowerToBallInExploration()" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="acceptFlowerToBallInExploration()"
+					operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfFlowerBallExplorationAcceptFlower([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="acceptFlowerToBallInExploration()"
+					operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfFlowerBasketExploration([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](type)" operator="=" value="Basket" />
+			<Property name="[objectAccept](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[objectAccept](type)" operator="=" value="Flower" />
+			<Property name="acceptFlowerToBasketInExploration()"
+				operator="=" value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="acceptFlowerToBasketInExploration()"
+					operator="=" value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfFlowerBasketExplorationAcceptFlower([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Flower" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="acceptFlowerToBasketInExploration()"
+					operator="=" value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPotStackExploration([object])" probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](type)" operator="=" value="Pot" />
+			<Property name="[object](hasObject)" operator="!=" value="True" />
+			<Property name="acceptPotInExploration()" operator="="
+				value="True" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="childOfferedObject()" operator="=" value="False" />
+			</Effect>
+			<Effect probability="1.0">
+				<Property name="acceptPotInExploration()" operator="="
+					value="False" />
+			</Effect>
+		</Effects>
+	</Action>
+
+	<Action name="SelfPotStackExplorationAcceptPot([object])"
+		probability="1">
+		<PreConditions>
+			<!-- 	<Property name="[AGENT]" operator="=" value="[SELF]" /> -->
+			<Property name="ExploreWithAgent(isChosenActivity)"
+				operator="=" value="True" />
+			<Property name="[object](objectToAccept)" operator="="
+				value="True" />
+			<Property name="[object](type)" operator="=" value="Pot" />
+		</PreConditions>
+		<Effects>
+			<Effect probability="1.0">
+				<Property name="acceptPotInExploration()" operator="="
+					value="True" />
+			</Effect>
+		</Effects>
+	</Action>
+
+</DomainActions>

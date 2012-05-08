@@ -1,0 +1,7 @@
+<script name="Testing" start="#test">
+	<action id="test" type="TeacherPrompt" timeout="0">
+		<response context="Timeout" action="#end" />
+	</action>
+	<action id="end" type="EndTrial" timeout="0" />
+</script>
+	

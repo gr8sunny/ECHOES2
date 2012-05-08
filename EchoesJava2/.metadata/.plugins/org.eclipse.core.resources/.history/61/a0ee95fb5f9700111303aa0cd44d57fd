@@ -1,0 +1,313 @@
+package echoesEngine;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import touchListener.*;
+import utils.Interfaces.*;
+import utils.Enums.*;
+
+public class ListenerManager
+{
+  private TouchListener touchListener;
+  private TouchPublisher touchPublisher;
+  private ChildModelListenerImpl childModelListener;
+  private AgentListenerImpl agentListener;
+  private AgentListenerImpl agentPublisher;
+  private PauseListenerImpl pauseListener;
+  private EventListenerImpl eventListener;
+  private Map<Integer, IRenderingListener> renderingListeners = new HashMap<Integer, IRenderingListener> ();
+  private Map<Integer, IUserHeadListener> userHeadListeners = new HashMap<Integer, IUserHeadListener> ();
+  
+  private static ListenerManager theManager = new ListenerManager();
+  
+  public static ListenerManager GetInstance()
+  {
+    return theManager;
+  }
+  
+  private ListenerManager()
+  {
+    childModelListener = new ChildModelListenerImpl();
+    agentListener = new AgentListenerImpl();
+    eventListener = new EventListenerImpl();
+    pauseListener = new PauseListenerImpl();
+    touchListener = new TouchListener();
+    touchPublisher = new TouchPublisher(touchListener);
+  }
+  
+  public void Subscribe(Object listener)
+  {
+    Integer key = new Integer(listener.hashCode());
+    
+    if (listener instanceof IUserHeadListener)
+    {
+      if (!userHeadListeners.containsKey(key))
+        userHeadListeners.put(key, (IUserHeadListener)listener);
+    }
+    else if (listener instanceof IRenderingListener)
+    {
+      if (!renderingListeners.containsKey(key))
+        renderingListeners.put(key, (IRenderingListener)listener);
+    }
+    else if (listener instanceof IPauseListener)
+      pauseListener.subscribe(listener);
+    else if (listener instanceof IEventListener)
+      eventListener.subscribe(listener);
+  }
+  
+  public void Unsubscribe(Object listener)
+  {
+    Integer key = new Integer(listener.hashCode());
+    
+    if (listener instanceof IUserHeadListener)
+    {
+      if (userHeadListeners.containsKey(key))
+        userHeadListeners.remove(key);
+    }
+    else if (listener instanceof IRenderingListener)
+    {
+      if (renderingListeners.containsKey(key))
+        renderingListeners.remove(key);
+    }
+    else if (listener instanceof IPauseListener)
+      pauseListener.unsubscribe(listener);
+    else if (listener instanceof IEventListener)
+      eventListener.unsubscribe(listener);
+    else if (listener instanceof IAgentListener)
+      agentListener.unsubscribe(listener);
+  }
+  
+  public void registerForEvents(Object listener, ListenerType type)
+  {
+    switch (type)
+    {
+    case childModel:
+      //childModelListener.subscribe(listener);
+      break;
+    case agent:
+      agentListener.subscribe(listener);
+      break;
+    case event:
+      eventListener.subscribe(listener);
+      break;
+    case pause:
+      pauseListener.subscribe(listener);
+      break;
+    }
+  }
+  
+  public void unregisterForEvents(Object listener, ListenerType type)
+  {
+    switch (type)
+    {
+    case childModel:
+      //childModelListener.unsubscribe(listener);
+      break;
+    case agent:
+      agentListener.unsubscribe(listener);
+      break;
+    case event:
+      eventListener.unsubscribe(listener);
+      break;
+    case pause:
+      pauseListener.unsubscribe(listener);
+      break;
+    }
+  }
+  
+  public Object retrieve(ListenerType type)
+  {
+    switch (type)
+    {
+    case childModel:
+      return childModelListener;
+    case agent:
+      return agentListener;
+    case event:
+      return eventListener;
+    case pause:
+      return pauseListener;
+    }
+    return null;
+  }
+  
+  private class ChildModelListenerImpl implements IChildModelListener
+  {
+    private Map<Integer, IChildModelListener> childModelListeners = new HashMap<Integer, IChildModelListener> ();
+  
+    @SuppressWarnings("rawtypes")
+    public void engagementEstimate(Object engagement, double confidence)
+    {
+      Iterator<?> it = childModelListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IChildModelListener nextListener = (IChildModelListener)pairs.getValue();
+        nextListener.engagementEstimate(engagement, confidence);
+      }
+    }
+    
+    public void subscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (!childModelListeners.containsKey(key))
+        childModelListeners.put(key, (IChildModelListener)listener);
+    }
+    
+    public void unsubscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (childModelListeners.containsKey(key))
+        childModelListeners.remove(key);
+    }
+  }
+  
+  @SuppressWarnings("rawtypes")
+  private class AgentListenerImpl implements IAgentListener
+  {
+    private Map<Integer, IAgentListener> agentListeners = new HashMap<Integer, IAgentListener> ();
+    
+    public void agentActionStarted(String agentId, String action,
+        List<String> details)
+    {
+      Iterator<?> it = agentListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IAgentListener nextListener = (IAgentListener)pairs.getValue();
+        nextListener.agentActionStarted(agentId, action, details);
+      }
+    }
+
+    public void agentActionCompleted(String agentId, String action,
+        List<String> details)
+    {
+      Iterator<?> it = agentListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IAgentListener nextListener = (IAgentListener)pairs.getValue();
+        nextListener.agentActionCompleted(agentId, action, details);
+      }
+    }
+
+    @Override
+    public void agentActionFailed(String agentId, String action,
+        List<String> details, String reason)
+    {
+      Iterator<?> it = agentListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IAgentListener nextListener = (IAgentListener)pairs.getValue();
+        nextListener.agentActionFailed(agentId, action, details, reason);
+      }
+    }
+    
+    public void subscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (!agentListeners.containsKey(key))
+        agentListeners.put(key, (IAgentListener)listener);
+    }
+    
+    public void unsubscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (agentListeners.containsKey(key))
+        agentListeners.remove(key);
+    }
+  }
+  
+  private class PauseListenerImpl implements IPauseListener
+  {
+    private Map<Integer, IPauseListener> pauseListeners = new HashMap<Integer, IPauseListener> ();
+    private boolean paused;
+  
+    @SuppressWarnings("rawtypes")
+    public void setPaused(boolean value)
+    {
+      paused = value;
+      
+      Iterator<?> it = pauseListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IPauseListener nextListener = (IPauseListener)pairs.getValue();
+        nextListener.setPaused(paused);
+      }
+    }
+    
+    public void subscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (!pauseListeners.containsKey(key))
+        pauseListeners.put(key, (IPauseListener)listener);
+    }
+    
+    public void unsubscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (pauseListeners.containsKey(key))
+        pauseListeners.remove(key);
+    }
+  }
+  
+  private class EventListenerImpl implements IEventListener
+  {
+    private Map<Integer, IPauseListener> eventListeners = new HashMap<Integer, IPauseListener> ();
+    
+    @SuppressWarnings("rawtypes")
+    public void userGazeEvent(String details, long msec)
+    {
+      Iterator<?> it = eventListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IEventListener nextListener = (IEventListener)pairs.getValue();
+        nextListener.userGazeEvent(details, msec);
+      }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void userTouchEvent(String objId)
+    {
+      Iterator<?> it = eventListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IEventListener nextListener = (IEventListener)pairs.getValue();
+        nextListener.userTouchEvent(objId);
+      }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void userAction(UserActionType action)
+    {
+      Iterator<?> it = eventListeners.entrySet().iterator();
+      while (it.hasNext()) 
+      {
+        Map.Entry pairs = (Map.Entry)it.next();
+        IEventListener nextListener = (IEventListener)pairs.getValue();
+        nextListener.userAction(action);
+      }
+    }
+  
+    public void subscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (!eventListeners.containsKey(key))
+        eventListeners.put(key, (IPauseListener)listener);
+    }
+    
+    public void unsubscribe(Object listener)
+    {
+      Integer key = new Integer(listener.hashCode());
+      if (eventListeners.containsKey(key))
+        eventListeners.remove(key);
+    }
+  }
+}
+

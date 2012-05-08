@@ -1,0 +1,7 @@
+name Paul
+type character
+sex F 
+pose Standing
+at,RedFlower False 
+targetFlower RedFlower 
+ 

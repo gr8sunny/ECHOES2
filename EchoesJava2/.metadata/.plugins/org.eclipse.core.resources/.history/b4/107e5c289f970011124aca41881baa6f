@@ -1,0 +1,38 @@
+package renderingEngine.agents;
+
+public class EchoesAgent
+{
+
+    public EchoesAgent(boolean autoAdd, Map<String, String> props)
+        
+        
+        
+        this.app = app
+        this.props = props
+        if (autoAdd
+            this.id = app.canvas.addAgent(props)
+        else
+            this.id = -1
+        
+        this.collisonTest = true            # whether to include in any collision testing
+
+            
+    public void render()
+        
+        All objects are added to the scene as plugins (see EchoesGLCanvas) 
+        and need to provide a render function if (they want to draw anything 
+        
+        print "EchoesAgent overwrite this rendering method!"
+        
+    public void remove()
+        # Remove this object from the canvas
+        this.app.canvas.removeAgent(this.id)
+
+
+public class AgentAction(object)
+    
+    public void __init__(callback, agentId, action, details)
+        this.callback = callback
+        this.agentId = agentId
+        this.action = action
+        this.details = details

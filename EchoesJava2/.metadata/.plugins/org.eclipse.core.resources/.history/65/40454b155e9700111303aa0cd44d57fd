@@ -1,0 +1,164 @@
+package renderingEngine.src.sound.EchoesAudio;
+
+public class EchoesAudio
+{
+
+  private boolean soundPresent = false;
+  private boolean withIce = true;
+  private Object glCanvas = null;
+  private Object  mixer = null;
+  private Object server = null;
+  private int mixerChans = 0;
+  private String sndpath = "sound/sounds/";
+
+  public void soundInit(device='')
+  {/*
+    gl.global soundPresent, mixer, server, pyoPresent
+    try
+        pa_device_index = Ice.Application.communicator().getProperties().getPropertyWithpublic voidault('RenderingEngine.PADevice', None)
+    except
+        pa_device_index = None
+
+    if (pyoPresent
+        try
+            pyo.pa_list_devices()
+            server = pyo.Server()
+            server.setDuplex(0)
+            pai = None
+            if (pa_device_index
+                try
+                    pai = int(pa_device_index)
+                    server.setOutputDevice(pai)
+                    Logger.trace("info", "Sound system using device" + str(pai) + " (was public voidined in RenderingEngine.PADevice)")
+                except
+                    Logger.warning("Sound system was passed an invalid device from ICE, trying public voidault device")
+            if (not pai and hasattr(pyo, "PYO_VERSION") and pyo.PYO_VERSION == "0.4.0" // only try to use ASIO if (the new version of pyo is installed
+                out_devices = pyo.pa_get_output_devices()
+                od_index = 0
+                for od in out_devices[0]
+                    if ("ASIO" in od
+                        pai = int(out_devices[1][od_index])
+                        server.setOutputDevice(pai)
+                        Logger.trace("info", "Found ASIO device, using device " + str(pai))                        
+                        break
+                    od_index += 1
+            if (not pai
+                Logger.trace("info", "Sound system using public voidault device " + str(pyo.pa_get_public voidault_output()))
+            server.boot()
+            server.start()
+            if (server.getIsStarted() == 0
+                Logger.warning("Sound has not started up, trying mono")
+                server.setNchnls(1)
+                server.boot()
+                server.start()
+            if (server.getIsStarted() == 0
+                Logger.warning("Sound has still not started up, giving up")
+                soundPresent = false
+            else
+    //            server.gui(locals())
+                mixer = pyo.Mixer()
+                mixer.out()
+                soundPresent = true
+                Logger.trace("info", "Sound system up and running")
+        except
+            Logger.warning("SoundInit failed, pyaudio could not initialise, sound will not be available")
+            soundPresent = false
+            raise
+    if (not soundPresent
+        Logger.warning("pyo is not present, sound will not be available")*/
+  }
+  
+  public void soundShutdown()
+  {/*
+    gl.global server
+    if (server 
+        server.shutdown()
+        Logger.trace("info", "Sound system is shut down")*/
+  }
+    
+  public void getSoundDuration(String name)
+  {/*
+    gl.global sndpath
+    try
+        wr = wave.open(sndpath + "/" + name)
+    except
+        Logger.warning("Soundfile not found, no duration returned")
+        return 0
+    return float(wr.getnframes())/wr.getframerate();*/
+  }
+
+  public void playSound(String name, boolean loop, float vol, int action_id)
+  {/*
+    gl.global mixer, mixerChans
+    player = pyo.SfPlayer(sndpath + name, speed=1, loop=loop, mul=vol)
+    if (not loop
+        time = getSoundDuration(name) + 1.0
+        pyo.Clean_objects(time, player).start()
+        Clean_mixer(time, mixerChans).start()
+    mixer.addInput(mixerChans, player)
+    mixer.setAmp(mixerChans,0,1)
+    mixer.setAmp(mixerChans,1,1)
+    mixerChans +=1
+    return player;*/
+  }
+
+  public void bubblePop(float size)
+  {/*
+    gl.global mixer, mixerChans
+    speed = 1/((size-1.0)*0.5 + 1.0)
+    vol = min(size, 1.0)
+    player = pyo.SfPlayer(sndpath + "pop.wav", speed=speed, loop=false, mul=vol)
+    wet = pyo.Freeverb(player, size=min(size, 1.0), damp=.7, bal=.3)
+    pyo.Clean_objects(1.5, wet, player).start()
+    Clean_mixer(1.5, mixerChans).start()
+    mixer.addInput(mixerChans, wet)
+    mixer.setAmp(mixerChans,0,1)
+    mixer.setAmp(mixerChans,1,1)
+    mixerChans +=1
+    return wet;*/
+  }
+    
+  public void bounce(float velocity)
+  {/*
+    gl.global mixer, mixerChans
+    speed = 1.2 - velocity
+    vol = min(1.0, 2*velocity)
+    size = 0.3-velocity
+    player = pyo.SfPlayer(sndpath + "bounce.wav", speed=speed, loop=false, mul=vol)
+    pyo.Clean_objects(1.5, player).start()
+    Clean_mixer(1.5, mixerChans).start()
+    mixer.addInput(mixerChans, player)
+    mixer.setAmp(mixerChans,0,1)
+    mixer.setAmp(mixerChans,1,1)
+    mixerChans +=1
+    return player*/
+  }
+
+  /*
+  public class Clean_mixer(threading.Thread)
+  {
+    gl.global mixer
+
+    public void __init__(time, mixerChnl)
+        this.time = time
+        this.mixerChnl = mixerChnl
+        threading.Thread.__init__()
+
+    public void run()
+        time.sleep(this.time)
+        mixer.delInput(this.mixerChnl)
+  }
+
+  public class SoundCallback(threading.Thread)
+  {  
+    public void __init__(sound, callback)
+        this.time = getSoundDuration(sound) + 0.1
+        this.callback = callback
+        threading.Thread.__init__()
+
+    public void run()
+        time.sleep(this.time)
+        this.callback()
+  }
+  */
+}

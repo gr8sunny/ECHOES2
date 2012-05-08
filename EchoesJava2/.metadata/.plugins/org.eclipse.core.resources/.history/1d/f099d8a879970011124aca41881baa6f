@@ -1,0 +1,85 @@
+import java.awt.BorderLayout;
+import java.util.HashMap;
+import javax.media.opengl.GLCapabilities;
+import javax.swing.JFrame;
+import FAtiMA.knowledgeBase.KnowledgeBase;
+import FAtiMA.wellFormedNames.ComposedName;
+import FAtiMA.wellFormedNames.Name;
+import echoesEngine.ActionEngine;
+import echoesEngine.EchoesAgent;
+import childModel.ChildModel;
+import stateManager.StateManager;
+import dramaManager.DramaManager;
+import dramaManager.SceneAndObjectDirector;
+import dramaManager.SceneAndActivitiesMonitor;
+import renderingEngine.RenderingEngine;
+import pedagogicComponent.PCcomponentHandler;
+import pedagogicComponent.PCcomponents;
+import pedagogicComponent.PedagogicComponent;
+import utils.Logger;
+
+public class EchoesJava 
+{
+  private static PedagogicComponent pedComponent = new PedagogicComponent();
+  private static RenderingEngine renderEng = new RenderingEngine();
+  private static StateManager stateMgr = new StateManager();
+  private static ActionEngine actionEngine = new ActionEngine(stateMgr, renderEng);
+  private static ChildModel childModel = new ChildModel();
+  private static SceneAndActivitiesMonitor sam = new SceneAndActivitiesMonitor(pedComponent, actionEngine, renderEng);
+  private static SceneAndObjectDirector sod = new SceneAndObjectDirector(renderEng, sam);
+  private static DramaManager dramaMgr = new DramaManager(sam, sod);
+  private static PCcomponents pCcomp = new PCcomponents(dramaMgr, actionEngine, childModel, stateMgr);
+  private static PCcomponentHandler pCcompH = new PCcomponentHandler(pCcomp, dramaMgr, actionEngine);
+  private static EchoesAgent Paul;
+  
+	public static void main(String[] args) 
+	{
+    CreateAgent();
+    CreateFrame();
+    
+    Paul.stop();
+	}
+	
+	@SuppressWarnings("unchecked")
+  private static void CreateAgent()
+  {
+	  String agentId = renderEng.addAgent("Andy");
+    KnowledgeBase.GetInstance().Tell(new ComposedName("User", "type"), "user");
+	        
+    // Instantiate the ActionEngine implementation and add it to the IceGrid
+    // registry with the correct name (NB: the implementation is currently
+    // empty, but this covers the cases in the future where other servers
+    // need to communicate with the Action Engine)
+    ActionEngine aeImpl = new ActionEngine(stateMgr, renderEng);
+
+    Logger.Log("info", "Creating Paul agent");
+    HashMap<String, String> props = new HashMap<String, String>();
+    props.put("name", "Paul");
+    props.put("type", "character");
+    props.put("sex", "M");
+    props.put("pose", "Frontal");
+
+    Paul = new EchoesAgent("Paul", "Paul", agentId, props, renderEng, pedComponent);
+    KnowledgeBase.GetInstance().Tell(Name.ParseName("handsFree(Paul)"), "True");
+    KnowledgeBase.GetInstance().Tell(Name.ParseName("isInECHOES()"), "False");
+    KnowledgeBase.GetInstance().Tell(Name.ParseName("hasGreetedChild()"), "False");
+    Paul.start();
+  }
+	
+	private static void CreateFrame()
+	{
+    GLCapabilities capabilities = new GLCapabilities(null);
+    capabilities.setRedBits(8);
+    capabilities.setBlueBits(8);
+    capabilities.setGreenBits(8);
+    capabilities.setAlphaBits(8);
+    
+    renderingEngine.MyCanvas canvas = new renderingEngine.MyCanvas(800, 500, capabilities);
+    JFrame frame = new JFrame("OpenGL Test");
+    frame.getContentPane().add(canvas, BorderLayout.CENTER);
+    frame.setSize(800, 500);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setVisible(true);
+    canvas.requestFocus();
+	}
+}

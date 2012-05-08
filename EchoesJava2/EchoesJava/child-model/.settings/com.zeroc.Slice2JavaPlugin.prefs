@@ -1,0 +1,4 @@
+#Thu Nov 11 11:22:54 GMT 2010
+eclipse.preferences.version=1
+includes=../echoes-ice-interfaces/slice/echoes
+sliceSourceDirs=slice;slice/echoes

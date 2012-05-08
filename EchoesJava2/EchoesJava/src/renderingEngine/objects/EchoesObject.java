@@ -1,0 +1,333 @@
+
+
+import java.util.Iterator;
+import java.net.URL;
+import java.awt.Dimension;
+import java.io.File;
+import java.util.Map;
+import java.util.HashMap;
+import javax.media.opengl.GL2;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+import renderingEngine.visual.EchoesGLCanvas;
+import utils.Logger;
+
+public class EchoesObject
+{
+  protected Map<String, String> props = new HashMap<String, String>();
+  protected String name = "";
+  protected Texture texture = null;
+  protected Object callback = null;
+  protected Object overAgent = null;
+  protected Object currentOverAgent = null;
+  protected Object draggedOverAgent = null;
+  protected Object currentDraggedOverAgent = null;
+  protected String removeAction = null;
+  protected Object removeActionArgs = null;
+  protected String colour;
+  protected float pos[] = new float[3];
+  protected float circle[][] = new float[36][2];
+  protected float size = 1;
+  protected float transparancy = 0;
+  protected float maxSize = (float)1.5;
+  protected float speed = (float)0.002;
+  protected boolean autoAdd = true;
+  protected boolean showBoundary = false;
+  protected boolean showId = false;
+  protected boolean fadingOut = false;
+  protected boolean fadingIn = false;
+  protected boolean moving = true;
+  protected boolean floatingXY = true;
+  protected boolean floatingSound = false;
+  protected boolean canBeClicked = true;
+  protected boolean canBeDragged = true;
+  protected boolean beingDragged = false;
+  protected boolean locationChanged = false;
+  protected boolean removeAtTargetPos = false;       
+  protected boolean canMerge = true;
+  protected boolean willBeReplaced = true;
+  protected boolean mergedByChild = false;
+  protected boolean atAgent = false;
+  protected boolean nearAgent = false;
+  protected boolean attachedToAgent = false;
+  protected boolean publishOverAgent = true;
+  protected boolean publishCoords = false;
+  protected boolean publishHSlot = true;
+  protected boolean publishNearness = true;
+  protected boolean publishRegion = true;
+  protected boolean interactive = true;
+  protected boolean magic = true;
+  protected boolean objectCollisionTest = true;
+  protected boolean agentCollisionTest = true;
+  protected boolean avatarTCB = false;
+  protected int fadingFrames = 100;
+  protected int publishCounter = 0;
+  protected int publishFreq = 20; // publish region information every X frames
+  protected int currentRegion = -1;
+  protected int currentHSlot = -1;
+  protected int attachedToAgentId = -1;
+  protected Integer objectID = new Integer(-1);
+  protected EchoesGLCanvas canvas = EchoesGLCanvas.theCanvas;
+
+  @SuppressWarnings("rawtypes") 
+  public EchoesObject(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
+  {
+    this.autoAdd = autoAdd;
+    this.fadingIn = fadeIn;
+    this.fadingFrames = fadingFrames;
+    this.callback = callback;
+  
+    props.put("type", "Bubble");
+    Iterator it = properties.entrySet().iterator();
+    while (it.hasNext()) 
+    {
+      Map.Entry pairs = (Map.Entry)it.next();
+      if (pairs.getKey() != "type")
+        props.put((String)pairs.getKey(), (String)pairs.getValue());
+    }
+
+    if (autoAdd)
+      objectID = canvas.addObject(this, props);
+    
+    transparancy = fadeIn ? 0 : 1;
+    setPos(0,0,0);
+    
+    for (int i = 0; i < 36; i++)
+    {
+      circle[i][0] = (float)(Math.cos(Math.toRadians(i*10)));
+      circle[i][1] = (float)(Math.sin(Math.toRadians(i*10)));
+    }
+  }
+  
+  protected void setPos(float x, float y, float z)
+  {
+    pos[0] = x;
+    pos[1] = y;
+    pos[2] = z;
+  }
+        
+  public void render(GL2 gl, boolean hitTest)
+{   
+    // All objects are added to the scene as plugins (see EchoesGLCanvas) 
+    // and need to provide a render function if (they want to draw anything 
+    // do not do anything when rendered into normal mode to perform the hit test
+    // this double check is necessary as render is sometimes called before the object is fully built  
+    
+    if (!hitTest && props.containsKey("publishCounter") && props.containsKey("publishFreq"))
+    {
+      // perform region update every publishFreq frames for efficiency
+      if ((int)(publishCounter/this.publishFreq) == 0)
+      {
+        publishCounter = 0;
+        float screenpos[] = canvas.getScreenCoord(pos);
+        float[] screensize = canvas.frameSize;
+        if (props.containsKey("publishRegion") && publishRegion)
+        {
+          int region = -1;
+          if (screenpos[0] < screensize[0]/3)
+          {
+            if (screenpos[1] < screensize[1]/3)
+              region = 6;
+            else if (screenpos[1] < 2*screensize[1]/3)
+              region = 3;
+            else
+              region = 0;
+          }
+          else if (screenpos[0] < 2*screensize[0]/3)
+          {
+            if (screenpos[1] < screensize[1]/3)
+              region = 7;
+            else if (screenpos[1] < 2*screensize[1]/3)
+              region = 4;
+            else
+              region = 1;
+          }
+          else
+          {
+            if (screenpos[1] < screensize[1]/3)
+              region = 8;
+            else if (screenpos[1] < 2*screensize[1]/3)
+              region = 5;
+            else
+              region = 2;
+          }
+              
+          if (currentRegion != region)
+          {
+            currentRegion = region;
+            //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "ScreenRegion", str(echoes.ScreenRegion(currentRegion)));
+          }
+          
+          if (props.containsKey("publishCoords") && publishCoords)
+          {
+            //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "ScreenCoordinates", str(screenpos));
+            //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "WorldCoordinates", str(pos));
+          }
+        
+          if (props.containsKey("publishHSlot") && publishHSlot)
+          {
+            int hSlot = (int)(Math.floor(pos[0]) + 5);
+            if (hSlot != currentHSlot)
+            {
+              //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "HorizontalSlot", str(hSlot))
+              currentHSlot = hSlot;
+            }
+          }
+        
+          if (props.containsKey("publishNearness") && publishNearness && canvas.renderPiavca && canvas.piavcaAvatars.values().size() > 0)
+          {
+            for (String agentid : canvas.piavcaAvatars.keySet())
+            {
+              boolean at = false; //canvas.piavcaAvatars.get(agentid).isAt(objectID);
+  
+              if (atAgent != at)
+              {
+                atAgent = at;
+                //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "atAgent", str(at));
+              }
+              boolean near = false; //canvas.piavcaAvatars.get(agentid).isNear(objectID);
+            
+              if (nearAgent != near)
+              {
+                nearAgent = near;
+                //canvas.rlPublisher.objectPropertyChange(objectID.toString(), "nearAgent", str(near));
+              }
+              
+              if (props.containsKey("avatarTCB"))
+              {
+                if (attachedToAgent && !avatarTCB)
+                {
+                  attachedToAgent = false;
+                  //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "attachedToAgent", "false");
+                }
+                if (!attachedToAgent && avatarTCB)
+                {
+                  attachedToAgent = true;
+                  //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "attachedToAgent", "true");
+                }
+              }
+            }
+          }
+        }
+          
+        if (props.containsKey("publishOverAgent") && publishOverAgent)
+        {
+          if (currentOverAgent != overAgent)
+          {
+            currentOverAgent = overAgent;
+            //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "overAgent", str(overAgent));
+          }
+          if (currentDraggedOverAgent != draggedOverAgent)
+          {
+            currentDraggedOverAgent = draggedOverAgent;
+            //canvas.rlPublisher.objectPropertyChanged(objectID.toString(), "draggedOverAgent", str(draggedOverAgent));
+          }
+        }
+          
+        publishCounter += 1;
+      }
+    }
+      
+    if (props.containsKey("fadingIn") && fadingIn)
+    {
+      transparancy += 1.0 / fadingFrames;
+      if (transparancy >= 1.0)
+      {
+        transparancy = 1;
+        fadingIn = false;
+      }
+    }
+    else if (props.containsKey("fadingOut") && fadingOut)
+    {
+      transparancy -= 1.0 / fadingFrames;
+      if (transparancy <= 0.0)
+        remove(false, 100);
+    }
+    
+    if (showBoundary)
+    {
+      gl.glPushMatrix();
+      gl.glLineWidth(1);
+      gl.glTranslatef(pos[0], pos[1], pos[2]);
+      gl.glScalef(size, size, size);
+      gl.glColor4f(1, 0, 0, transparancy);
+      gl.glBegin(GL2.GL_LINE_STRIP);
+      for (float v[] : circle)
+        gl.glVertex3f(v[0], v[1], pos[2]);                      
+      gl.glEnd();         
+      gl.glPopMatrix();
+    }
+
+    if (showId)
+    {
+      gl.glPushMatrix();
+      gl.glLineWidth(3);
+      gl.glTranslatef((float)(pos[0]-size*0.15), (float)(pos[1]-size*0.15), (float)(pos[2]+0.5));
+      gl.glScalef(size/200, size/200, size/200);
+      gl.glColor4f(1, 0, 0, (float)0.8*transparancy);
+      //for letter in str(id)
+      //    gl.glutStrokeCharacter(GLUT_STROKE_ROMAN, ord(letter))
+      gl.glPopMatrix();
+    }
+                         
+    renderObj(gl);
+  }
+
+    
+    public void remove(boolean fadeOut, int fadeFrames)
+    {
+      // Remove this object from the canvas
+      if (fadeOut)
+      {
+        if (!fadingOut)
+        {
+          fadingOut = true;
+          fadingFrames = fadeFrames;
+          transparancy = 1;
+          if (removeAction == "PublishScenarioEnded")
+            canvas.clearScene(false);
+        }
+      }
+      else    
+      {
+        canvas.removeObject(objectID.toString());
+        if (removeAction == "PublishScenarioEnded")
+        {
+          canvas.clearScene(true);
+          //canvas.rlPublisher.scenarioEnded(removeActionArgs);
+          if (callback != null)
+          {
+            //callback.response();
+            callback = null;
+          }
+        }
+      }
+    }
+    
+    public void renderObj(GL2 gl) {}   
+    public void startDrag(int x, int y) {}
+    public void stopDrag() {}
+    public void drag(int newXY[]) {}
+    public void click(String agentName) {}
+    
+    public void setAttr(String item, String value)
+    {
+      if (props.containsKey(item))
+        props.remove(item);
+      props.put(item, value);
+    }
+    
+    public void loadTexture(String resourceName)
+    {
+      try 
+      {
+        URL dir_url = ClassLoader.getSystemResource("images/GardenBackExplore.png");
+        File file = new File(dir_url.toURI());
+        texture =  TextureIO.newTexture(file, true);
+      }
+      catch (Exception e) 
+      {
+        Logger.LogError("loadTexture: " + e.getMessage());
+      }
+    }
+}

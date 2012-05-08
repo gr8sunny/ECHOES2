@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;renderingEngine.src.Motions.java&apos; to &apos;BezierMotion.java&apos;&#x0D;&#x0A;- Original project: &apos;EchoesJava&apos;&#x0D;&#x0A;- Original element: &apos;renderingEngine.src.Motions.java&apos;&#x0D;&#x0A;- Renamed element: &apos;renderingEngine.src.BezierMotion.java&apos;" description="Rename compilation unit &apos;Motions.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;renderingEngine.src{Motions.java" name="BezierMotion.java" references="false" stamp="1335707505889" version="1.0"/>
+</session>

@@ -1,0 +1,735 @@
+package pedagogicComponent;
+
+import java.util.*;
+import echoesEngine.ListenerManager;
+import utils.Interfaces.*;
+import utils.Enums.*;
+import pedagogicComponent.PCcomponentHandler;
+import pedagogicComponent.PCcomponents;
+
+public class RuleBasedChildModel extends PCcomponentHandler 
+{
+	private RenderingListenerImpl rlImpl;
+	private AgentListenerImpl alImpl;
+	private TouchListenerImpl tlImpl;
+	private Map<String, String> mapObjectIdObjectType;
+	//Given a SCERTS goal, the map reports how many times the user has satisfied it
+	private Map<String, Integer> scertsGoalSatisfaction;
+	private boolean userHoldingObjectOverAgent = false;
+	private String objectDraggedOverAgentId = "";
+	private boolean childEngagedWithEchoes = true;
+	private boolean childEngagedWithAgent = true;
+	//Given a type of object, the map reports how many times the user has touched that type of object
+	private Map<String, Integer> objectTypesPreferredByUser;
+	private boolean storeTouchedObjectAfterBid = false;
+	private String touchedObjectAfterBid;
+
+	public RuleBasedChildModel(PCcomponents pCc, IDramaManager dmPrx, IActionEngine aePrx) 
+	{
+		super(pCc, dmPrx, aePrx);
+
+		objectTypesPreferredByUser = new HashMap<String, Integer>();
+		mapObjectIdObjectType = new HashMap<String, String>();
+		scertsGoalSatisfaction = createScertsGoalMap();
+
+		ListenerManager listenerManager = ListenerManager.GetInstance();
+
+		rlImpl = new RenderingListenerImpl();
+		listenerManager.Subscribe(rlImpl);
+		
+		alImpl = new AgentListenerImpl();
+		listenerManager.Subscribe(alImpl);
+	
+		tlImpl = new TouchListenerImpl();
+		listenerManager.Subscribe(tlImpl);
+	}
+	
+	public void printScertsGoalSatisfactionMap(){
+		System.out.println("Printing ScertsGoalSatisfactionMap...");
+		System.out.print(scertsGoalMapToString(scertsGoalSatisfaction));
+	}
+
+	private class AssessInitiationHoldTask{
+		private final Timer timer = new Timer();
+		public void start() {
+			timer.schedule(new TimerTask() {
+				public void run() {
+					assessInitiation();
+					timer.cancel();
+				}
+				private void assessInitiation(){
+					System.out.println("Testing initiation of interaction through holding an object over agent...");
+					if (userHoldingObjectOverAgent == true) {
+						incrementGoal(ScertsGoal.InitiateNonVerbalBid);
+					}
+				}
+			},  2000);
+		}
+	}
+	
+	private class AssessAnticipateTask{
+		private final Timer timer = new Timer();
+		public void start() {
+			timer.schedule(new TimerTask() {
+				public void run() {
+					assessAnticipate();
+					timer.cancel();
+				}
+				private void assessAnticipate(){
+					System.out.println("Testing anticipation...");
+					if (getPCcs().agentH.getCurrentActivity() == EchoesActivity.FlowerPickToBasket){
+						if (alImpl.getUserDragged()
+								&& alImpl.getUserDraggedType().equals("Basket")){
+							incrementGoal(ScertsGoal.AnticipateAction);
+						}
+					}
+				}
+			},  25000);
+		}
+	}
+	
+	private class AssessResponsePointAtBidTask{
+		private final Timer timer = new Timer();
+		public void start() {
+			timer.schedule(new TimerTask() {
+				public void run() {
+					assessPointAt();
+					timer.cancel();
+				}
+				private void assessPointAt(){
+					System.out.println("Testing the satisfaction of scerts goals after a point-at bid for interaction...");
+					String agentPointAtObjectId = alImpl.getPointAtObjectId();
+					System.out.println("Agent pointed at: " + agentPointAtObjectId);
+					System.out.println("User touched: " + touchedObjectAfterBid);
+					if (touchedObjectAfterBid == null){
+						System.out.println("Child no action");
+						if (childEngagedWithAgent){
+							childEngagedWithAgent = false;
+							getPCcs().childStateH.setEngagedWithAgent(false);
+						}
+					} else {
+						if (touchedObjectAfterBid.equals(agentPointAtObjectId)) {
+							if (!childEngagedWithEchoes){
+								childEngagedWithEchoes = true;
+								getPCcs().childStateH.setEngagedECHOES(true);
+							}
+							if (!childEngagedWithAgent){
+								childEngagedWithAgent = true;
+								getPCcs().childStateH.setEngagedWithAgent(true);
+							}
+							incrementGoal(ScertsGoal.FollowRemotePoint,
+									ScertsGoal.NonverballyRespondBid,
+									ScertsGoal.TurnTaking,
+									ScertsGoal.MonitorPartner);
+						} else {
+							String userTouchedObjectType = rlImpl.getUserTouchedObjectType(touchedObjectAfterBid);
+							if (userTouchedObjectType.equals("Cloud") 
+									|| userTouchedObjectType.equals("Pot")
+									|| userTouchedObjectType.equals("Flower")
+									|| userTouchedObjectType.equals("Basket")
+									|| userTouchedObjectType.equals("Ball")) {
+								if (!childEngagedWithEchoes){
+									childEngagedWithEchoes = true;
+									getPCcs().childStateH.setEngagedECHOES(true);
+								}
+								if (!childEngagedWithAgent){
+									childEngagedWithAgent = true;
+									getPCcs().childStateH.setEngagedWithAgent(true);
+								}
+								incrementGoal(ScertsGoal.NonverballyRespondBid,
+										ScertsGoal.MonitorPartner);
+								EchoesActivity currentActivity = getPCcs().agentH.getCurrentActivity();
+								switch (currentActivity) {
+								case CloudRain: if (userTouchedObjectType.equals("Cloud")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerGrow: if (userTouchedObjectType.equals("Cloud")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerPickToBasket: if (userTouchedObjectType.equals("Flower")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerTurnToBall: if (userTouchedObjectType.equals("Flower")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case BallThrowing: if (userTouchedObjectType.equals("Ball")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								default: break;
+								}
+							}
+						}
+					}
+					storeTouchedObjectAfterBid = false;
+				}
+			},  10000);
+		}
+	}
+	
+	private class AssessResponseTouchBidTask{
+		private final Timer timer = new Timer();
+		public void start() {
+			timer.schedule(new TimerTask() {
+				public void run() {
+					assessTouch();
+					timer.cancel();
+				}
+				private void assessTouch(){
+					System.out.println("Testing the satisfaction of scerts goals after a contact-point bid for interaction...");
+					String agentTouchObjectId = alImpl.getTouchObjectId();
+					System.out.println("Agent touched: " + agentTouchObjectId);
+					System.out.println("User touched: " + touchedObjectAfterBid);
+					if (touchedObjectAfterBid == null){
+						System.out.println("Child no action");
+						if (childEngagedWithAgent){
+							childEngagedWithAgent = false;
+							getPCcs().childStateH.setEngagedWithAgent(false);
+						}
+					} else {
+						if (touchedObjectAfterBid.equals(agentTouchObjectId)) {
+							if (!childEngagedWithEchoes){
+								childEngagedWithEchoes = true;
+								getPCcs().childStateH.setEngagedECHOES(true);
+							}
+							if (!childEngagedWithAgent){
+								childEngagedWithAgent = true;
+								getPCcs().childStateH.setEngagedWithAgent(true);
+							}
+							incrementGoal(ScertsGoal.FollowContactPoint,
+									ScertsGoal.NonverballyRespondBid,
+									ScertsGoal.TurnTaking,
+									ScertsGoal.MonitorPartner);
+						} else {
+							String userTouchedObjectType = rlImpl.getUserTouchedObjectType(touchedObjectAfterBid);
+							if (userTouchedObjectType.equals("Cloud") 
+									|| userTouchedObjectType.equals("Pot")
+									|| userTouchedObjectType.equals("Flower")
+									|| userTouchedObjectType.equals("Basket")
+									|| userTouchedObjectType.equals("Ball")) {
+								if (!childEngagedWithEchoes){
+									childEngagedWithEchoes = true;
+									getPCcs().childStateH.setEngagedECHOES(true);
+								}
+								if (!childEngagedWithAgent){
+									childEngagedWithAgent = true;
+									getPCcs().childStateH.setEngagedWithAgent(true);
+								}
+								incrementGoal(ScertsGoal.NonverballyRespondBid,
+										ScertsGoal.MonitorPartner);
+								EchoesActivity currentActivity = getPCcs().agentH.getCurrentActivity();
+								switch (currentActivity) {
+								case CloudRain: if (userTouchedObjectType.equals("Cloud")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerGrow: if (userTouchedObjectType.equals("Cloud")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerPickToBasket: if (userTouchedObjectType.equals("Flower")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerTurnToBall: if (userTouchedObjectType.equals("Flower")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case BallThrowing: if (userTouchedObjectType.equals("Ball")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								default: break;
+								}
+							}
+						}
+					}
+					storeTouchedObjectAfterBid = false;
+				}
+			},  10000);
+		}
+	}
+
+	private class AssessResponseLookAtBidTask{
+		private final Timer timer = new Timer();
+		public void start() {
+			timer.schedule(new TimerTask() {
+				public void run() {
+					assessLookAt();
+					timer.cancel();
+				}
+				private void assessLookAt(){
+					System.out.println("Testing the satisfaction of scerts goals after a look-at bid for interaction...");
+					String childLookAtObjectId = touchedObjectAfterBid;
+					String agentLookAtObjectId = alImpl.getLookAtObjectId(); 
+					if (childLookAtObjectId == null){
+						System.out.println("Child no action");
+						if (childEngagedWithAgent){
+							childEngagedWithAgent = false;
+							getPCcs().childStateH.setEngagedWithAgent(false);
+						}
+					} else {
+						if (childLookAtObjectId.equals(agentLookAtObjectId)) {
+							// only send changes to engagement
+							if (!childEngagedWithEchoes){
+								childEngagedWithEchoes = true;
+								getPCcs().childStateH.setEngagedECHOES(true);
+							}
+							if (!childEngagedWithAgent){
+								childEngagedWithAgent = true;
+								getPCcs().childStateH.setEngagedWithAgent(true);
+							}
+							incrementGoal(ScertsGoal.NonverballyRespondBid,
+									ScertsGoal.MonitorPartner,
+									ScertsGoal.TurnTaking);
+						} else {
+							String userTouchedObjectType = rlImpl.getUserTouchedObjectType(touchedObjectAfterBid);
+							if (userTouchedObjectType.equals("Cloud") 
+									|| userTouchedObjectType.equals("Pot")
+									|| userTouchedObjectType.equals("Flower")
+									|| userTouchedObjectType.equals("Basket")
+									|| userTouchedObjectType.equals("Ball")) {
+								if (!childEngagedWithEchoes){
+									childEngagedWithEchoes = true;
+									getPCcs().childStateH.setEngagedECHOES(true);
+								}
+								if (!childEngagedWithAgent){
+									childEngagedWithAgent = true;
+									getPCcs().childStateH.setEngagedWithAgent(true);
+								}
+								incrementGoal(ScertsGoal.NonverballyRespondBid,
+										ScertsGoal.MonitorPartner);
+								EchoesActivity currentActivity = getPCcs().agentH.getCurrentActivity();
+								switch (currentActivity) {
+								case CloudRain: if (userTouchedObjectType.equals("Cloud")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerGrow: if (userTouchedObjectType.equals("Cloud")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerPickToBasket: if (userTouchedObjectType.equals("Flower")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case FlowerTurnToBall: if (userTouchedObjectType.equals("Flower")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								case BallThrowing: if (userTouchedObjectType.equals("Ball")) {
+									incrementGoal(ScertsGoal.TurnTaking);} break;
+								default: break;
+								}
+							}
+						}
+					}
+					storeTouchedObjectAfterBid = false;
+				}
+			},  10000);
+		}
+	}
+	
+	private class AssessResponseVerbalBidTask{
+		private final Timer timer = new Timer();
+		public void start() {
+			timer.schedule(new TimerTask() {
+				public void run() {
+					assessVerbal();
+					timer.cancel();
+				}
+				private void assessVerbal(){
+					System.out.println("Testing the satisfaction of scerts goals after a verbal bid for interaction...");
+					if (touchedObjectAfterBid == null){
+						System.out.println("Child: no action");
+						if (childEngagedWithAgent){
+							childEngagedWithAgent = false;
+							getPCcs().childStateH.setEngagedWithAgent(false);
+						}
+					} else {
+						String userTouchedObjectType = rlImpl.getUserTouchedObjectType(touchedObjectAfterBid);
+						if (userTouchedObjectType.equals("Cloud") 
+								|| userTouchedObjectType.equals("Pot")
+								|| userTouchedObjectType.equals("Flower")
+								|| userTouchedObjectType.equals("Basket")
+								|| userTouchedObjectType.equals("Ball")) {
+							if (!childEngagedWithEchoes){
+								childEngagedWithEchoes = true;
+								getPCcs().childStateH.setEngagedECHOES(true);
+							}
+							if (!childEngagedWithAgent){
+								childEngagedWithAgent = true;
+								getPCcs().childStateH.setEngagedWithAgent(true);
+							}
+							incrementGoal(ScertsGoal.NonverballyRespondBid,
+									ScertsGoal.MonitorPartner);
+							EchoesActivity currentActivity = getPCcs().agentH.getCurrentActivity();
+							switch (currentActivity) {
+							case CloudRain: if (userTouchedObjectType.equals("Cloud")) {
+								incrementGoal(ScertsGoal.TurnTaking);} break;
+							case FlowerGrow: if (userTouchedObjectType.equals("Cloud")) {
+								incrementGoal(ScertsGoal.TurnTaking);} break;
+							case FlowerPickToBasket: if (userTouchedObjectType.equals("Flower")) {
+								incrementGoal(ScertsGoal.TurnTaking);} break;
+							case FlowerTurnToBall: if (userTouchedObjectType.equals("Flower")) {
+								incrementGoal(ScertsGoal.TurnTaking);} break;
+							case BallThrowing: if (userTouchedObjectType.equals("Ball")) {
+								incrementGoal(ScertsGoal.TurnTaking);} break;
+							default: break;
+							}
+						}
+					}
+					storeTouchedObjectAfterBid = false;
+				}
+			},  10000);
+		}
+	}
+	
+	public Map<String, Integer> getObjectTypesPreferredByUser()
+	{
+		return objectTypesPreferredByUser;
+	}
+	
+	public void printObjectTypesPreferredByUser()
+	{
+		System.out.println("Printing ObjectTypesPreferredByUserMap...");
+		for (Map.Entry<String, Integer> e : objectTypesPreferredByUser.entrySet())
+		    System.out.println(e.getKey() + ": " + e.getValue());
+
+	}
+
+	public IRenderingListener getRenderingListener() 
+	{
+		return rlImpl;
+	}
+
+	/**
+	 * You have to call this method when shutting down ...
+	 */
+	public void shutdown() 
+	{
+	}
+
+	public Map<String, Integer> getScertsGoalSatisfactionMap() 
+	{
+		return scertsGoalSatisfaction;
+	}
+
+	/**
+	 * A class to listen for messages from the rendering engine indicating
+	 * actions performed by the agent and the child.
+	 * 
+	 * Possibly need to convert rendering engine names to DM and PC names, e.g.
+	 * for object animations
+	 * 
+	 * @author Mary Ellen Foster
+	 */
+	@SuppressWarnings("unused")
+	private class AgentListenerImpl implements IAgentListener
+	{
+		private boolean agentVerbalBidForInteraction;
+		private boolean agentPointAtBidForInteraction;
+		private boolean agentLookAtBidForInteraction;
+		private boolean agentTouchBidForInteraction;
+		private boolean userDrag;
+		private String userDragId;
+		private String userDragType;
+		private String pointAtObjectId;
+		private String lookAtObjectId;
+		private String touchedObjectId;
+		
+    public void agentActionCompleted(String agentId, String action, List<String> details) 
+		{
+			Iterator<String> itr = details.iterator();
+			if (action.equals("drag") && agentId.equals("User")) {
+				System.out.println("DRAG...");
+				userDrag = true;
+				userDragId = itr.next();
+				userDragType = mapObjectIdObjectType.get(userDragId);
+			}
+			if (getAgentPointAtBidForInteraction() ){
+				System.out.println("POINT AT...");
+				storeTouchedObjectAfterBid = true;
+				agentPointAtBidForInteraction = false;
+				AssessResponsePointAtBidTask task = new AssessResponsePointAtBidTask();
+				task.start();
+
+			} else {
+				if (getAgentLookAtBidForInteraction()){
+					System.out.println("LOOK AT...");
+					storeTouchedObjectAfterBid = true;
+					agentLookAtBidForInteraction = false;
+					AssessResponseLookAtBidTask task = new AssessResponseLookAtBidTask();
+					task.start();
+				} else {
+					if (getAgentVerbalBidForInteraction()){
+						System.out.println("VERBAL...");
+						storeTouchedObjectAfterBid = true;
+						agentVerbalBidForInteraction = false;
+						AssessResponseVerbalBidTask task = new AssessResponseVerbalBidTask();
+						task.start();					
+					} else {
+						if (getAgentTouchBidForInteraction()){
+							System.out.println("TOUCH...");
+							storeTouchedObjectAfterBid = true;
+							agentTouchBidForInteraction = false;
+							AssessResponseTouchBidTask task = new AssessResponseTouchBidTask();
+							task.start();
+						}
+					}
+				}
+			}
+			if (action.equals("SelfVerbalBid") && details.get(1).equals("FlowerPickToBasket") && details.get(1).equals("requestObject")){
+				AssessAnticipateTask task = new AssessAnticipateTask();
+				task.start();
+			}
+		}
+
+		public void agentActionFailed(String agentId, String action,List<String> details, String reason) {}
+		public void agentActionStarted(String agentId, String action,List<String> details) {}
+
+		public void setAgentBids(String type, String objId) {
+			if (type.equals("verbal")) {
+				System.out.println("VERBAL****");
+				agentVerbalBidForInteraction = true;
+			} else if (type.equals("point")) {
+				System.out.println("POINT****");
+				agentPointAtBidForInteraction = true;
+				pointAtObjectId = objId;
+ 			} else if (type.equals("look")) {
+				System.out.println("LOOK****");
+				agentLookAtBidForInteraction = true;
+				lookAtObjectId = objId;
+			} else if (type.equals("touch")) {
+				System.out.println("TOUCH****");
+				agentTouchBidForInteraction = true;
+				touchedObjectId = objId;
+			} else if (type.isEmpty()) {
+				System.out.println("EMPTY****");
+				agentVerbalBidForInteraction = false;
+				agentPointAtBidForInteraction = false;
+				agentLookAtBidForInteraction = false;
+				agentTouchBidForInteraction = false;
+			}
+		}
+
+		public boolean getAgentVerbalBidForInteraction() {
+			return agentVerbalBidForInteraction;
+		}
+
+		public boolean getAgentTouchBidForInteraction() {
+			return agentTouchBidForInteraction;
+		}
+		
+		public boolean getAgentPointAtBidForInteraction() {
+			return agentPointAtBidForInteraction;
+		}
+
+		public boolean getAgentLookAtBidForInteraction() {
+			return agentLookAtBidForInteraction;
+		}
+
+    public String getUserDraggedId() {
+			return userDragId;
+		}
+
+		public boolean getUserDragged() {
+			return userDrag;
+		}
+		
+		public String getUserDraggedType() {
+			return userDragType;
+		}
+
+		public String getPointAtObjectId() {
+			return pointAtObjectId;
+		}
+
+		public String getLookAtObjectId() {
+			return lookAtObjectId;
+		}
+		
+		public String getTouchObjectId() {
+			return touchedObjectId;
+		}
+	}
+
+	private class TouchListenerImpl implements ITouchListener
+	{
+		private int anyTouchCounter;
+
+		public void click(int x, int y, int width, int height) {}
+
+		public void pointDown(int id, int x, int y, int width, int height) 
+		{
+			anyTouchCounter++;
+		}
+
+		public void pointMoved(int id, int newX, int newY, int newWidth,int newHeight) {}
+
+		public void pointUp(int id) {}
+
+		@SuppressWarnings("unused")
+    public int getCounter() {
+			return anyTouchCounter;
+		}
+	}
+
+	/**
+	 * A class to listen for messages from the rendering engine updating the
+	 * state of the world. Fill in the body of any methods that you need to use
+	 * ...
+	 */
+	private class RenderingListenerImpl implements IRenderingListener 
+	{
+		private String touchedObjectId;
+		// pots that have flowers in them
+		private List<String> potWithFlowers = new ArrayList<String>(); ;
+
+
+		public void agentAdded(String agentId, Map<String, String> props) {}
+		public void agentPropertyChanged(String agentId, String propName,String propValue) {}
+		public void agentRemoved(String agentId) {}
+
+		public void objectAdded(String objId, Map<String, String> props) 
+		{
+			mapObjectIdObjectType.put(objId, props.get("type"));
+		}
+
+		public void objectPropertyChanged(String objId, String propName,
+				String propValue) {
+			if (propName.equals("pot_flower")) {
+				if (!propValue.equals("None")) {
+					potWithFlowers.add(objId);
+				} else {
+					potWithFlowers.remove(objId);
+				}
+			}
+			else{
+				// Child has dragged an object over the agent
+				if (propName.equals("draggedOverAgent")) {
+					if (!propValue.equals("None")) {
+						// only accept these types of objects
+						userHoldingObjectOverAgent = true;
+						objectDraggedOverAgentId = objId;
+						AssessInitiationHoldTask task = new AssessInitiationHoldTask();
+						task.start();
+					} 
+					else {
+						//Child has dragged the object away
+						userHoldingObjectOverAgent = false;
+					}
+
+				} else if (propName.equals("overAgent")) {
+					if (propValue.equals("None") && objId.equals(objectDraggedOverAgentId)) {
+						//Object no longer over agent
+						userHoldingObjectOverAgent = false;
+					}
+				}
+			}
+		}
+
+		public void objectRemoved(String objId) 
+		{
+			mapObjectIdObjectType.remove(objId);
+		}
+
+		public void scenarioEnded(String name) {}
+		public void scenarioStarted(String name) {}
+		public void userStarted(String name) {}
+
+		public void userTouchedAgent(String agentId) 
+		{
+			incrementGoal(ScertsGoal.InitiateNonVerbalBid);
+		}
+		
+		public void userTouchedObject(String objId) 
+		{
+			touchedObjectId = objId;
+			String touchedObjectType = getUserTouchedObjectType(objId);
+			System.out.println("userTouchedObject..." + touchedObjectType);
+			if (objectTypesPreferredByUser.containsKey(touchedObjectType)){
+				int num = objectTypesPreferredByUser.get(touchedObjectType);
+				num = num + 1;
+				objectTypesPreferredByUser.put(touchedObjectType, num);
+				System.out.println("Updating ObjectTypesPreferredByUserMap...");
+				printObjectTypesPreferredByUser();
+			} else {
+				objectTypesPreferredByUser.put(touchedObjectType, 1);
+				System.out.println("Updating ObjectTypesPreferredByUserMap...");
+				printObjectTypesPreferredByUser();
+			}
+			if (storeTouchedObjectAfterBid){
+				System.out.println("touchedObjectAfterBid" + objId);
+				touchedObjectAfterBid=objId;
+			}
+		}
+
+		public void worldPropertyChanged(String propName, String propValue) {}
+
+		@SuppressWarnings("unused")
+    public String getUserTouchedObjectId() 
+		{
+			return touchedObjectId;
+		}
+
+		public String getUserTouchedObjectType(String objId) 
+		{
+			String touchedObjectType = mapObjectIdObjectType.get(objId);
+			return touchedObjectType;
+		}
+
+		@SuppressWarnings("unused")
+    public Map<String, String> getMapObjTypes() 
+		{
+			return mapObjectIdObjectType;
+		}
+
+		@SuppressWarnings("unused")
+    public List<String> getFlowerPots() 
+		{
+			return potWithFlowers;
+		}
+	}
+
+	public void agentMadeBid(String bidType, String objId) 
+	{
+		if (!bidType.isEmpty()) 
+		{
+			System.out.println("BID");
+			alImpl.setAgentBids(bidType, objId);
+		}
+		else 
+			alImpl.setAgentBids("", "");
+	}
+
+  private void incrementGoal(ScertsGoal... goals)
+  {
+    System.out.println("Updating ScertsGoalSatisfactionMap...");
+    incrementScertsGoal(scertsGoalSatisfaction, goals);
+
+    printScertsGoalSatisfactionMap();
+  }
+
+  public static int incrementScertsGoal(Map <String, Integer> map,
+                                        ScertsGoal... goals)
+  {
+    for (ScertsGoal goal : goals)
+    {
+      String key = getMapKey(goal);
+
+      int count = map.get(key);
+      map.put(key, count + 1);
+
+      if (goals.length == 1)
+        return map.get(key);
+    }
+
+    return 0;
+  }
+
+  public static String getMapKey(ScertsGoal goal)
+  {
+    return goal.name();
+  }
+
+  public static Map <String, Integer> createScertsGoalMap()
+  {
+    Map <String, Integer> map = new HashMap <String, Integer>();
+    for (ScertsGoal goal : ScertsGoal.values())
+      map.put(getMapKey(goal), 0);
+
+    return map;
+  }
+
+  public static String scertsGoalMapToString(Map <String, Integer> map)
+  {
+    StringBuilder buf = new StringBuilder();
+
+    for (Map.Entry <String, Integer> e : map.entrySet())
+    {
+      buf.append(e.getKey());
+      buf.append(": ");
+      buf.append(e.getValue());
+      buf.append("\n");
+    }
+    
+    return buf.toString();
+  }
+}

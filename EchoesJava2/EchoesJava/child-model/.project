@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>child-model</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.zeroc.Slice2JavaPlugin.Slice2JavaBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>com.zeroc.Slice2JavaPlugin.Slice2JavaNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>echoes</name>
+			<type>2</type>
+			<locationURI>WORKSPACE/echoes-ice-interfaces/slice/echoes</locationURI>
+		</link>
+		<link>
+			<name>slice</name>
+			<type>2</type>
+			<locationURI>WORKSPACE/echoes-ice-interfaces/slice</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

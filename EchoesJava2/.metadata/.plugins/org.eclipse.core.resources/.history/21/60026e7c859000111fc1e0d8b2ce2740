@@ -1,0 +1,63 @@
+package uk.ac.ed.echoes.touch;
+
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+
+import Ice.Application;
+import Ice.Current;
+import echoes._TouchListenerDisp;
+
+public class TouchListenerImpl extends _TouchListenerDisp {
+    
+    private TouchPanel touchPanel;
+    
+    public TouchListenerImpl() {
+        JFrame frame = new JFrame("Touch demo");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Application.communicator().getLogger().trace("Info",
+                        "Calling communicator.shutdown()");
+                Application.communicator().shutdown();
+            }
+        });
+        
+        touchPanel = new TouchPanel();
+        frame.add(touchPanel);
+        
+        /*
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gs = ge.getDefaultScreenDevice();
+        gs.setFullScreenWindow(frame);
+        */
+        frame.pack();
+        frame.setVisible(true);
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+    }
+
+    public synchronized void pointDown(int id, int x, int y, int width, int height, Current __current) {
+        touchPanel.addEllipse(id, x, y, width, height);
+        Application.communicator().getLogger().trace("INFO", "Point " + id + " down at (" + x + "," + y + "); size " + width + "x" + height);
+    }
+
+    public synchronized void pointMoved(int id, int newX, int newY, int newWidth, int newHeight, Current __current) {
+        touchPanel.moveEllipse(id, newX, newY, newWidth, newHeight);
+        Application.communicator().getLogger().trace("INFO", "Point " + id + " moved to (" + newX + "," + newY + "); size " + newWidth + "x" + newHeight);
+    }
+
+    public synchronized void pointUp(int id, Current __current) {
+        touchPanel.removeEllipse(id);
+        Application.communicator().getLogger().trace("INFO", "Point " + id + " up");
+    }
+    
+    public void click (int x, int y, int width, int height, Current __current) {
+    	touchPanel.addClick (x, y, width, height);
+        Application.communicator().getLogger().trace("INFO", "Click at (" + x + "," + y + ") " + width + "x" + height);
+    }
+
+}

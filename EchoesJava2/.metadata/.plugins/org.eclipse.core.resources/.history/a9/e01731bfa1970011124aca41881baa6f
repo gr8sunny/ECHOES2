@@ -1,0 +1,26 @@
+package renderingEngine;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import renderingEngine.visual.EchoesGLCanvas;
+
+public class screenCanvas extends EchoesGLCanvas
+{
+  public static screenCanvas theCanvas;
+  public Map<Integer, Object> piavcaAvatars = new HashMap<Integer, Object>();
+  public List<Object> sceneElements = new ArrayList<Object>();
+  public String scenario = "";
+  public float frameSize[] = new float[2];
+  public float orthoCoordWidth = 100;
+  public float aspectRatio = 1;
+  public float orthoCoordDepth = 1;
+  public boolean renderPiavca = false;
+  
+  
+  public void clearScene(boolean quickly)
+  {
+  }
+}

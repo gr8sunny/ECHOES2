@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench progressCount="19" version="2.0">
+<workbenchAdvisor/>
+<window height="728" width="1204" x="75" y="1">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar>
+<itemSize x="160"/>
+</perspectiveBar>
+<coolbarLayout>
+<coolItem id="group.file" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="122" y="22"/>
+<coolItem id="additions" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="129" y="22"/>
+<coolItem id="org.eclipse.jdt.ui.JavaElementCreationActionSet" itemType="typeToolBarContribution" x="76" y="22"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="76" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="107" y="22"/>
+<coolItem id="group.nav" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="190" y="22"/>
+<coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.DefaultTextEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.jdt.ui.ClassFileEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="group.help" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
+</coolbarLayout>
+<page aggregateWorkingSetId="Aggregate for window 1335701254250" focus="true" label="Workspace - Java">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+<part id="4"/>
+<part id="5"/>
+<part id="6"/>
+<part id="7"/>
+<part id="8"/>
+<part id="9"/>
+<part id="10"/>
+<part id="11"/>
+<part id="12"/>
+<part id="13"/>
+<part id="14"/>
+</presentation>
+</folder>
+</info>
+</editorArea>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="ListenerManager.java" partName="ListenerManager.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/echoesEngine/ListenerManager.java" title="ListenerManager.java" tooltip="EchoesJava/src/echoesEngine/ListenerManager.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/echoesEngine/ListenerManager.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="12" selectionOffset="2367" selectionTopPixel="820"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EngagementClassifier.java" partName="EngagementClassifier.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/childModel/EngagementClassifier.java" title="EngagementClassifier.java" tooltip="EchoesJava/src/childModel/EngagementClassifier.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/childModel/EngagementClassifier.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="79" selectionOffset="3387" selectionTopPixel="1050"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PDCritiqueIceApp.java" partName="PDCritiqueIceApp.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/src/PDCritiqueIceApp.java" title="PDCritiqueIceApp.java" tooltip="EchoesJava/src/renderingEngine/src/PDCritiqueIceApp.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/src/PDCritiqueIceApp.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="990"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesGLCanvas.java" partName="EchoesGLCanvas.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/visual/EchoesGLCanvas.java" title="EchoesGLCanvas.java" tooltip="EchoesJava/src/renderingEngine/visual/EchoesGLCanvas.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/visual/EchoesGLCanvas.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="35850" selectionTopPixel="13472"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Annotator.java" partName="Annotator.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/visual/Annotator.java" title="Annotator.java" tooltip="EchoesJava/src/renderingEngine/visual/Annotator.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/visual/Annotator.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="5287" selectionTopPixel="2155"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesBubble.java" partName="EchoesBubble.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/objects/EchoesBubble.java" title="EchoesBubble.java" tooltip="EchoesJava/src/renderingEngine/objects/EchoesBubble.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/objects/EchoesBubble.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="3751" selectionTopPixel="1365"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesJava.java" partName="EchoesJava.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/EchoesJava.java" title="EchoesJava.java" tooltip="EchoesJava/src/EchoesJava.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/EchoesJava.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="636"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesObject.java" partName="EchoesObject.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/objects/EchoesObject.java" title="EchoesObject.java" tooltip="EchoesJava/src/renderingEngine/objects/EchoesObject.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/objects/EchoesObject.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="45" selectionOffset="2556" selectionTopPixel="656"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Enums.java" partName="Enums.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/utils/Enums.java" title="Enums.java" tooltip="EchoesJava/src/utils/Enums.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/utils/Enums.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="12" selectionOffset="2106" selectionTopPixel="1695"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Interfaces.java" partName="Interfaces.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/utils/Interfaces.java" title="Interfaces.java" tooltip="EchoesJava/src/utils/Interfaces.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/utils/Interfaces.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="1779"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Collisions.java" partName="Collisions.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/Collisions.java" title="Collisions.java" tooltip="EchoesJava/src/renderingEngine/Collisions.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/Collisions.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="6" selectionOffset="1744" selectionTopPixel="270"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesAgent.java" partName="EchoesAgent.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/agents/EchoesAgent.java" title="EchoesAgent.java" tooltip="EchoesJava/src/renderingEngine/agents/EchoesAgent.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/agents/EchoesAgent.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="735" selectionTopPixel="52"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PiavcaAvatars.java" partName="PiavcaAvatars.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/agents/PiavcaAvatars.java" title="PiavcaAvatars.java" tooltip="EchoesJava/src/renderingEngine/agents/PiavcaAvatars.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/agents/PiavcaAvatars.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="356" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Plants.java" partName="Plants.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/objects/Plants.java" title="Plants.java" tooltip="EchoesJava/src/renderingEngine/objects/Plants.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/objects/Plants.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="135"/>
+</editor>
+<editor activePart="true" focus="true" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="MyCanvas.java" partName="MyCanvas.java" path="C:/Keith/echoes/EchoesJava/EchoesJava/src/renderingEngine/MyCanvas.java" title="MyCanvas.java" tooltip="EchoesJava/src/renderingEngine/MyCanvas.java" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/EchoesJava/src/renderingEngine/MyCanvas.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="315"/>
+</editor>
+</editors>
+<views>
+<view id="org.eclipse.search.ui.views.SearchView" partName="Search">
+<viewState isPinned="false">
+<view IMemento.internal.id="org.eclipse.search.text.FileSearchResultPage" org.eclipse.search.lastActivation="1" org.eclipse.search.resultpage.layout="2" org.eclipse.search.resultpage.limit="1000" org.eclipse.search.resultpage.sorting="2"/>
+<view IMemento.internal.id="" org.eclipse.search.lastActivation="0"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Errors"/>
+</expanded>
+<columnWidths org.eclipse.ui.ide.locationField="90" org.eclipse.ui.ide.markerType="90" org.eclipse.ui.ide.pathField="120" org.eclipse.ui.ide.resourceField="170" org.eclipse.ui.ide.severityAndDescriptionField="338"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
+</view>
+<view id="org.eclipse.jdt.ui.PackageExplorer" partName="Package Explorer">
+<viewState group_libraries="1" layout="1" linkWithEditor="0" rootMode="1" workingSetName="Aggregate for window 1335435713062">
+<customFilters userDefinedPatternsEnabled="false">
+<xmlDefinedFilters>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.LibraryFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.LocalTypesFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.StaticsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.pde.ui.ExternalPluginLibrariesFilter1" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.ClosedProjectsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonSharedProjectsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonJavaElementFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.ContainedLibraryFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.CuAndClassFileFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonJavaProjectsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.internal.ui.PackageExplorer.EmptyInnerPackageFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.PackageDeclarationFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.internal.ui.PackageExplorer.EmptyPackageFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.ImportDeclarationFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.FieldsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.internal.ui.PackageExplorer.HideInnerClassFilesFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonPublicFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer_patternFilterId_.*" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.EmptyLibraryContainerFilter" isEnabled="true"/>
+<child filterId="org.eclipse.pde.ui.BinaryProjectFilter1" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.SyntheticMembersFilter" isEnabled="true"/>
+</xmlDefinedFilters>
+</customFilters>
+</viewState>
+</view>
+<view id="org.eclipse.jdt.ui.SourceView" partName="Declaration"/>
+<view id="org.eclipse.jdt.ui.JavadocView" partName="Javadoc"/>
+</views>
+<perspectives activePart="org.eclipse.jdt.ui.CompilationUnitEditor" activePerspective="org.eclipse.jdt.ui.JavaPerspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="org.eclipse.jdt.internal.ui.JavaPerspectiveFactory" id="org.eclipse.jdt.ui.JavaPerspective" label="Java"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.ui.JavaActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.ui.JavaElementCreationActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.debug.ui.JDTDebugActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.junit.JUnitActionSet"/>
+<show_view_action id="org.eclipse.jdt.ui.PackageExplorer"/>
+<show_view_action id="org.eclipse.jdt.ui.TypeHierarchy"/>
+<show_view_action id="org.eclipse.jdt.ui.SourceView"/>
+<show_view_action id="org.eclipse.jdt.ui.JavadocView"/>
+<show_view_action id="org.eclipse.search.ui.views.SearchView"/>
+<show_view_action id="org.eclipse.ui.console.ConsoleView"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<show_view_action id="org.eclipse.ui.views.ProblemView"/>
+<show_view_action id="org.eclipse.ui.views.ResourceNavigator"/>
+<show_view_action id="org.eclipse.ui.views.TaskList"/>
+<show_view_action id="org.eclipse.ui.views.ProgressView"/>
+<show_view_action id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<show_view_action id="org.eclipse.ui.texteditor.TemplatesView"/>
+<show_view_action id="org.eclipse.pde.runtime.LogView"/>
+<show_view_action id="org.eclipse.ant.ui.views.AntView"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.JavaProjectWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewClassCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewEnumCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewAnnotationCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewSnippetFileCreationWizard"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewJavaWorkingSetWizard"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.folder"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.file"/>
+<new_wizard_action id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard"/>
+<new_wizard_action id="org.eclipse.jdt.junit.wizards.NewTestCaseCreationWizard"/>
+<perspective_action id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
+<perspective_action id="org.eclipse.debug.ui.DebugPerspective"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="org.eclipse.jdt.ui.PackageExplorer"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.jdt.ui.JavadocView"/>
+<view id="org.eclipse.jdt.ui.SourceView"/>
+<view id="org.eclipse.search.ui.views.SearchView"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<fastViewBars/>
+<layout>
+<mainWindow>
+<info folder="true" part="left">
+<folder activePageID="org.eclipse.jdt.ui.PackageExplorer" appearance="2" expanded="2">
+<page content="org.eclipse.jdt.ui.PackageExplorer" label="Package Explorer"/>
+<page content="org.eclipse.jdt.ui.TypeHierarchy" label="LabelNotFound"/>
+<page content="org.eclipse.ui.views.ResourceNavigator" label="LabelNotFound"/>
+<page content="org.eclipse.ui.navigator.ProjectExplorer" label="LabelNotFound"/>
+<page content="org.eclipse.jdt.junit.ResultView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="750" ratioRight="250" relationship="2" relative="left">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.2898696" ratioLeft="289" ratioRight="708" relationship="2" relative="left"/>
+<info folder="true" part="bottom" ratio="0.6721854" ratioLeft="406" ratioRight="198" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="org.eclipse.jdt.ui.JavadocView" label="Javadoc"/>
+<page content="org.eclipse.jdt.ui.SourceView" label="Declaration"/>
+<page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.eclipse.ui.views.BookmarkView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.views.ProgressView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+<part id="4"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="right" ratio="0.84195673" ratioLeft="895" ratioRight="168" relationship="2" relative="org.eclipse.ui.editorss">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
+<page content="org.eclipse.ui.texteditor.TemplatesView" label="LabelNotFound"/>
+<page content="org.eclipse.ant.ui.views.AntView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/visual/EchoesGLCanvas.java"/>
+<editor factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" org.eclipse.jdt.ui.ClassFileIdentifier="=EchoesJava/C:\/Program Files\/Java\/jogl\/jar\/jogl.all.jar&lt;javax.media.opengl.awt(GLCanvas.class"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/visual/Annotator.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/objects/EchoesObject.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/utils/Interfaces.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/objects/EchoesBubble.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/EchoesJava.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/echoesEngine/ListenerManager.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/utils/Enums.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/Collisions.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/agents/EchoesAgent.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/FAtiMA/AgentSimulationTime.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/FAtiMA/DialogManager.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/agents/PiavcaAvatars.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/objects/Plants.java"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/EchoesJava/src/renderingEngine/MyCanvas.java"/>
+</editors>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="531" y="8"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="37001" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="876" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="741" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="762" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="1960" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="1960" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="6244" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="6129" y="1"/>
+</item>
+<item historyLabel="Interfaces.java" index="4">
+<position info="not_deleted" x="5989" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="6129" y="1"/>
+</item>
+<item historyLabel="Annotator.java" index="2">
+<position info="not_deleted" x="5287" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="6129" y="1"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="6379" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="6286" y="19"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="35315" y="5"/>
+</item>
+<item historyLabel="GLCanvas.class" index="1">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="35315" y="5"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="15121" y="12"/>
+</item>
+<item historyLabel="EchoesBubble.java" index="5">
+<position info="not_deleted" x="405" y="12"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="15282" y="11"/>
+</item>
+<item historyLabel="EchoesBubble.java" index="5">
+<position info="not_deleted" x="3751" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="5636" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position info="not_deleted" x="10367" y="0"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="33016" y="19"/>
+</item>
+<item historyLabel="EchoesJava.java" index="6">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="ListenerManager.java" index="7">
+<position info="not_deleted" x="2367" y="12"/>
+</item>
+<item historyLabel="Enums.java" index="8">
+<position info="not_deleted" x="2106" y="12"/>
+</item>
+<item historyLabel="Interfaces.java" index="4">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="Collisions.java" index="9">
+<position info="not_deleted" x="1744" y="6"/>
+</item>
+<item historyLabel="EchoesGLCanvas.java" index="0">
+<position info="not_deleted" x="35850" y="0"/>
+</item>
+<item historyLabel="EchoesAgent.java" index="10">
+<position info="not_deleted" x="152" y="0"/>
+</item>
+<item historyLabel="EchoesObject.java" index="3">
+<position info="not_deleted" x="2556" y="45"/>
+</item>
+<item historyLabel="EchoesAgent.java" index="10">
+<position info="not_deleted" x="735" y="0"/>
+</item>
+<item historyLabel="AgentSimulationTime.java" index="11">
+<position info="not_deleted" x="1945" y="60"/>
+</item>
+<item historyLabel="DialogManager.java" index="12">
+<position info="not_deleted" x="6" y="0"/>
+</item>
+<item historyLabel="AgentSimulationTime.java" index="11">
+<position info="not_deleted" x="1945" y="60"/>
+</item>
+<item historyLabel="EchoesAgent.java" index="10">
+<position info="not_deleted" x="735" y="0"/>
+</item>
+<item historyLabel="PiavcaAvatars.java" index="13">
+<position info="not_deleted" x="31" y="0"/>
+</item>
+<item historyLabel="PiavcaAvatars.java" index="13">
+<position info="not_deleted" x="356" y="0"/>
+</item>
+<item historyLabel="Plants.java" index="14">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="EchoesJava.java" index="6">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item active="true" historyLabel="MyCanvas.java" index="15">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+</navigationHistory>
+<input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
+</trimArea>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="MyCanvas.java" tooltip="EchoesJava/src/renderingEngine/MyCanvas.java">
+<persistable path="/EchoesJava/src/renderingEngine/MyCanvas.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Plants.java" tooltip="EchoesJava/src/renderingEngine/objects/Plants.java">
+<persistable path="/EchoesJava/src/renderingEngine/objects/Plants.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PiavcaAvatars.java" tooltip="EchoesJava/src/renderingEngine/agents/PiavcaAvatars.java">
+<persistable path="/EchoesJava/src/renderingEngine/agents/PiavcaAvatars.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="DialogManager.java" tooltip="EchoesJava/src/FAtiMA/DialogManager.java">
+<persistable path="/EchoesJava/src/FAtiMA/DialogManager.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="AgentSimulationTime.java" tooltip="EchoesJava/src/FAtiMA/AgentSimulationTime.java">
+<persistable path="/EchoesJava/src/FAtiMA/AgentSimulationTime.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesAgent.java" tooltip="EchoesJava/src/renderingEngine/agents/EchoesAgent.java">
+<persistable path="/EchoesJava/src/renderingEngine/agents/EchoesAgent.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Collisions.java" tooltip="EchoesJava/src/renderingEngine/Collisions.java">
+<persistable path="/EchoesJava/src/renderingEngine/Collisions.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Interfaces.java" tooltip="EchoesJava/src/utils/Interfaces.java">
+<persistable path="/EchoesJava/src/utils/Interfaces.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Enums.java" tooltip="EchoesJava/src/utils/Enums.java">
+<persistable path="/EchoesJava/src/utils/Enums.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesObject.java" tooltip="EchoesJava/src/renderingEngine/objects/EchoesObject.java">
+<persistable path="/EchoesJava/src/renderingEngine/objects/EchoesObject.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesJava.java" tooltip="EchoesJava/src/EchoesJava.java">
+<persistable path="/EchoesJava/src/EchoesJava.java"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="EchoesBubble.java" tooltip="EchoesJava/src/renderingEngine/objects/EchoesBubble.java">
+<persistable path="/EchoesJava/src/renderingEngine/objects/EchoesBubble.java"/>
+</file>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="org.eclipse.jdt.ui.ClassFileEditor" name="GLCanvas.class" tooltip="javax.media.opengl.awt.GLCanvas">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=EchoesJava/C:\/Program Files\/Java\/jogl\/jar\/jogl.all.jar&lt;javax.media.opengl.awt(GLCanvas.class"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Annotator.java" tooltip="EchoesJava/src/renderingEngine/visual/Annotator.java">
+<persistable path="/EchoesJava/src/renderingEngine/visual/Annotator.java"/>
+</file>
+<file factoryID="org.eclipse.ui.ide.FileStoreEditorInputFactory" id="org.eclipse.ui.DefaultTextEditor" name="Annotator.py" tooltip="C:\Keith\echoes\echoes2-read-only\rendering-engine\src\visual\Annotator.py">
+<persistable uri="file:/C:/Keith/echoes/echoes2-read-only/rendering-engine/src/visual/Annotator.py"/>
+</file>
+</mruList>
+</workbench>

@@ -1,0 +1,77 @@
+package renderingEngine.src.environment;
+
+import java.io.File;
+import java.io.IOException;
+import javax.media.opengl.GL2;
+
+import renderingEngine.src.screenCanvas;
+
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
+
+@SuppressWarnings("unused")
+public class Garden extends EchoesSceneElement
+{
+  private Texture texture;
+  private boolean withSound = false;
+  private boolean ambient = false;
+  private screenCanvas canvas = screenCanvas.theCanvas;
+  
+  public Garden(boolean autoAdd, boolean fadeIn, int fadingFrames, boolean sound)
+  {
+    super(autoAdd, fadeIn,  fadingFrames);
+    setImage();
+    withSound = sound;
+    //if (withSound)
+    //  ambient = sound.EchoesAudio.playSound("garden.wav", loop=True, vol = 0.1)        
+  }
+  
+  public void setImage()
+  {
+    try 
+    {
+      File file = new File("C:\\temp\\java\\OpenGLTest\\resources\\GardenBackExplore.png");
+      texture = TextureIO.newTexture(file, true);
+    }
+    catch (IOException e) {}
+  }
+  
+  public void renderObj(GL2 gl)
+  {
+    gl.glPushMatrix();
+    gl.glEnable(GL2.GL_TEXTURE_2D);
+    gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+    gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+    texture.enable(gl);
+    texture.bind(gl);
+    gl.glDisable(GL2.GL_DEPTH_TEST);
+    gl.glColor4d(1,1,1,transparancy);
+    gl.glScalef(canvas.orthoCoordWidth/2, canvas.orthoCoordWidth/2/canvas.aspectRatio, 1);
+    gl.glBegin(GL2.GL_QUADS);
+    gl.glTexCoord2f(0, 0);
+    gl.glVertex2f(-1, -1);
+    gl.glTexCoord2f(1, 0);
+    gl.glVertex2f(1, -1);
+    gl.glTexCoord2f(1, 1);
+    gl.glVertex2f(1, 1);
+    gl.glTexCoord2f(0, 1);
+    gl.glVertex2f(-1, 1);
+    gl.glEnd();       
+    gl.glEnable(GL2.GL_DEPTH_TEST);
+    gl.glDisable(GL2.GL_TEXTURE_2D);
+    gl.glPopMatrix();
+  }
+        
+  public void soundEvent(String type)
+  {
+    //if (withSound && (type=="plane"))
+    //  sound.EchoesAudio.playSound("plane.wav", vol=0.3);
+  }
+  
+  public void  remove(boolean fadeOut, int fadingFrames)
+  {
+    //if (!fadeOut && ambient)
+    //  ambient.stop()
+    super.remove(fadeOut, fadingFrames);
+  }
+}

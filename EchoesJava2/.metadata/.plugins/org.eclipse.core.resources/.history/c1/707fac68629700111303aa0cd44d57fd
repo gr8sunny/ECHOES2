@@ -1,0 +1,192 @@
+package renderingEngine.src.objects;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javax.media.opengl.GL2;
+
+import echoesEngine.ListenerManager;
+import renderingEngine.src.screenCanvas;
+import renderingEngine.src.BezierMotion;
+import renderingEngine.src.objects.EchoesObject;
+import renderingEngine.src.objects.EchoesObject;
+
+public class EchoesBubble extends EchoesObject
+{
+  private BezierMotion bezierMotion = new BezierMotion();
+  private boolean randomSize = true;
+  private boolean floatingXY = true;
+  private boolean willBeReplaced = false;
+  private boolean showCtrlPoints = false;
+  private int shape[][] = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
+  private int texshape[][] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+
+  public EchoesBubble(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, boolean randomSize, Object callback)
+  {
+    super(autoAdd, properties, fadeIn, fadingFrames, callback);
+
+    this.randomSize = randomSize;
+    this.size = (float) (randomSize ?  0.2 + Math.random() * 0.2 : 0.3);
+    this.colour = props.containsKey("colour" ) ?  props.get("colour") : "neutral";
+      
+    newStartPos();
+    bezierMotion.newCtrlPoints(null);
+  }
+                    
+    public void setAttr(String item, String value)
+    {
+      if (item == "colour")
+      {
+        if (value == "green")
+          loadTexture("visual/images/Bubble-green.png");
+        else if (value == "red")
+          loadTexture("visual/images/Bubble-red.png");
+        else // "neutral")
+          loadTexture("visual/images/Bubble-neutral.png");
+      }
+      
+      setAttr(item, value);
+    }
+    
+    public void renderObj(GL2 gl)
+    {
+      if (this.moving && !this.beingDragged)
+      {
+        this.pos = bezierMotion.nextBezierPos(this.floatingXY);
+        if (this.removeAtTargetPos && bezierMotion.bezierIndex > 0.95)
+          this.remove(true, 100);
+      }
+          
+      if (this.size > this.maxSize)
+        this.click("None");
+ 
+      if (this.mergedByChild) //remove in first rendering cycle after the child might have merged the bubbles
+        this.mergedByChild = false;
+      
+      gl.glPushMatrix();
+      gl.glEnable(GL2.GL_ALPHA_TEST );
+      gl.glAlphaFunc(GL2.GL_GREATER, (float)0.1);      
+      gl.glEnable(GL2.GL_TEXTURE_2D );
+      gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+      gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+      //gl.glBindTexture(GL2.GL_TEXTURE_2D, this.texture);
+      gl.glTranslatef(pos[0], pos[1], pos[2]);
+      gl.glScalef(size, size, size);
+      gl.glColor4f(1, 1, 1, transparancy);
+      gl.glBegin(GL2.GL_QUADS);
+      int ti = 0;
+      for (int[] v : shape)
+      {
+        gl.glTexCoord2d(this.texshape[ti][0], this.texshape[ti][1]);
+        gl.glVertex3f(v[0], v[1], this.pos[2]);
+        ti += 1;
+      }
+      gl.glEnd();
+      gl.glDisable( GL2.GL_TEXTURE_2D );
+      gl.glDisable( GL2.GL_ALPHA_TEST );
+      gl.glPopMatrix();
+      
+      if (showCtrlPoints)
+      {
+        gl.glPushMatrix();
+        gl.glPointSize (4);
+        gl.glColor4f(1,0,0,1);
+        gl.glBegin (GL2.GL_POINTS);
+        for (float[] p : bezierMotion.ctrlpoints)
+            gl.glVertex3f (p[0], p[1], p[2]);
+        gl.glEnd();
+        gl.glPointSize(1);
+        gl.glPopMatrix();;
+      }
+    }
+    
+    public void grow()
+    {
+      if (this.size < this.maxSize)
+        this.size = (float)(this.size * 1.1);
+    }
+                
+    public void newStartPos()
+    {
+      pos[0] = (float)(canvas.orthoCoordWidth/2 - (Math.random() * canvas.orthoCoordWidth));
+      pos[1] = (float)( Math.random() * canvas.orthoCoordWidth/2/canvas.aspectRatio + this.size * 1.1);
+      pos[2] = 0;
+    }
+        
+    public void click(String agentName, boolean replace)
+    {   
+      // pop the bubble when clicked and re-introduce it from the back to keep the number
+      if (this.interactive && (this.canBeClicked || agentName=="None"))
+      {
+        if (this.mergedByChild || agentName == "User")  //only count if (it was inflicted by the child
+        {
+          if (canvas.scenario == "BubbleWorld")
+          {
+              Object bs = null;
+              for (Object o : canvas.sceneElements)
+              {
+                if (o is environment.HelperElements.Score))
+                  bs = o;
+                if (bs)
+                  bs.increment(); 
+              }
+          }
+          (IAgentPublisher)ListenerManager.GetInstance()).agentActionCompleted("User", "bubble_pop", objectID);
+                
+          if (sound.EchoesAudio.soundPresent)
+            sound.EchoesAudio.bubblePop(this.size);
+          
+          if (this.willBeReplaced && replace)
+            newB = EchoesBubble(this.app, true, this.props, this.fadingIn);
+          this.remove();
+        }
+      }
+    }
+    
+    public void startDrag(float[] pos)
+    {
+      if (this.interactive && this.canBeDragged)
+      {
+        this.beingDragged = true;
+        this.locationChanged = false;
+        //this.dragStartXY = pos;
+        //this.dragStartWorld = this.pos;
+      }
+    }
+        
+    public void stopDrag()
+    {
+      if (this.interactive && this.canBeDragged)
+      {
+        this.beingDragged = false;
+        this.locationChanged = false;
+        bezierMotion.newCtrlPoints(null);
+      }
+    }
+    
+    public void drag(int[] newXY, GL2 gl)
+    {
+      if (this.interactive && this.canBeDragged)
+      {
+        // Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
+        projection = gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX);
+        modelview = gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX);
+        viewport = gl.glGetIntegerv(GL2.GL_VIEWPORT);
+        windowZ = gl.glReadPixels(newXY[0], viewport[3]-newXY[1], 1, 1, GL2.GL_DEPTH_COMPONENT, GL2.GL_FLOAT);
+        worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
+        
+        if (this.floatingXY)
+          this.pos = {worldCoords[0], worldCoords[1], this.pos[2]};
+        else
+          this.pos = (worldCoords[0], worldCoords[1], worldCoords[2]);
+
+        this.locationChanged = true;
+      }
+    }
+        
+    public void remove(boolean fadeOut, int fadingFrames)
+    {
+      remove(fadeOut, fadingFrames);  
+    }
+
+

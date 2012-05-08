@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This file was written by IceGrid Admin -->
+<icegrid>
+   <application name="Echoes">
+      <service-template id="IceStorm">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="10000"/>
+         <service name="${instance-name}" entry="IceStormService,33:createIceStorm">
+            <properties>
+               <property name="${service}.InstanceName" value="${instance-name}"/>
+               <property name="${service}.Flush.Timeout" value="${flush-timeout}"/>
+            </properties>
+            <adapter name="${service}.Publish" endpoints="${publish-endpoints}" id="${instance-name}.Publish"/>
+            <adapter name="${service}.TopicManager" endpoints="${topic-manager-endpoints}" id="${instance-name}.TopicManager">
+               <object identity="${instance-name}/TopicManager" type="::IceStorm::TopicManager"/>
+            </adapter>
+            <dbenv name="${service}"/>
+         </service>
+      </service-template>
+      <service-template id="IceStorm-HA">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="node-id"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="node-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="10000"/>
+         <parameter name="publish-replica-group"/>
+         <parameter name="topic-manager-replica-group"/>
+         <service name="${instance-name}${node-id}" entry="IceStormService,33:createIceStorm">
+            <properties>
+               <property name="${service}.InstanceName" value="${instance-name}"/>
+               <property name="${service}.NodeId" value="${node-id}"/>
+               <property name="${service}.Flush.Timeout" value="${flush-timeout}"/>
+            </properties>
+            <adapter name="${service}.Node" endpoints="${node-endpoints}" id="${instance-name}${node-id}.Node"/>
+            <adapter name="${service}.Publish" endpoints="${publish-endpoints}" id="${instance-name}${node-id}.Publish" replica-group="${publish-replica-group}"/>
+            <adapter name="${service}.TopicManager" endpoints="${topic-manager-endpoints}" id="${instance-name}${node-id}.TopicManager" replica-group="${topic-manager-replica-group}"/>
+            <dbenv name="${service}"/>
+         </service>
+      </service-template>
+      <server-template id="Glacier2">
+         <parameter name="instance-name" default="${application}.Glacier2"/>
+         <parameter name="client-endpoints"/>
+         <parameter name="server-endpoints" default=""/>
+         <parameter name="session-timeout" default="0"/>
+         <server id="${instance-name}" activation="manual" exe="glacier2router">
+            <properties>
+               <property name="Glacier2.Client.Endpoints" value="${client-endpoints}"/>
+               <property name="Glacier2.Server.Endpoints" value="${server-endpoints}"/>
+               <property name="Glacier2.InstanceName" value="${instance-name}"/>
+               <property name="Glacier2.SessionTimeout" value="${session-timeout}"/>
+            </properties>
+         </server>
+      </server-template>
+      <server-template id="IcePatch2">
+         <parameter name="instance-name" default="${application}.IcePatch2"/>
+         <parameter name="endpoints" default="default"/>
+         <parameter name="directory"/>
+         <server id="${instance-name}" activation="on-demand" application-distrib="false" exe="icepatch2server">
+            <properties>
+               <property name="IcePatch2.InstanceName" value="${instance-name}"/>
+               <property name="IcePatch2.Directory" value="${directory}"/>
+            </properties>
+            <adapter name="IcePatch2" endpoints="${endpoints}" id="${server}.IcePatch2">
+               <object identity="${instance-name}/server" type="::IcePatch2::FileServer"/>
+            </adapter>
+         </server>
+      </server-template>
+      <server-template id="IceStorm">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="10000"/>
+         <icebox id="${instance-name}" activation="on-demand" exe="icebox">
+            <service-instance template="IceStorm" instance-name="${instance-name}" topic-manager-endpoints="${topic-manager-endpoints}" publish-endpoints="${publish-endpoints}" flush-timeout="${flush-timeout}"/>
+         </icebox>
+      </server-template>
+      <server-template id="IceStorm-HA">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="node-id"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="node-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="10000"/>
+         <parameter name="publish-replica-group"/>
+         <parameter name="topic-manager-replica-group"/>
+         <icebox id="${instance-name}${node-id}" activation="on-demand" exe="icebox">
+            <service-instance template="IceStorm-HA" instance-name="${instance-name}" node-id="${node-id}" topic-manager-endpoints="${topic-manager-endpoints}" publish-endpoints="${publish-endpoints}" node-endpoints="${node-endpoints}" flush-timeout="${flush-timeout}" publish-replica-group="${publish-replica-group}" topic-manager-replica-group="${topic-manager-replica-group}"/>
+         </icebox>
+      </server-template>
+      <server-template id="JavaServer">
+         <parameter name="name"/>
+         <parameter name="main-class"/>
+         <parameter name="classpath" default=""/>
+         <parameter name="type"/>
+         <server id="${name}" activation="on-demand" exe="java">
+            <option>${main-class}</option>
+            <env>CLASSPATH=$ICE_HOME/lib/Ice.jar:${classpath}</env>
+            <properties>
+               <properties refid="Echoes.Properties"/>
+            </properties>
+            <adapter name="Adapter" endpoints="default" id="${server}.Adapter" register-process="true">
+               <object identity="${name}" type="${type}" property="Identity"/>
+            </adapter>
+         </server>
+      </server-template>
+      <properties id="Echoes.Properties">
+         <property name="IceGrid.InstanceName" value="Echoes.IceGrid"/>
+         <property name="IceStorm.InstanceName" value="Echoes.IceStorm"/>
+      </properties>
+      <node name="node1">
+         <server-instance template="JavaServer" name="ActionEngine" main-class="uk.ac.ed.echoes.ActionEngineApp" classpath="bin/action-engine.jar:bin/Language.jar" type="::echoes::ActionEngine"/>
+         <server-instance template="JavaServer" name="ChildModel" main-class="uk.ac.hw.echoes.child_model.ChildModelApp" classpath="bin/child-model.jar:bin/weka.jar:bin/libsvm.jar" type="::echoes::ChildModel"/>
+         <server-instance template="JavaServer" name="ControlPanel" main-class="uk.ac.hw.echoes.control_panel.ControlPanelApp" classpath="bin/control-panel.jar" type="::echoes::ControlPanel"/>
+         <server-instance template="JavaServer" name="DramaManager" main-class="echoes.drama_manager.DramaManagerApp" classpath="bin/drama-manager.jar" type="::echoes::DramaManager"/>
+         <server-instance template="IceStorm"/>
+         <server-instance template="JavaServer" name="PedagogicComponent" main-class="echoes.pedagogic_component.PedagogicComponentApp" classpath="bin/pedagogic-component.jar" type="::echoes::PedagogicComponent"/>
+         <server id="RenderingEngine" activation="always" exe="python" pwd="bin/rendering-engine">
+            <option>RenderingEngineIceApp.py</option>
+            <env>PYTHONPATH=$ICE_HOME/python</env>
+            <properties>
+               <properties refid="Echoes.Properties"/>
+               <property name="RenderingEngine.UserList" value="Lucy Amy Charlotte Robin"/>
+               <property name="RenderingEngine.AspectFourByThree" value="False"/>
+               <property name="RenderingEngine.Sound" value="True"/>
+               <property name="RenderingEngine.PADevice" value=""/>
+            </properties>
+            <adapter name="Adapter" endpoints="default" id="${server}.Adapter" server-lifetime="false">
+               <object identity="RenderingEngine" type="::echoes::RenderingEngine" property="Identity"/>
+            </adapter>
+         </server>
+         <server id="PDCritique" activation="on-demand" exe="python" pwd="bin/rendering-engine">
+            <option>PDCritiqueIceApp.py</option>
+            <env>PYTHONPATH=$ICE_HOME/python</env>
+            <properties>
+               <properties refid="Echoes.Properties"/>
+            </properties>
+            <adapter name="Adapter" endpoints="default" id="${server}.Adapter" server-lifetime="false">
+               <object identity="PDCritique" type="::echoes::PDCritique" property="Identity"/>
+            </adapter>
+         </server>
+         <server-instance template="JavaServer" name="StateManager" main-class="uk.ac.ed.echoes.state_manager.StateManagerApp" classpath="bin/state-manager.jar" type="::echoes::StateManager"/>
+         <server id="TouchServer" activation="on-demand" exe="bin/touch-server.exe">
+            <env>PATH=%PQ_HOME%\PQClient\dll;%PATH%</env>
+            <properties>
+               <properties refid="Echoes.Properties"/>
+            </properties>
+            <adapter name="Adapter" endpoints="default" id="${server}.Adapter">
+               <object identity="TouchServer" type="::echoes::TouchServer" property="Identity"/>
+            </adapter>
+         </server>
+      </node>
+   </application>
+</icegrid>
