@@ -152,7 +152,7 @@ public class EchoesAvatar extends EchoesAgent
     	rp = this.avatar.getRootPosition() * this.scale;
         if (adjustY)
         {
-        	if (not this.floorheight)
+        	if (! this.floorheight)
             {
             	this.floorheight = (this.avatar.getJointBasePosition(this.jointIdByName["Bip01 L Foot"], Piavca.WORLD_COORD) * this.scale)[1]
             }
@@ -269,45 +269,74 @@ public class EchoesAvatar extends EchoesAgent
 //                         " angle " + str(math.degrees(turn+this.orientation.Zangle())))
         return at;
     }
-    public void isNear(id, distance = 1.7)
+    //isNear(int id, float distance = 1.7)
+    public boolean isNear(int id, float distance)
     {
     	try
     	{
     		o = this.app.canvas.objects[int(id)];
     	}
         catch () //***Which exception?
-            Logger.warning("No object " + str(id) + " to check whether agent is at the object")
-            return false
-        return this.getDistance(id) <= distance
+        {
+        	Logger.warning("No object " + str(id) + " to check whether agent is at the object");
+            return false;
+        }
+        return this.getDistance(id) <= distance;
     }
-    public void findMotionEndtime(motion, distance)
-        motion.setStartTime(0.0)
-        dt = time = motion.getMotionLength()
-        d = this.getPlaneMotionDistance(motion, 0, time)
-        if (d < distance
-            return 0
-        while (math.fabs(d-distance) > 0.1)
-            dt = dt/2
-            if (d > distance time -= dt 
-            else time += dt
-            d = this.getPlaneMotionDistance(motion, 0, time)
-        return time
     
-    public void getPlaneMotionDistance(motion, startTime, endTime)
-        vec = motion.getVecValueAtTime(0, endTime) - motion.getVecValueAtTime(0, startTime)
-        return math.hypot(vec.X(), vec.Y())*this.scale
-
-    public void turnTowardsDirect(x, z, relaxAfter = true, intermediate=false, action_id = -1)
-        turn = math.atan2(x-this.pos[0], z-this.pos[2])
-        orientation = Piavca.Quat(turn, Piavca.Vec.ZAxis())
-        this.orientation = orientation
-        if (relaxAfter
-            this.motionQueue.append(QueueItem(this.startstep)) 
-            this.motionQueue.append(QueueItem(this.relaxPosture, isFinal= not intermediate, action_id=action_id)) 
-
-    public void lookAtObject(targetId, speech=None, speed=1.0, hold=0.0, action_id = -1)
-        if (targetId in this.app.canvas.objects
+    public float findMotionEndtime(motion, distance)
+    {
+    	motion.setStartTime(0.0);
+        dt = time = motion.getMotionLength();
+        d = this.getPlaneMotionDistance(motion, 0, time);
+        if (d < distance)
+        {
+        	return 0;
+        }
+        while (Math.fabs(d-distance) > 0.1)
+        {
+        	dt = dt/2;
+            if (d > distance)
+            {
+            	time -= dt; 
+            }
+            else
+            {
+            	time += dt;
+            }
+            d = this.getPlaneMotionDistance(motion, 0, time);
+        }
+        return time;
+    }
+    public float getPlaneMotionDistance(motion, startTime, endTime)
+    {    
+    	vec = motion.getVecValueAtTime(0, endTime) - motion.getVecValueAtTime(0, startTime);
+        return Math.hypot(vec.X(), vec.Y())*this.scale;
+    }
+    //turnTowardsDirect(x, z, relaxAfter = true, intermediate=false, action_id = -1)
+    public void turnTowardsDirect(float x, float z, boolean relaxAfter, boolean intermediate, int action_id )
+    {
+    	turn = Math.atan2(x-this.pos[0], z-this.pos[2]);
+        orientation = Piavca.Quat(turn, Piavca.Vec.ZAxis());
+        this.orientation = orientation;
+        if (relaxAfter)
+        {    
+        	this.motionQueue.append(QueueItem(this.startstep)); 
+            this.motionQueue.append(QueueItem(this.relaxPosture, isFinal= not intermediate, action_id=action_id)); 
+        }
+    }
+    //lookAtObject(int targetId, Object speech=None, speed=1.0, hold=0.0, action_id = -1)
+    public boolean lookAtObject(int targetId, Object speech, float speed, float hold, int action_id)
+    {
+    	//if (targetId in this.app.canvas.objects
+      	/*
+      	 * will have to do it using a loop and a flag called targetIdinObjects
+      	 */
+    	boolean targetIdinObjects=false;
+    	
+    	if (targetId in this.app.canvas.objects)
             target = this.app.canvas.objects[targetId]
+            //*****jointIdByName is dictionary->convert to HashTable http://www.java-samples.com/showtutorial.php?tutorialid=375
             mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec())
             mh.setForwardDirection(Piavca.Vec.YAxis())
             mh.setLocal(true)
@@ -318,7 +347,7 @@ public class EchoesAvatar extends EchoesAgent
             qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id)
             qi.speech = speech
             qi.preCall = ("lookatTarget", (mh, target, action_id))
-            if (hold > 0.0
+            if (hold > 0.0)
                 qi.callback = ("hold_posture", [hold, qi])
             tqi = QueueItem(None, isFinal=false)
             tqi.preCall=("turn_towardsTarget", [tqi, target])
@@ -328,162 +357,248 @@ public class EchoesAvatar extends EchoesAgent
         else
             Logger.warning( "Avatar.lookAt no such object id in scene - " + str(targetId))
             return false
-        
-    public void lookAtChild(speech=None, speed=1.0, hold=0.0, action_id = -1)
-        target = "child"
-        mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec())
-        mh.setForwardDirection(Piavca.Vec.YAxis())
-        mh.setLocal(true)
-        mask = Piavca.MotionMask()
-        mask.setAllMask(false)
-        mask.setMask(this.jointIdByName['Bip01 Head'], true)
-        masked_mh = Piavca.MaskedMotion(mh, mask)
-        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id)
-        qi.preCall = ("lookatTarget", (mh, target, action_id))
-        if (hold > 0.0
-            qi.callback = ("hold_posture", [hold, qi])        
-        qi.speech = speech
-        tqi = QueueItem(None, isFinal=false)
-        tqi.preCall=("turn_towardsTarget", [tqi, target])
-        this.motionQueue.append(tqi)
-        this.motionQueue.append(qi)
-        return true
-
-    public void lookAtPoint(x, y, z, speech=None, speed=1.0, hold=0.0, action_id = -1, intermediate=false)
-        target = Piavca.Vec(x, y, z)
-        mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec())
-        mh.setForwardDirection(Piavca.Vec.YAxis())
-        mh.setLocal(true)
-        mask = Piavca.MotionMask()
-        mask.setAllMask(false)
-        mask.setMask(this.jointIdByName['Bip01 Head'], true)
-        masked_mh = Piavca.MaskedMotion(mh, mask)
-        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=not intermediate, action_id=action_id)
-        qi.preCall = ("lookatTarget", (mh, target, action_id))
-        if (hold > 0.0
-            qi.callback = ("hold_posture", [hold, qi])        
-        qi.speech = speech        
-        tqi = QueueItem(None, isFinal=false)
-        tqi.preCall=("turn_towardsTarget", [tqi, target])
-        this.motionQueue.append(tqi)
-        this.motionQueue.append(qi)
-        return true
-        
-    public void turnToChild(action_id = -1)
-        qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", ["child", action_id])) # the motion is set up just before he actually needs to walk
-        qi.action_id = action_id
-        this.motionQueue.append(qi) 
-        return true 
-
-    public void turnTo(targetId, action_id = -1)
-        target = None
-        if (targetId in this.app.canvas.objects
-            target = this.app.canvas.objects[targetId]
+    }
+    //lookAtChild(speech=None, speed=1.0, hold=0.0, action_id = -1)
+    public void lookAtChild(Object speech, float speed, float hold, int action_id)
+    {
+    	String target = "child";
+        mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec());//*****dictionary here also
+        mh.setForwardDirection(Piavca.Vec.YAxis());
+        mh.setLocal(true);
+        mask = Piavca.MotionMask();
+        mask.setAllMask(false);
+        mask.setMask(this.jointIdByName['Bip01 Head'], true);
+        masked_mh = Piavca.MaskedMotion(mh, mask);
+        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id);
+        qi.preCall = ("lookatTarget", (mh, target, action_id));
+        if (hold > 0.0)
+        {
+        	qi.callback = ("hold_posture", [hold, qi]);        
+        }
+        qi.speech = speech;
+        tqi = QueueItem(None, isFinal=false);
+        tqi.preCall=("turn_towardsTarget", [tqi, target]);
+        this.motionQueue.append(tqi);//****do something about append in queue
+        this.motionQueue.append(qi);
+        return true;
+    }
+    //lookAtPoint(x, y, z, speech=None, speed=1.0, hold=0.0, action_id = -1, intermediate=false)
+    public boolean lookAtPoint(float x, float y, float z, Object speech, float speed, float hold, int action_id, boolean intermediate)
+    {
+    	target = Piavca.Vec(x, y, z);
+        mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec());//****dictionary here also
+        mh.setForwardDirection(Piavca.Vec.YAxis());
+        mh.setLocal(true);
+        mask = Piavca.MotionMask();
+        mask.setAllMask(false);
+        mask.setMask(this.jointIdByName['Bip01 Head'], true);//*****dictionary
+        masked_mh = Piavca.MaskedMotion(mh, mask);
+        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=not intermediate, action_id=action_id);
+        qi.preCall = ("lookatTarget", (mh, target, action_id));
+        if (hold > 0.0)
+        {
+        	qi.callback = ("hold_posture", [hold, qi]);        
+        }
+        qi.speech = speech;        
+        tqi = QueueItem(None, isFinal=false);
+        tqi.preCall=("turn_towardsTarget", [tqi, target]);
+        this.motionQueue.append(tqi);
+        this.motionQueue.append(qi);
+        return true;
+    }
+    //turnToChild(action_id = -1)
+    public boolean turnToChild(int action_id)
+    {
+    	//*******preCall has a tuple and a list...what to do?
+    	qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", ["child", action_id])); // the motion is set up just before he actually needs to walk
+        qi.action_id = action_id;
+        this.motionQueue.append(qi);//do something about append 
+        return true; 
+    }
+    //turnTo(targetId, action_id = -1)
+    public boolean turnTo(int targetId, int action_id)
+    {    
+    	//target = None
+        Object target;//****Don't know for sure if this will solve it
+    	if (targetId in this.app.canvas.objects)//****put a loop again for this?
+    	{
+    		target = this.app.canvas.objects[targetId];
+    	}
         else
-            Logger.warning( "TurnTo no such object id in scene - " + str(targetId))
-            return false
-        qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", [target, action_id])) # the motion is set up just before he actually needs to walk
-        qi.action_id = action_id
-        this.motionQueue.append(qi) 
-        return true 
-    
-    public void turnToPoint(x, z, action_id = -1)
-        qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", [x,z, action_id])) # the motion is set up just before he actually needs to walk
-        qi.action_id = action_id
-        this.motionQueue.append(qi) 
-        return true 
-
-    public void popBubble(targetId, action_id = 1)
-        return this.pointAt(targetId, action_id=action_id, postAction="popBubble")
-
-    public void pointAt(targetId, hand="right", action_id = -1, speed=1.0, hold=0.0, postAction=None)
-        if (targetId in this.app.canvas.objects
-            target = this.app.canvas.objects[targetId]
+        {
+        	Logger.warning( "TurnTo no such object id in scene - " + str(targetId));
+            return false;
+        }
+        //****again preCall has a tuple and list
+    	qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", [target, action_id])) // the motion is set up just before he actually needs to walk
+        qi.action_id = action_id;
+        this.motionQueue.append(qi); 
+        return true ;
+    }
+    //turnToPoint(x, z, action_id = -1)
+    public boolean turnToPoint(float x, float z, int action_id)
+    {
+    	//****preCall problem
+    	qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", [x,z, action_id])) # the motion is set up just before he actually needs to walk
+        qi.action_id = action_id;
+        //*****something about the append
+    	this.motionQueue.append(qi); 
+        return true ;
+    }
+    //popBubble(targetId, action_id = 1)
+    public void popBubble(int targetId, int action_id)//****change the return type
+    {
+    	return this.pointAt(targetId, action_id=action_id, postAction="popBubble");
+    }
+    //pointAt(targetId, hand="right", action_id = -1, speed=1.0, hold=0.0, postAction=None)
+    public void pointAt(int targetId, String hand, int action_id, float speed, float hold, Object postAction)
+    {
+    	if (targetId in this.app.canvas.objects //*******the In problem
+    	{
+    		target = this.app.canvas.objects[targetId];
+    	}
         else
-            Logger.warning( "pointAt no such object id in scene - " + str(targetId))
-            return false
-        if (hand=="right"
-            jid = this.jointIdByName['Bip01 R UpperArm']
+        {
+        	Logger.warning( "pointAt no such object id in scene - " + str(targetId));
+            return false;
+        }
+        if (hand=="right")
+        {
+        	jid = this.jointIdByName['Bip01 R UpperArm'];//****the dictionary problem
+        }
         else
-            jid = this.jointIdByName['Bip01 L UpperArm']
-        mh = Piavca.PointAt(jid, Piavca.Vec(0,0,0))
-        mh.setForwardDirection(Piavca.Vec.XAxis())
-        mh.setLocal(false)
-        mask = Piavca.MotionMask()
-        mask.setAllMask(false)
-        mask.setMask(jid, true)
-        masked_mh = Piavca.MaskedMotion(mh, mask)        
-        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id)
-        qi.preCall = ("pointatTarget", (mh, target, action_id))
-        if (postAction
-            qi.callback = (postAction, [target, action_id])
-        else if (hold > 0.0
-            qi.callback = ("hold_posture", [hold, qi])
-        tqi = QueueItem(None, isFinal=false)
-        tqi.preCall=("turn_towardsTarget", [tqi, target])
-        this.motionQueue.append(tqi)
-        this.motionQueue.append(qi)
-        return true
-        
-    public void pointAtPoint(x, y, z, hand="right", speed=1.0, hold=0.0, action_id = -1)          
-        if (hand=="right"
-            jid = this.jointIdByName['Bip01 R UpperArm']
+        {
+        	jid = this.jointIdByName['Bip01 L UpperArm']; //****dictionary prob
+        }
+        mh = Piavca.PointAt(jid, Piavca.Vec(0,0,0));
+        mh.setForwardDirection(Piavca.Vec.XAxis());
+        mh.setLocal(false);
+        mask = Piavca.MotionMask();
+        mask.setAllMask(false);
+        mask.setMask(jid, true);
+        masked_mh = Piavca.MaskedMotion(mh, mask);     
+        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id);
+        //****preCall has a list of I guess different objects
+        qi.preCall = ("pointatTarget", (mh, target, action_id));
+        if (postAction)
+        {
+        	//****has a list
+        	qi.callback = (postAction, [target, action_id]);
+        }
+        else if (hold > 0.0)
+        {
+        	//****has a list
+         	qi.callback = ("hold_posture", [hold, qi]);
+        }
+        tqi = QueueItem(None, isFinal=false);
+        //******the preCall problem
+        tqi.preCall=("turn_towardsTarget", [tqi, target]);
+        this.motionQueue.append(tqi);//*****append problem
+        this.motionQueue.append(qi);
+        return true;
+    }
+    //pointAtPoint(x, y, z, hand="right", speed=1.0, hold=0.0, action_id = -1)
+    public void pointAtPoint(float x, float y, float z, String hand, float speed, float hold, int action_id)          
+    {
+    	if (hand=="right")
+    	{
+    		jid = this.jointIdByName['Bip01 R UpperArm'];//****dictionary problem
+    	}
         else
-            jid = this.jointIdByName['Bip01 L UpperArm']
-        target = Piavca.Vec(x, y, z)
-        mh = Piavca.PointAt(jid, target)
-        mh.setForwardDirection(Piavca.Vec.XAxis())
-        mh.setLocal(false)
-        mask = Piavca.MotionMask()
-        mask.setAllMask(false)
-        mask.setMask(jid, true)
-        masked_mh = Piavca.MaskedMotion(mh, mask)                
-        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id)
-        qi.preCall = ("pointatTarget", (mh, target))
-        if (hold > 0.0
-            qi.callback = ("hold_posture", [hold, qi])
-        tqi = QueueItem(None, isFinal=false)
-        tqi.preCall=("turn_towardsTarget", [tqi, target])
-        this.motionQueue.append(tqi)
-        this.motionQueue.append(qi)
-        return true
-        
-    public void resetPosture(action_id = -1)
-        this.motionQueue.append(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id))
-        return true
-            
-    public void gestureAnim(name, relaxAfter=true, orientation=None, speech=None, speed=1.0, hold=0.0, action_id = -1)
-        if (orientation
-            preCall = ("turnTo", orientation)
+        {
+        	jid = this.jointIdByName['Bip01 L UpperArm'];//*****dictionary prob
+        }
+        target = Piavca.Vec(x, y, z);
+        mh = Piavca.PointAt(jid, target);
+        mh.setForwardDirection(Piavca.Vec.XAxis());
+        mh.setLocal(false);
+        mask = Piavca.MotionMask();
+        mask.setAllMask(false);
+        mask.setMask(jid, true);
+        masked_mh = Piavca.MaskedMotion(mh, mask);                
+        qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id);
+        //*****preCall problem
+        qi.preCall = ("pointatTarget", (mh, target));
+        if (hold > 0.0)
+        {
+        	//***callback problem
+        	qi.callback = ("hold_posture", [hold, qi]);
+        }
+        tqi = QueueItem(None, isFinal=false);
+        //***********preCall prob
+        tqi.preCall=("turn_towardsTarget", [tqi, target]);
+        //*****append problem
+        this.motionQueue.append(tqi);
+        this.motionQueue.append(qi);
+        return true;
+    }
+    //resetPosture(action_id = -1)
+    public boolean resetPosture(int action_id)
+    {
+    	this.motionQueue.append(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id));
+        return true;
+    }
+    //gestureAnim(name, relaxAfter=true, orientation=None, speech=None, speed=1.0, hold=0.0, action_id = -1)
+    //********datatype of name
+    public boolean gestureAnim(name, boolean relaxAfter, Object orientation, Object speech, float speed, float hold, int action_id)
+    {
+    	if (orientation)
+    	{
+    		//******preCall is a tuple
+    		preCall = ("turnTo", orientation);
+    	}
         else 
-            preCall = None
-        m = QueueItem(Piavca.ScaleMotionSpeed(Piavca.getMotion(name), speed), preCall=preCall)
-        m.speech = speech        
-        if (hold > 0.0 m.callback = ("hold_posture", [hold, m])
-        if (relaxAfter
-            this.motionQueue.append(m)
-            this.motionQueue.append(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id))
+        {
+        	preCall = None;//****
+        }
+        m = QueueItem(Piavca.ScaleMotionSpeed(Piavca.getMotion(name), speed), preCall=preCall);
+        m.speech = speech;        
+        if (hold > 0.0)
+        {
+        	//********callback problem-has a list
+        	m.callback = ("hold_posture", [hold, m]);
+        }
+        if (relaxAfter)
+        {
+        	this.motionQueue.append(m);
+            this.motionQueue.append(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id));
+        }
         else
-            m.isFinal = true
-            m.action_id = action_id
-            this.motionQueue.append(m)
-        return true
-            
-    public void gesture(type, relaxAfter=true, orientation=None, speech=None, speed=1.0, hold=0.0, action_id = -1)
-        if (orientation
-            preCall = ("turnTo", orientation)
+        {    
+        	m.isFinal = true;
+            m.action_id = action_id;
+            this.motionQueue.append(m);
+        }
+        return true;
+    }
+    //gesture(type, relaxAfter=true, orientation=None, speech=None, speed=1.0, hold=0.0, action_id = -1)
+    //****datatype of type?
+    public void gesture(type, boolean relaxAfter, Object orientation, Object speech, float speed, float hold, int action_id)
+    {
+    	if (orientation)
+    	{
+    		//****preCall problem
+    		preCall = ("turnTo", orientation);
+    	}
         else 
-            preCall = None
-        if (type=="all" # going through all the joints, for debugging purposes only
-            jid = this.avatar.begin()
+        {
+        	preCall = None;//****None?
+        }
+        if (type=="all") // going through all the joints, for debugging purposes only
+        {    
+        	jid = this.avatar.begin();
             while (jid!=this.avatar.end())
-                original = dict()
-                original[jid] = this.avatar.getJointOrientation(jid)
+            {
+            	original = dict();//*****dictionary problem
+                //****original is a dictionary
+            	original[jid] = this.avatar.getJointOrientation(jid)
                 animationTargets = dict()
                 animationTargets[jid] = original[jid] * Piavca.Quat(-math.pi/2, Piavca.Vec.XAxis())
                 this.animationQueue.append(QueueItem(animationTargets, preCall=preCall))
                 this.animationQueue.append(QueueItem(original, isFinal=true, action_id=action_id))
                 jid = this.avatar.next(jid)
+            }
+        }
         else
             return this.gestureAnim(type, relaxAfter, orientation, speech, speed, hold, action_id)
         return true
@@ -1159,9 +1274,11 @@ public class EchoesAvatar extends EchoesAgent
                 this.app.canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible))
     
     public void remove()
-        # Piavca.Core.getCore().removeAvatar(this.avatar)
-        super(EchoesAvatar, ).remove()
-        
+    {
+        // Piavca.Core.getCore().removeAvatar(this.avatar)
+        super(EchoesAvatar, ).remove();
+    }
+}
 public class QueueItem()
     
     public void __init__ (item, isFinal=false, callback=None, preCall=None, playDirect=false, timer=None, speech=None, action_id = -1)
