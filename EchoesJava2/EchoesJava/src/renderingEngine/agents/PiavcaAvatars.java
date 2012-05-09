@@ -1,4 +1,8 @@
+//Translation from Py May 9th
+
 package renderingEngine.agents;
+
+import java.util.Map;
 
 public class Bill extends EchoesAgent
 {
@@ -17,15 +21,13 @@ public class Bill extends EchoesAgent
     }
 }
 
-public class EchoesAvatar(EchoesAgent)
-    
-    public classdocs
-    
-    public void __init__(avatar="agents/Paul/Paul", autoAdd=true, props={"type" "Paul"}, scale=0.0275, callback=None)
-        
-        
-        
-        super(EchoesAvatar, ).__init__(app, autoAdd, props)
+public class EchoesAvatar extends EchoesAgent
+{    
+    //public classdocs
+    //EchoesAvatar(avatar="agents/Paul/Paul", autoAdd=true, props={"type" "Paul"}, scale=0.0275, callback=None
+    public void EchoesAvatar(String avatar, boolean autoAdd=true, Map<String, String> properties ,float scale, Object callback)
+    {    
+        super(autoAdd, properties)
         
         this.collisionTest = true
         this.showBoundary = false
@@ -42,18 +44,19 @@ public class EchoesAvatar(EchoesAgent)
         this.jointBaseOrientations = dict()
         this.jointIdByName = dict()
         jid = this.avatar.begin()
-        while jid != this.avatar.end()
-            this.jointBaseOrientations[jid] = this.avatar.getJointOrientation(jid)
-            this.jointIdByName[this.avatar.getJointName(jid)] = jid
-            jid = this.avatar.next(jid)
-
-        # those have to be listed in the avatars cfg file in this order
-        expressionNames = ["Happy", "Sad", "Laugh", "OpenMouth", "ClosedEyes", "Blink", "Grin", "Aggressive"]
+        while( jid != this.avatar.end())
+        {
+        	this.jointBaseOrientations[jid] = this.avatar.getJointOrientation(jid);
+            this.jointIdByName[this.avatar.getJointName(jid)] = jid;
+            jid = this.avatar.next(jid);
+        }
+        // those have to be listed in the avatars cfg file in this order
+        String [] expressionNames = {"Happy", "Sad", "Laugh", "OpenMouth", "ClosedEyes", "Blink", "Grin", "Aggressive"};
         this.facialExpressions = dict()
         this.expressionTargets = dict()  
         i = 0
         fid = this.avatar.beginExpression()
-        # there is a bug in nextExpression that never produces the last number...
+        // there is a bug in nextExpression that never produces the last number...
         while fid != this.avatar.endExpression() and fid != 10000 and i < 15
             try
                 name = expressionNames[i]
@@ -64,7 +67,7 @@ public class EchoesAvatar(EchoesAgent)
             fid = this.avatar.nextExpression(fid)
             i += 1
              
-        # Current value motion to receive updates on facial expressions
+        // Current value motion to receive updates on facial expressions
         this.facialExpMotion = Piavca.CurrentValueMotion()
 
         this.playing = false # pre-recorded motions playing
@@ -72,14 +75,14 @@ public class EchoesAvatar(EchoesAgent)
         this.speaking = false # using speech
         this.blinkingTimer = None # blinking
         
-        # callback to determine end of motions and manually animate joint movements
+        // callback to determine end of motions and manually animate joint movements
         this.tcb = PiavcaTimeCallback(str(id()), )
         this.avatar.registerCallback (this.tcb)
         
-        # stores joints and target orientations for manual animation
+        // stores joints and target orientations for manual animation
         this.animationTargets = dict()  
 
-        # queues for smoothly stacking up motions, animations and speech
+        // queues for smoothly stacking up motions, animations and speech
         this.motionQueue = deque ()
         this.animationQueue = deque ()
         this.speechQueue = deque ()
@@ -103,124 +106,180 @@ public class EchoesAvatar(EchoesAgent)
         this.blinking(true)
 
         this.app.canvas.rlPublisher.agentAdded(str(this.id), dict())
-        if (callback
-            callback.ice_response(str(this.id))
+        //******************this is using ice :O
+        if (callback)
+        {
+        	callback.ice_response(str(this.id));
+        }
             
-        this.app.canvas.renderPiavca = true
-
-    public void __setattr__(item, value)
-        object.__setattr__(item, value)
-        if (item == "scale"
-            this.avatar.setScale(value)
-        if (item == "pos"
-            this.repositioner.setStartPosition(Piavca.Vec(value[0]/this.scale,value[1]/this.scale,(value[2]-this.zOffset)/this.scale))
-        if (item == "orientation" and hasattr("forwardOrientation")
-            this.repositioner.setStartOrientation(this.forwardOrientation * value)
-        
+        this.app.canvas.renderPiavca = true;
+    }
+    //public void __setattr__(item, value)
+    public void setAttr(String item, String value)
+    {
+        object.__setattr__(item, value); //********object?
+        if (item == "scale")
+        {
+        		this.avatar.setScale(value);
+        }
+        if (item == "pos")
+        {
+        		this.repositioner.setStartPosition(Piavca.Vec(value[0]/this.scale,value[1]/this.scale,(value[2]-this.zOffset)/this.scale));
+        }
+        if (item == "orientation" and hasattr("forwardOrientation"))
+        {
+        	this.repositioner.setStartOrientation(this.forwardOrientation * value);
+        }
+    }    
+    //playSmoothAtPos(motion, t1=1, t2=0, window=1)
     public void playSmoothAtPos(motion, t1=1, t2=0, window=1)
-        this.repositioner.setMotion(Piavca.OverrideMotion(this.facialExpMotion, motion))
-        posture = Piavca.AvatarPosture() 
-        posture.getPostureFromAvatar(this.avatar)
-        m = Piavca.MotionTransition(posture, this.repositioner, t1, t2, window)
-        this.avatar.playMotionDirect(m)
-        this.playing = true
-
+    {
+    	this.repositioner.setMotion(Piavca.OverrideMotion(this.facialExpMotion, motion));
+        posture = Piavca.AvatarPosture() ;
+        posture.getPostureFromAvatar(this.avatar);
+        m = Piavca.MotionTransition(posture, this.repositioner, t1, t2, window);
+        this.avatar.playMotionDirect(m);
+        this.playing = true;
+    } 
     public void playDirectAtPos(motion)
-        this.repositioner.setMotion(Piavca.OverrideMotion(this.facialExpMotion, motion))
-        this.avatar.playMotionDirect(this.repositioner)
-        this.playing = true
-            
+    {
+    	this.repositioner.setMotion(Piavca.OverrideMotion(this.facialExpMotion, motion));
+        this.avatar.playMotionDirect(this.repositioner);
+        this.playing = true;
+    }       
     public void updatePos(adjustY=true)
-        rp = this.avatar.getRootPosition() * this.scale
-        if (adjustY
-            if (not this.floorheight
-                this.floorheight = (this.avatar.getJointBasePosition(this.jointIdByName["Bip01 L Foot"], Piavca.WORLD_COORD) * this.scale)[1]
+    {
+    	rp = this.avatar.getRootPosition() * this.scale;
+        if (adjustY)
+        {
+        	if (not this.floorheight)
+            {
+            	this.floorheight = (this.avatar.getJointBasePosition(this.jointIdByName["Bip01 L Foot"], Piavca.WORLD_COORD) * this.scale)[1]
+            }
             currentFootHeight = (this.avatar.getJointBasePosition(this.jointIdByName["Bip01 L Foot"], Piavca.WORLD_COORD) * this.scale)[1]
             dy = this.floorheight - currentFootHeight
-    #        print this.floorheight, currentFootHeight, "adjusting by", dy
+    //        print this.floorheight, currentFootHeight, "adjusting by", dy
             this.pos = [rp.X(), rp.Y() + dy, rp.Z() + this.zOffset] # make the avatar re-adjust its y position at the next motion
+        }
         else 
-            this.pos = [rp.X(), rp.Y(), rp.Z() + this.zOffset]
-        this.orientation = this.forwardOrientation.inverse() * this.avatar.getRootOrientation()
-
+        {
+        	this.pos = [rp.X(), rp.Y(), rp.Z() + this.zOffset];
+        }
+        this.orientation = this.forwardOrientation.inverse() * this.avatar.getRootOrientation();
+    }
     public void startPostion()
-        this.orientation = Piavca.Quat(0, Piavca.Vec.ZAxis())
-        this.setPosition((-6,-0.5,-5))
-        
+    {
+    	this.orientation = Piavca.Quat(0, Piavca.Vec.ZAxis());
+        this.setPosition((-6,-0.5,-5));
+    }    
     public void setPosition(pos, action_id = -1)
-        if (len(pos) < 3 # assuming that it is xz, if (y is not given (avatar remains at original height)
-            pos = (pos[0], this.pos[1], pos[1])
-        qi = QueueItem(this.relaxPosture, isFinal=true, action_id=action_id)
-        qi.preCall = ("setPosition", pos)
-        qi.playDirect = true
-        this.motionQueue.append(qi)
-        
-    public void setDepthLayer(layer="front", action_id = -1)
-        pass
+    {
+    	if (len(pos) < 3) // assuming that it is xz, if (y is not given (avatar remains at original height)
+        {
+        	pos = (pos[0], this.pos[1], pos[1])
+        }
+        qi = QueueItem(this.relaxPosture, isFinal=true, action_id=action_id);
+        qi.preCall = ("setPosition", pos);
+        qi.playDirect = true;
+        this.motionQueue.append(qi);
+    }    
+    //setDepthLayer(String layer="front", int action_id = -1)
+    public void setDepthLayer(String layer, int action_id)
+    {
+    	//pass
+    }
                 
     public void isMoving()
-        m = this.repositioner.getMotion()
-        return not m.finished()
-
+    {
+    	m = this.repositioner.getMotion()
+        return !m.finished()
+    }
+    
     public void walkTo(x, z, turnTo=None, action_id = -1)
-        r = this.relaxPosture
-        wi = QueueItem(None) # the motion is set up just before he actually needs to walk
-        if (turnTo
-            wi.callback = ("turnTo", turnTo)
+    {
+    	r = this.relaxPosture;
+        wi = QueueItem(None); // the motion is set up just before he actually needs to walk
+        if (turnTo)
+        {
+        	wi.callback = ("turnTo", turnTo);
+        }
         wi.preCall = ("walkTo", [x,z,wi,r,action_id])
         this.motionQueue.append(wi) 
         this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id))
         return true 
-            
+    }  
     public void walkToObject(id, distance = 1.5, action_id = -1)
-        try
-            o = this.app.canvas.objects[int(id)]
-        except
+    {
+    	try
+    	{
+    		o = this.app.canvas.objects[int(id)];
+    	}
+        catch ()//****which exception?
+        {
             Logger.warning("Avatar no valid object to go to")
             return false
-        if (this.isAt(id, distance) 
-            # make sure actionCompleted is called shortly after this albeit not moving
-            a = ActionTimer(0.2, action_id) 
-            a.start()
-            return true
-        r = this.relaxPosture
-        wi = QueueItem(None) # the motion is set up just before he actually needs to walk
+        }
+        if (this.isAt(id, distance)) 
+        {    // make sure actionCompleted is called shortly after this albeit not moving
+            a = ActionTimer(0.2, action_id); 
+            a.start();
+            return true;
+        }
+        r = this.relaxPosture;
+        wi = QueueItem(None); // the motion is set up just before he actually needs to walk
         wi.preCall = ("walkTo", [o,distance,wi,r,action_id])
-        this.motionQueue.append(wi) 
+        /*
+         * Here motionQueue is a list and so append will work...but how to do it in Java? 
+         */
+        this.motionQueue.append(wi);//***********How to handle queues? 
         this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id))
-        return true 
-        
-    public void getDistance(id)
-        try
-            o = this.app.canvas.objects[int(id)]
-        except
-            Logger.warning("No object " + str(id) + " for distance computation")
-            return 1000
-        d = math.hypot(this.pos[0]-o.pos[0], this.pos[2]-o.pos[2])
-        return abs(d)
-    
-    public void isAt(id, distance = 1.5)
-        try
-            o = this.app.canvas.objects[int(id)]
-        except
-            Logger.warning("No object " + str(id) + " to check whether agent is at the object")
-            return false
-        turn = math.atan2(o.pos[0]-this.pos[0], o.pos[2]-this.pos[2])
-        at = this.getDistance(id) <= distance + 0.3 and this.getDistance(id) >= distance - 0.3 and abs(turn+this.orientation.Zangle()) < 0.2
-#        if (not at
-#            Logger.trace("info", "Agent not at object " + str(id) + 
-#                         " distance " + str(this.getDistance(id)) + 
-#                         " angle " + str(math.degrees(turn+this.orientation.Zangle())))
-        return at
-
+        return true; 
+    }
+    public double getDistance(int id)
+    {
+    	try
+    	{
+    		o = this.app.canvas.objects[int(id)];
+    	}
+        catch () //****which exception?
+        {
+        	Logger.warning("No object " + str(id) + " for distance computation");
+            return 1000;
+        }
+        d = Math.hypot(this.pos[0]-o.pos[0], this.pos[2]-o.pos[2]);
+        return abs(d);
+    }
+    //isAt(id, distance = 1.5)
+    public boolean isAt(int id, float distance)
+    {
+    	try
+    	{
+    		o = this.app.canvas.objects[int(id)];
+    	}
+        catch() //***Which exception?
+        {   
+        	Logger.warning("No object " + str(id) + " to check whether agent is at the object");
+            return false;
+        }
+        turn = Math.atan2(o.pos[0]-this.pos[0], o.pos[2]-this.pos[2]);
+        at = this.getDistance(id) <= distance + 0.3 && this.getDistance(id) >= distance - 0.3 && abs(turn+this.orientation.Zangle()) < 0.2;
+//        if (not at
+//            Logger.trace("info", "Agent not at object " + str(id) + 
+//                         " distance " + str(this.getDistance(id)) + 
+//                         " angle " + str(math.degrees(turn+this.orientation.Zangle())))
+        return at;
+    }
     public void isNear(id, distance = 1.7)
-        try
-            o = this.app.canvas.objects[int(id)]
-        except
+    {
+    	try
+    	{
+    		o = this.app.canvas.objects[int(id)];
+    	}
+        catch () //***Which exception?
             Logger.warning("No object " + str(id) + " to check whether agent is at the object")
             return false
         return this.getDistance(id) <= distance
-
+    }
     public void findMotionEndtime(motion, distance)
         motion.setStartTime(0.0)
         dt = time = motion.getMotionLength()
