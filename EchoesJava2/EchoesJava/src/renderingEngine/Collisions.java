@@ -11,7 +11,7 @@ import utils.Logger;
 public class Collisions
 {
 
-  public ststic void objectCollision(o1, o2, app)
+  public static void objectCollision(o1, o2, app)
   { 
     if (not (hasattr(o1,"id") and hasattr(o2,"id"))
         raise TypeError, "objectCollision not called with valid objects"

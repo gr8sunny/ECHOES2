@@ -1,9 +1,9 @@
 
-Created on 26 Aug 2009
+//Created on 26 Aug 2009
+//Translation from Py May 9th 2012
 
 
-
-
+/*
 from EchoesApp import *
 import objects.EchoesObject
 import objects.Plants
@@ -16,7 +16,7 @@ import Piavca, math, random
 import wx
 from OpenGL.GLUT import *
 from interface.RenderingEngineImpl import RenderingEngineImpl
-
+*/
 global avatar
 avatar = None
 
@@ -27,13 +27,19 @@ global iceCB
 iceCB = None
 
 public class FakeRLPublisher()
-    
+{    
     public void objectAdded(objId, props, current=None)
-        print "objectAdded", objId, props
+    {
+    		print "objectAdded", objId, props
+    }
     public void objectRemoved(objId, current=None)
-        print "objectRemoved", objId
+    {
+    	print "objectRemoved", objId
+    }
     public void objectPropertyChanged(objId, propName, propValue, current=None)
-        print "objectPropertyChanged", objId, propName, propValue
+    {
+    	print "objectPropertyChanged", objId, propName, propValue
+    }
     public void agentAdded(agentId, props, current=None)
         pass
     public void agentRemoved(agentId, current=None)

@@ -93,7 +93,7 @@ public class Cloud extends EchoesObject
         
         this.setImage()
         
-        if (sound.EchoesAudio.soundPresent
+        if (sound.EchoesAudio.soundPresent)
             this.rainSound = sound.EchoesAudio.playSound("rain.wav", true, 0.0)
         else
             this.rainSound = None
