@@ -3,7 +3,7 @@
 public class Stack
 {    
  //   public classdocs
-    public void Stack(app)
+    public Stack(app)
     {       
         this.app = app;        
         this.pots = [];
