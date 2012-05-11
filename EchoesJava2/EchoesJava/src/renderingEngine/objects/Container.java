@@ -14,7 +14,7 @@ public class Container
     //Container(autoAdd=true, props={"type" "Container"}, fadeIn = false, fadingFrames = 100, callback = None)
     public Container(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
-        super(app, autoAdd, props, fadeIn, fadingFrames, callback);
+        super(app, autoAdd, properties, fadeIn, fadingFrames, callback);
        
         this.pos[1] = this.app.canvas.getRegionCoords("ground")[1][1];   
         float [] temporaryIntArray = {0.735, 0.197, 0.286};
@@ -25,7 +25,7 @@ public class Container
         this.colours.put("blue", temporaryIntArray2);
         float [] temporaryIntArray3 = {0.439,0.633,0.245};
         this.colours.put("green", temporaryIntArray3);
-        this.balls = []
+        this.balls = [];//***array of what class?
     }
     
     public void setAttr(String item, String value)

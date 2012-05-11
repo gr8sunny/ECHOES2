@@ -18,7 +18,7 @@ public class Pond
 	public Pond(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
         //*****whats app?
-    	super(app, autoAdd, properties, fadeIn, fadingFrames, callback);
+    	super(autoAdd, properties, fadeIn, fadingFrames, callback);
     	int pointIndex = 1;
 		for (float deg = -180; deg < 1; deg+=10)
 		{
@@ -63,7 +63,7 @@ public class Pond
         //this.shape += [(-1+ 0.2*math.cos(math.radians(deg)), 1.2+0.2*math.sin(math.radians(deg))) for deg in xrange(90, 271, 10)]
         //this.shape += [(-1+ 0.5*math.cos(math.radians(deg)), 0.5+0.5*math.sin(math.radians(deg))) for deg in xrange(90, 271, 10)]
      }         
-    public void renderObj()
+    public void renderObj(GL2 gl)
     {  
         gl.glPushMatrix();
         gl.glDisable(GL2.GL_DEPTH_TEST);

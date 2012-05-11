@@ -1,7 +1,7 @@
 import java.util.Map;
 
         
-public class Sun
+public class Sun extends EchoesObject
 { 
  //   public classdocs
     //Sun(autoAdd=true, props={"type" "Sun"}, fadeIn = false, fadingFrames = 100, callback=None)
@@ -9,12 +9,12 @@ public class Sun
 	private double size=0.5;
 	private boolean objectCollisionTest = false;
 	private boolean agentCollisionTest = false;
-	private float shape = new float[40][2];
+	private float[][] shape = new float[40][2];
 	
     public Sun(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
         //********whats app?
-    	super(app, autoAdd, properties, fadeIn, fadingFrames, callback);
+    	super(autoAdd, properties, fadeIn, fadingFrames, callback);
     	int pointIndex = 1;
 		for (float deg = 0; deg < 370; deg+=10)
 		{
@@ -24,7 +24,7 @@ public class Sun
 		}
     }   
                
-    public void renderObj()
+    public void renderObj(GL2 gl)
     {   
         gl.glPushMatrix();
         gl.glDisable(GL2.GL_DEPTH_TEST);

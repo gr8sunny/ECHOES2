@@ -1,7 +1,7 @@
 import java.util.Map;
 
 
-public class Shed
+public class Shed extends EchoesObject
 {    
  //   public classdocs
     //Shed(autoAdd=true, props={"type" "Shed"}, fadeIn = false, fadingFrames = 100, callback=None)
@@ -10,12 +10,12 @@ public class Shed
     private double [] pos={-2,-0.5,-3};
     private double size=2.5;
 	private double [][]shape={{-0.5, -0.5}, {0.5, -0.5}, {0.5, 0.5}, {-0.5, 0.5}};
-	private double texshape = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+	private double[][] texshape = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
 	
 	public Shed(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
-        super(app, autoAdd, properties, fadeIn, fadingFrames, callback);
-        this.texture = this.setImage('visual/images/Shed.png');//*****whats setImage?
+        super(autoAdd, properties, fadeIn, fadingFrames, callback);
+        loadTexture("visual/images/Shed.png");//*****whats setImage?
     }
     public void setAttr(String item, String value)
     {
@@ -24,9 +24,9 @@ public class Shed
     		//pass
         }
                         
-        object.__setattr__(item, value)
+        setAttr(item, value);
     }       
-    public void renderObj()
+    public void renderObj(GL2 gl)
     {     
         //overwriting the render method to draw the flower
         gl.glPushMatrix();
