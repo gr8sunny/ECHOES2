@@ -1,5 +1,5 @@
 import java.util.Map;
-
+//all done
 
 public class Shed extends EchoesObject
 {    
@@ -42,8 +42,8 @@ public class Shed extends EchoesObject
         gl.glScalef(this.size, this.size, this.size);
         gl.glColor4f(1, 1, 1, this.transperancy);
         gl.glBegin(GL2.GL_QUADS);
-        ti = 0;
-        for v in this.shape
+        int ti = 0;
+        for(double[] v : this.shape)
         {
         	gl.glTexCoord2d(this.texshape[ti][0], this.texshape[ti][1]);
             gl.glVertex3f(v[0], v[1], this.pos[2]);

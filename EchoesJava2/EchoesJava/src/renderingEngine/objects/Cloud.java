@@ -35,12 +35,11 @@ public class Cloud extends EchoesObject
     private float curDirChangesPF = 0;   // change in directions per 20 frames when dragged
     private float avDirChangesPF = 0;
     private int fcounter = 0;
-    
-    this.hitBy = None; //Which class?
-    private int hitByFCounter = 0;
     private String [] b_colours = {"yellow", "blue", "green"};
     private float b_nextcolour = 0;
-    
+    this.hitBy = None; //Which class?
+    private int hitByFCounter = 0;
+      
     this.avatarTCB = null;//Which class?
     private boolean avatarRain = false;
     //props={"type" "Cloud"}
@@ -85,20 +84,19 @@ public class Cloud extends EchoesObject
         this.avDirChangesPF = 0;
         this.fcounter = 0;
         
-        this.hitBy = None
-        this.hitByFCounter = 0
-        this.b_colours = ["yellow", "blue", "green"]
-        this.b_nextcolour = 0
+        this.hitBy = null;
+        this.hitByFCounter = 0;
         
-        this.avatarTCB = None
-        this.avatarRain = false
         
-        this.setImage()
+        this.avatarTCB = null;
+        this.avatarRain = false;
+        
+        this.setImage();
         
         if (sound.EchoesAudio.soundPresent)
-            this.rainSound = sound.EchoesAudio.playSound("rain.wav", true, 0.0)
+            this.rainSound = sound.EchoesAudio.playSound("rain.wav", true, 0.0);
         else
-            this.rainSound = None
+            this.rainSound = null;
 	}
         
     //public void __setattr__(item, value)
@@ -112,7 +110,7 @@ public class Cloud extends EchoesObject
         if (item == "hitBy" && hasattr("hitBy"))
         {    if (value != this.hitBy && value != None)
              {   
-        		this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_hitby", str(value.id));
+        		canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_hitby", str(value.id));
                 this.hitByFCounter = 30;
                 if (value.thrownByAvatar==false)
                 {
@@ -122,7 +120,7 @@ public class Cloud extends EchoesObject
                 	 * Lets see if this works
                 	 */
                 	String valueParams[] = {str(this.id), str(value.id)};
-                	this.app.canvas.agentPublisher.agentActionCompleted("User", "cloud_ball", valueParams);  
+                	canvas.agentPublisher.agentActionCompleted("User", "cloud_ball", valueParams);  
                 }
              }
         }
@@ -185,7 +183,7 @@ public class Cloud extends EchoesObject
         gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, image);
         this.dropSize = (ix, iy);
     }           
-    public void renderObj()
+    public void renderObj(GL2 gl)
     {    
       	gl.glPushMatrix();
         gl.glDisable(GL2.GL_DEPTH_TEST);
@@ -200,7 +198,7 @@ public class Cloud extends EchoesObject
         {
         	if (! this.raining)
             {
-        		this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_rain", "true");
+        		canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_rain", "true");
                 this.raining = true;
                 if (this.rainSound)
                 {
@@ -209,7 +207,7 @@ public class Cloud extends EchoesObject
                 if (! this.avatarRain)
                 {
                 	//******Don't know what to do with this
-                	this.app.canvas.agentPublisher.agentActionStarted('User', 'cloud_rain', [str(this.id)]);
+                	canvas.agentPublisher.agentActionStarted("User", "cloud_rain", [str(this.id)]);
             	}      
              } 
             for(int i=0; i<20; i++)
@@ -243,7 +241,7 @@ public class Cloud extends EchoesObject
                         foundObject = true;
                         break;
                     }
-                    else if (isinstance(object, objects.Plants.EchoesFlower) and object.canGrow)
+                    else if (isinstance(object, objects.Plants.EchoesFlower) && object.canGrow)
                     {
                     	object.grow();
                         foundObject = true;
@@ -256,11 +254,11 @@ public class Cloud extends EchoesObject
             	flower = objects.Plants.EchoesFlower(this.app, true, fadeIn=true);
                 flower.size = 0.1;
                 flower.pos = [this.pos[0], this.app.canvas.getRegionCoords("ground")[1][1], this.pos[2]];
-                this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_flower", str(flower.id));
+                canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_flower", str(flower.id));
                 if (! this.avatarRain)
                 {
                 	bs = None;
-                    for id, object in this.app.canvas.sceneElements.items()
+                    for id, object in canvas.sceneElements.items()
                     {
                     	if (isinstance(object, environment.HelperElements.Score))
                     	{
@@ -270,9 +268,9 @@ public class Cloud extends EchoesObject
                     if (bs)
                     {
                     	bs.increment();
-                        if (this.app.canvas.publishScore)
+                        if (canvas.publishScore)
                         {
-                        	this.app.canvas.rlPublisher.worldPropertyChanged("FlowerScore", str(bs.score));
+                        	canvas.rlPublisher.worldPropertyChanged("FlowerScore", str(bs.score));
                         }
                     }
                 }
@@ -289,9 +287,9 @@ public class Cloud extends EchoesObject
                 }
                 if (! this.avatarRain)
                 {
-                	this.app.canvas.agentPublisher.agentActionCompleted("User", "cloud_rain", [str(this.id)]);
+                	canvas.agentPublisher.agentActionCompleted("User", "cloud_rain", [str(this.id)]);
                 }
-                this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_rain", "false");
+                canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_rain", "false");
                 this.raining = false;
                 this.avatarRain = false;
             }
@@ -309,7 +307,7 @@ public class Cloud extends EchoesObject
                
         if (this.colour != "white")
         {
-        	for i in range(3)
+        	for (int i = 0; i < 3;i++)
             {
         		this.cv[i] = min(1, this.cv[i]+0.005);
             }
@@ -319,12 +317,12 @@ public class Cloud extends EchoesObject
             }
          }
         // reset hits in 30 frames
-        if (this.hitBy and this.hitByFCounter > 0
+        if (this.hitBy && this.hitByFCounter > 0)
         {    
         	this.hitByFCounter -= 1;
             if (this.hitByFCounter <= 0)
             {
-            	this.hitBy = None;
+            	this.hitBy = null;
             }
         }
         gl.glTranslate(this.pos[0] + shakeX, this.pos[1], this.pos[2]);
@@ -332,7 +330,7 @@ public class Cloud extends EchoesObject
         gl.glColor4f(this.cv[0], this.cv[1], this.cv[2], this.transperancy);
         gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glVertex2f(0,0);
-        for v in this.shape
+        for( float[] v : this.shape)
         {
         	gl.glVertex3f(v[0], v[1], this.pos[2]);
         }
@@ -340,7 +338,7 @@ public class Cloud extends EchoesObject
         gl.glLineWidth(3.0);
         gl.glColor4f(0.385, 0.691, 1.0, this.transperancy);
         gl.glBegin(GL2.GL_LINE_STRIP);
-        for v in this.shape
+        for(float [] v : this.shape)
         {
         	gl.glVertex3f(v[0], v[1], this.pos[2]+0.1);
         }
@@ -387,7 +385,7 @@ public class Cloud extends EchoesObject
         gl.glPopMatrix();
     }
 
-    public void startDrag(pos)
+    public void startDrag(float [] pos)
     {    
     	if (this.interactive)
         {    
@@ -405,7 +403,7 @@ public class Cloud extends EchoesObject
     	}
     }
     
-    public void drag(newXY)
+    public void drag(float [] newXY)
     {    
     	if (this.interactive)
         {   // Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
@@ -448,7 +446,7 @@ public class Cloud extends EchoesObject
     }
     public void objectsUnderCloud()
     {
-    	for oid, object in this.app.canvas.objects.items()
+    	for oid, object in canvas.objects.items()
     	{
     		if (hasattr(object, "underCloud")
     		{

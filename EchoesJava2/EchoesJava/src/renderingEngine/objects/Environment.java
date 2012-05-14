@@ -14,59 +14,66 @@ import Logger
 /*Not sure if Cloud extends EchoesObject but seeing the super() call I guessed that should be it
  * 
  */
-public class Bee(EchoesObject, Motions.BezierMotion)
+public class Bee extends EchoesObject
 {    
  //   public classdocs
-    public void Bee(autoAdd=true, props = {"type" "Bee"}, fadeIn = false, fadingFrames = 100, randomSize = true, callback=None)
-    {       
-        super(Bee, ).__init__(app, autoAdd, props, fadeIn, fadingFrames, callback)
-        super(Bee, ).initBezierVars()
-        
-        if (randomSize
-            this.size = 0.15 + random.random() * 0.1
-        else
-            this.size = 0.3 
-        this.maxSize = 1.5
-        this.speed = 0.002
-        this.moving = true
-        this.floatingXY = true
-        this.floatingSound = false
-        this.canBeClicked = true
-        this.canBeDraged = true
+	//Bee(autoAdd=true, props = {"type" "Bee"}, fadeIn = false, fadingFrames = 100, randomSize = true, callback=None)
+	private BezierMotion bezierMotion = new BezierMotion();
+	private float [] orientation = {0, 0, 0};
+    
+    private float [][] shape = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
+    private float [][] texshape = {{1, 0}, {1, 1}, {0, 1}, {0, 0}};
+    private float maxSize = 1.5;
+    private float speed = 0.002;
+    private boolean moving = true;
+    private boolean floatingXY = true;
+    private boolean floatingSound = false;
+    private boolean canBeClicked = true;
+    private boolean canBeDraged = true;
 
-        this.texture = this.setImage('visual/images/bee.png')        
-            
-        this.shape = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
-        this.texshape = [(1, 0), (1, 1), (0, 1), (0, 0)]
+
+	public void Bee(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, boolean randomSize, Object callback)
+    {       
+        super(autoAdd, props, fadeIn, fadingFrames, callback);
+        //super(Bee, ).initBezierVars();
         
-        this.newstartpos()
-        this.newctrlpoints()
-        
-        if (sound.EchoesAudio.soundPresent
-            this.buzz = sound.EchoesAudio.playSound("buzz.wav", loop=true, vol=0.0)
+        if (randomSize)
+            this.size = 0.15 + Math.random() * 0.1;
         else
-            this.buzz = None
+            this.size = 0.3; 
+            
+        loadTexture("visual/images/bee.png");        
+        
+        newStartPos();
+        bezierMotion.newCtrlPoints(null);
+        
+        if (sound.EchoesAudio.soundPresent)
+            this.buzz = sound.EchoesAudio.playSound("buzz.wav", loop=true, vol=0.0);
+        else
+            this.buzz = None;
     }               
-    public void __setattr__(item, value)
+    public void setAttr(String item, String value)
     {
-    	object.__setattr__(item, value);
+    	setAttr(item, value);
     }                     
     public void renderObj()
     {     
      //   overwriting the render method to draw the bubble
         oldpos = this.pos
-        if (this.moving and not this.beingDragged);
+        if (this.moving && !this.beingDragged)
         {
         	this.pos = this.nextBezierPos(this.floatingXY);
-            this.orientation = (this.pos[0]-oldpos[0], this.pos[1]-oldpos[1], this.pos[2]-oldpos[2]);              
-            if (this.removeAtTargetPos and this.bezierIndex > 0.95)
+            this.orientation[0] = this.pos[0]-oldpos[0]; 
+            this.orientation[1] = this.pos[1]-oldpos[1]; 
+            this.orientation[2] = this.pos[2]-oldpos[2];              
+            if (this.removeAtTargetPos && this.bezierIndex > 0.95)
             {
-            	this.remove(true);
+            	this.remove(true, 100);
             }
         }
         if (this.buzz && !this.fadingOut)
         {
-        	vel = math.hypot(this.orientation[0], this.orientation[1]);
+        	vel = Math.hypot(this.orientation[0], this.orientation[1]);
             this.buzz.mul = min(0.8, vel*200);
             this.buzz.speed =  1 + (vel*10);
         }
@@ -84,7 +91,7 @@ public class Bee(EchoesObject, Motions.BezierMotion)
         gl.glColor4f(1, 1, 1, this.transperancy);
         gl.glBegin(GL2.GL_QUADS);
         ti = 0;
-        for v in this.shape
+        for(float [] v : this.shape)
         {
         	gl.glTexCoord2d(this.texshape[ti][0], this.texshape[ti][1]);
             gl.glVertex3f(v[0], v[1], this.pos[2]);
@@ -112,16 +119,17 @@ public class Bee(EchoesObject, Motions.BezierMotion)
     }         
     public void newstartpos()
     {
-    	x = this.app.canvas.orthoCoordWidth/2 - (random.random() * this.app.canvas.orthoCoordWidth);
-        y = random.choice([-1,1])*this.app.canvas.orthoCoordWidth/2/this.app.canvas.aspectRatio + this.size * 1.1;
+    	x = canvas.orthoCoordWidth/2 - (Math.random() * canvas.orthoCoordWidth);
+        y = random.choice([-1,1])*canvas.orthoCoordWidth/2/canvas.aspectRatio + this.size * 1.1;
         this.pos = (x,y,0);
     }   
-    public void click(agentName, replace=true)
+    //click(agentName, replace=true)
+    public void click(agentName, boolean replace)
     {    
      //   click
     }   
     
-    public void startDrag(pos)
+    public void startDrag(float []pos)
     {   
     	if (this.interactive && this.canBeDraged)
       	{
@@ -133,14 +141,14 @@ public class Bee(EchoesObject, Motions.BezierMotion)
     }   
     public void stopDrag()
     {
-    	if (this.interactive and this.canBeDraged)
+    	if (this.interactive && this.canBeDraged)
     	{
     		this.beingDragged = false;
             this.locationChanged = false;
             this.newctrlpoints();
     	}
     }
-    public void drag(newXY)
+    public void drag(float [] newXY)
     {
     	if (this.interactive && this.canBeDraged)
     	{    //# Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
@@ -176,6 +184,6 @@ public class Bee(EchoesObject, Motions.BezierMotion)
             	this.buzz.stop();
             }
     	}
-        super(Bee, ).remove(fadeOut, fadingFrames);            
+        super.remove(fadeOut, fadingFrames);            
     }
 }

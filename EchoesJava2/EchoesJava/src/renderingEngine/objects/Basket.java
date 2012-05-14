@@ -7,7 +7,7 @@ public class Basket
     //Basket(autoAdd=true, props={"type" "Basket"}, fadeIn = false, fadingFrames = 100, callback = None)
     public void Basket(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {  
-        super(app, autoAdd, props, fadeIn, fadingFrames, callback);
+        super(autoAdd, props, fadeIn, fadingFrames, callback);
        
         this.size = 0.6
         this.pos = (0,0,0)   
@@ -29,8 +29,8 @@ public class Basket
         this.sizes = []
         this.shapes = []
         this.texshape = [(0, 0), (1, 0), (1, 1), (0, 1)]        
-        this.setImage('visual/images/basket-top.png')
-        this.setImage('visual/images/basket-bottom.png')
+        loadTexture("visual/images/basket-top.png");
+        loadTexture("visual/images/basket-bottom.png");
         oy = (this.sizes[0][1] + this.sizes[1][1]) * 0.96
         w = this.sizes[0][0] / oy
         h = 1.0-2.0*this.sizes[0][1]/oy
@@ -60,15 +60,15 @@ public class Basket
         {
         	if (value == None)
         	{
-        		this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_stack", "false");
+        		canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_stack", "false");
         	}
             else
             {
-            	this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_stack", "true");
+            	canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_stack", "true");
             }
         }
     
-        object.__setattr__(item, value);
+        setAttr(item, value);
     }
     public void setImage(String file)
     {
@@ -89,7 +89,7 @@ public class Basket
         this.textures.append(tex);
         this.sizes.append([ix,iy]);        
     }                  
-    public void renderObj()
+    public void renderObj(GL2 gl)
     {
     	if (! hasattr("shapes"))
     	{
@@ -99,7 +99,7 @@ public class Basket
         if (this.numflowers != len(this.flowers))
         {
         	this.numflowers = len(this.flowers);
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_numflowers", str(this.numflowers));
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_numflowers", str(this.numflowers));
         }   
         if (this.fallTopublic voidaultHeight && !this.beingDragged && !this.avatarTCB)
         {
@@ -153,9 +153,9 @@ public class Basket
     {
     	this.flowers.append(flower);
         flower.basket = //*****equal to what?
-        flower.pos = [this.pos[0], this.pos[1]+flower.stemLength-this.size/2, this.pos[2]];
+        flower.pos[1] = this.pos[1]+flower.stemLength-this.size/2;
         flower.inCollision = this.id;
-        this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_flower", str(flower.id));
+        canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_flower", str(flower.id));
         if (flower.beingDragged)
         {
         	this.app.canvas.agentPublisher.agentActionCompleted('User', 'flower_placeInBasket', [str(this.id), str(flower.id)]);
@@ -188,7 +188,7 @@ public class Basket
         }
         if (len(this.flowers) == 0)
         {
-        	this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_flower", "None");
+        	canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_flower", "None");
         }
     }
     
@@ -211,10 +211,10 @@ public class Basket
     
     public void resetPlayer()
     {
-    	this.player = None;
+    	this.player = null;
     }
                        
-    public void startDrag(newXY)
+    public void startDrag(float [] newXY)
     {
     	if (this.avatarTCB)
         {
@@ -234,7 +234,7 @@ public class Basket
     	this.beingDragged = false;
     }
 
-    public void drag(newXY)
+    public void drag(float [] newXY)
     {
     	if (this.interactive && this.canBeDraged)
             //# Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
@@ -256,7 +256,7 @@ public class Basket
                 }
                 this.locationChanged = true;
     }          
-    public void attachToJoint(jpos, jori, avatarTCB)
+    public void attachToJoint(float [] jpos, Object jori, avatarTCB)
     {
     	this.avatarTCB = avatarTCB;
         this.objectCollisionTest = false;        
@@ -268,7 +268,8 @@ public class Basket
         {
         	y = jpos[1];
         }
-        this.pos = [jpos[0], y, this.pos[2]];
+        this.pos[0] = jpos[0];
+        this.pos[1] = y;
     }       
     public void detachFromJoint()
     {
@@ -278,12 +279,12 @@ public class Basket
     //remove(fadeOut = false, fadingFrames = 100)
     public void remove(boolean fadeOut, int fadingFrames)
     {  
-    	if (not fadeOut and this.stack and  in this.stack.pots)
+    	if (!fadeOut && this.stack && /*****something missing*/ in this.stack.pots)
      	{
     		this.objectCollisionTest = false;
      	    del this.stack.pots[this.stack.pots.index()];
             this.stack = None;
     	}
-        super(Basket, ).remove(fadeOut, fadingFrames);
+        super.remove(fadeOut, fadingFrames);
     }   
 }

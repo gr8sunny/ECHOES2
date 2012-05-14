@@ -1,7 +1,7 @@
 import java.util.Map;
 import java.util.*; 
 //Translation from Py May 10 2012
-public class Container
+public class Container extends EchoesObject
 {   
    // public classdocs
 	private float [] pos = {0, 0, 0};
@@ -14,9 +14,9 @@ public class Container
     //Container(autoAdd=true, props={"type" "Container"}, fadeIn = false, fadingFrames = 100, callback = None)
     public Container(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
-        super(app, autoAdd, properties, fadeIn, fadingFrames, callback);
+        super(autoAdd, properties, fadeIn, fadingFrames, callback);
        
-        this.pos[1] = this.app.canvas.getRegionCoords("ground")[1][1];   
+        this.pos[1] = canvas.getRegionCoords.get("ground")[1][1];   
         float [] temporaryIntArray = {0.735, 0.197, 0.286};
         this.colours.put("red", temporaryIntArray); 
         float [] temporaryIntArray1 = {0.921,0.832,0.217};
@@ -31,13 +31,13 @@ public class Container
     public void setAttr(String item, String value)
     {
     	if (item == "colour")
-            if (not value in this.colours)
+            if (!this.colours.contains(value))
             {
             	value = "red"; 
             }
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "container_colour", str(value))      
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "container_colour", str(value))      
     
-        object.__setattr__(item, value)
+       setAttr(item, value);
     }
     
     public void renderObj()
@@ -76,7 +76,7 @@ public class Container
         gl.glEnable(GL2.GL_DEPTH_TEST);        
         gl.glPopMatrix();
     }                         
-    public void startDrag(newXY)
+    public void startDrag(float [] newXY)
     {
     	this.beingDragged = true;
      //   # Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
@@ -172,9 +172,10 @@ public class Container
         this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "container_reward", str(num_balls));
         
     }   
-    public void remove(fadeOut = false, fadingFrames = 100)
+    //remove(fadeOut = false, fadingFrames = 100)
+    public void remove(boolean fadeOut, int fadingFrames)
     {
-    	super(Container, ).remove(fadeOut, fadingFrames)
+    	super.remove(fadeOut, fadingFrames);
     }
                
 }          

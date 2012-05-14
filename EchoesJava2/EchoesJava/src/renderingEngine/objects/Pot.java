@@ -15,13 +15,15 @@ public class Pot extends EchoesObject
                   {{-0.8, 0.5, 1}, {-0.6, -0.7, 0.6}, {0.6, -0.7, 0.6}, {0.8, 0.5, 1}}};
     private String [] neutralshadeArr = {"neutral-1", "neutral-2", "neutral-3", "neutral-4", "neutral-5"};
     private String neutralshade;
+    private float [] basecolour = new float[4];
+    private float [] linecolour = new float[4];
     //**********have to do something about properties and props
     
 	public void Pot(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
         //super(Pot, ).__init__(app, autoAdd, props, fadeIn, fadingFrames, callback)
-    	super(app, autoAdd, properties, fadeIn, fadingFrames, callback);
-        this.size = 0.3 + random.random()*0.2;
+    	super(autoAdd, properties, fadeIn, fadingFrames, callback);
+        this.size = (float) (0.3 + Math.random()*0.2);
         this.pos[0] = -1;
         this.pos[1] = -2.5;
         this.pos[2] = 0.1; 
@@ -30,22 +32,24 @@ public class Pot extends EchoesObject
         this.fallTopublic voidaultHeight = true
     //    # basic shape in two strips [x,y, colour shade value]
         
-        //# a random neutral shade 
-        this.neutralshade = neutralshadeArr[random.randint(0,4)];  
+        //# a random neutral shade
+        //Math.randint(0,4)--->minimum + (int)(Math.random()*maximum)
+        int randint = 0 + (int)(Math.random()*4); 
+        this.neutralshade = neutralshadeArr[randint];  
 
         //# the flower growing out of the pot 
-        this.flower = None;
-        this.stack = None;
+        this.flower = null;
+        this.stack = null;
                                     
-        if ("colour" in this.props)
+        if (this.props.containsKey("colour"))
         {
-        	this.colour = this.props["colour"];
-            this.neutralshade = this.props["colour"];
+        	this.colour = this.props.get("colour");
+            this.neutralshade = this.props.get("colour");
         }
         else
             this.colour = this.neutralshade;
                     
-        this.avatarTCB = None;
+        this.avatarTCB = null;
     }
     public void setAttr(String item, String value)
     { 
@@ -53,39 +57,53 @@ public class Pot extends EchoesObject
       	{
     		if (value == "dark")
     		{
-    			this.basecolour = [0.770, 0.371, 0.082, 1.0];
-    		    this.linecolour = [0.3,0.1,0.1,1];
+    			float [] temparray = {(float) 0.770, (float) 0.371, (float) 0.082, (float) 1.0}; 
+    			this.basecolour = temparray;
+    			float [] temparray1 = {0.3, 0.1, 0.1, 1}; 
+    		    this.linecolour = temparray1;
     		}
             else if (value == "neutral-1")                
             {
-            	this.basecolour = [1.000, 0.609, 0.277, 1.000];
-                this.linecolour = [0.3,0.1,0.1,1];
+            	float [] temparray = {1.000, 0.609, 0.277, 1.000}; 
+    			this.basecolour = temparray;
+    			float [] temparray1 = {0.3,0.1,0.1,1}; 
+    		    this.linecolour = temparray1;
             }
             else if (value == "neutral-2")                
             {
-            	this.basecolour = [0.955, 0.878, 0.471, 1.000];
-                this.linecolour = [0.3,0.1,0.1,1];
+            	float [] temparray = {0.955, 0.878, 0.471, 1.000}; 
+    			this.basecolour = temparray;
+    			float [] temparray1 = {0.3,0.1,0.1,1}; 
+    		    this.linecolour = temparray1;
             }
             else if (value == "neutral-3")                
             {
-            	this.basecolour = [1.000, 0.796, 0.634, 1.000];
-                this.linecolour = [0.3,0.1,0.1,1];
+            	float [] temparray = {1.000, 0.796, 0.634, 1.000}; 
+    			this.basecolour = temparray;
+    			float [] temparray1 = {0.3,0.1,0.1,1}; 
+    		    this.linecolour = temparray1;
             }
             else if (value == "neutral-4")                
             {
-            	this.basecolour = [0.872, 0.655, 0.133, 1.000];
-                this.linecolour = [0.3,0.1,0.1,1];
+            	float [] temparray = {0.872, 0.655, 0.133, 1.000};
+    			this.basecolour = temparray;
+    			float [] temparray1 = {0.3,0.1,0.1,1};
+    		    this.linecolour = temparray1;
             }
             else //# neutral is the public voidault
             {
-            	this.basecolour = [0.970, 0.571, 0.282, 1.0];
-                this.linecolour = [1,0,0,1];
-            }
+            	float [] temparray = {0.970, 0.571, 0.282, 1.0};
+    			this.basecolour = temparray;
+    			float [] temparray1 = {1,0,0,1};
+    		    this.linecolour = temparray1;
+    		}
       	}    
         else if (item == "flower" && isinstance(value, EchoesFlower))
-            if (hasattr("hasOnTop") && this.hasOnTop) 
-            {    Logger.warning("Pot can't have flower in pot that has other pots on top of it");
-                return;
+        {
+        	if (hasattr("hasOnTop") && this.hasOnTop) 
+        	{
+        		Logger.warning("Pot can't have flower in pot that has other pots on top of it");
+        		return;
             }
             this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", str(value.id));
             value.pos = [this.pos[0], this.pos[1]+value.stemLength+this.size/2, this.pos[2]-0.01];
@@ -95,7 +113,7 @@ public class Pot extends EchoesObject
             Logger.trace("info", "Flower put into pot" + str(this.id) );
             if (value.beingDragged)
                 this.app.canvas.agentPublisher.agentActionCompleted('User', 'flower_placeInPot', [str(this.id), str(value.id)]);
-            
+        }   
         else if (item == "flower" && value == null)
             this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", "None");
         

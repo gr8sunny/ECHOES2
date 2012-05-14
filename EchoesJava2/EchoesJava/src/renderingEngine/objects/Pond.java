@@ -2,11 +2,11 @@ import java.util.Map;
 
 //Translation from Py May 10 2012
 
-public class Pond
+public class Pond extends EchoesObject
 {    
     //public classdocs
     //Pond(autoAdd=true, props={"type" "Pond"}, fadeIn = false, fadingFrames = 100, callback = None)
-	private float shape = new float[40][2];
+	private float [][]shape = new float[40][2];
 	private double[] pos={0, -2.5, 0};
     private float size=0.2;
     private float maxsize=0.1;
@@ -23,13 +23,13 @@ public class Pond
 		for (float deg = -180; deg < 1; deg+=10)
 		{
 			shape[pointIndex][0] = (float)(Math.cos(Math.toRadians(deg)));
-			shape[pointIndex][1] = (float)Math.sin(Math.toRadians(deg);
+			shape[pointIndex][1] = (float)Math.sin(Math.toRadians(deg));
 			pointIndex++;
 		}
 		for (float deg = -90; deg < 91; deg+=10)
 		{
 			shape[pointIndex][0] = (float)(1+0.5*Math.cos(Math.toRadians(deg)));
-			shape[pointIndex][1] = (float)(0.5+0.5*Math.sin(Math.toRadians(deg));
+			shape[pointIndex][1] = (float)(0.5+0.5*Math.sin(Math.toRadians(deg)));
 			pointIndex++;
 		}
 		for (float deg = -90; deg < 91; deg+=10)
@@ -75,7 +75,7 @@ public class Pond
         gl.glRotate(35.0,0.0,0.0,-1.0);
         gl.glColor4f(0.576, 0.918, 1.0, this.transperancy);
         gl.glBegin(GL2.GL_LINE_STRIP);
-        for v in this.shape
+        for (float[] v : this.shape)
         {
         	gl.glVertex2f(v[0], v[1]);
         }
@@ -84,7 +84,7 @@ public class Pond
         gl.glColor4f(0.376, 0.718, 1.0, this.transperancy);
         gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glVertex2f(0,0);
-        for v in this.shape
+        for(float [] v : this.shape)
         {
         	gl.glVertex2f(v[0], v[1]);
         }

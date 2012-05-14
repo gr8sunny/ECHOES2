@@ -7,7 +7,7 @@ public class Stack
  //   public classdocs
 	private boolean objectCollisionTest = false;
     private boolean agentCollisionTest = false;
-    Vector pots = new Vector(); 
+    Vector pots = new Vector(); //*****is pots of the type Pot?
     
     public Stack(app)
     {       
@@ -88,8 +88,8 @@ public class Stack
     public void intoTree()
     {
     	Logger.trace("info", "replacing stack with tree"); 
-        tree = LifeTree(this.app, true, fadeIn=true);
-        size = 0 ;
+        tree = LifeTree(this.app, true, fadeIn=true);//****set default params
+        int size = 0 ;
         for pot in this.pots
             size += pot.size;
         size += 2.5;
