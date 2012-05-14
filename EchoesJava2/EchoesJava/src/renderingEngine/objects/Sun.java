@@ -1,5 +1,6 @@
-import java.util.Map;
 
+import java.util.Map;
+//all done
         
 public class Sun extends EchoesObject
 { 
@@ -19,7 +20,7 @@ public class Sun extends EchoesObject
 		for (float deg = 0; deg < 370; deg+=10)
 		{
 			shape[pointIndex][0] = (float)(Math.cos(Math.toRadians(deg)));
-			shape[pointIndex][1] = (float)Math.sin(Math.toRadians(deg);
+			shape[pointIndex][1] = (float)Math.sin(Math.toRadians(deg));
 			pointIndex++;
 		}
     }   
@@ -34,11 +35,11 @@ public class Sun extends EchoesObject
         gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glVertex2f(0,0);
         gl.glColor4f(0.741, 0.878, 0.929, 0);
-        for v in this.shape
+        for (float [] v : this.shape)
         { 
         	gl.glVertex2f(v[0], v[1]);
         }
-        gl.glEnd()
+        gl.glEnd();
 
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glPopMatrix(); 

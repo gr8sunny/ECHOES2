@@ -18,7 +18,7 @@ import Logger
 
 public class Cloud extends EchoesObject
 {   
-	private float shape = new float[40][2];
+	private float[][] shape = new float[40][2];
 	private double[] pos = {-0.39, 2.25, 0};
 	private float size = 0.3;
 	private String colour = "white";
@@ -41,7 +41,7 @@ public class Cloud extends EchoesObject
     private String [] b_colours = {"yellow", "blue", "green"};
     private float b_nextcolour = 0;
     
-    this.avatarTCB = None;//Which class?
+    this.avatarTCB = null;//Which class?
     private boolean avatarRain = false;
     //props={"type" "Cloud"}
 	public Cloud(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
@@ -167,7 +167,8 @@ public class Cloud extends EchoesObject
         }
         setAttr(item, value);
     }
-    public void setImage(file='visual/images/Rain-drop.png')
+    //setImage(file='visual/images/Rain-drop.png')
+    public void setImage(String file)
     {
     	im = PIL.Image.open(file); // .jpg, .bmp, etc. also work
         /*
@@ -207,13 +208,13 @@ public class Cloud extends EchoesObject
                 }
                 if (! this.avatarRain)
                 {
-                	//Don't know what to do with this
+                	//******Don't know what to do with this
                 	this.app.canvas.agentPublisher.agentActionStarted('User', 'cloud_rain', [str(this.id)]);
             	}      
              } 
-            for i in xrange(20)
+            for(int i=0; i<20; i++)
             {
-            	this.drawRainDrop((this.pos[0] + (random.random()-0.5) * this.size *2.5, this.pos[1] - random.random() * 5,0), random.random() * 0.3);
+            	this.drawRainDrop((this.pos[0] + (random.random()-0.5) * this.size *2.5, this.pos[1] - Math.random() * 5,0), Math.random() * 0.3);
             }
             
             foundObject = false;
@@ -350,14 +351,16 @@ public class Cloud extends EchoesObject
         gl.glPopMatrix();
         }
     }
-    public void rain(frames=40)
+	//rain(frames=40)
+    public void rain(int frames)
     {
-    	this.shakeAmplitude = 0.3
-        this.fcounter = -1*(frames-40)
-        this.avDirChangesPF = 3
-        this.avatarRain = true
+    	this.shakeAmplitude = 0.3;
+        this.fcounter = -1*(frames-40);
+        this.avDirChangesPF = 3;
+        this.avatarRain = true;
     }
-    public void drawRainDrop(pos, size=1)
+    //size=1)
+    public void drawRainDrop(float [] pos, float size)
     {
         gl.glPushMatrix();
         gl.glBlendFunc(GL2.GL_ONE, GL2.GL_ONE);        
