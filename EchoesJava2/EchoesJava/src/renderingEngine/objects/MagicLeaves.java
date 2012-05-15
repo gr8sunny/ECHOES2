@@ -149,7 +149,7 @@ public class MagicLeaves extends EchoesObject
         gl.glPopMatrix();
     }         
     //startDrag(pos=(0,0))
-    public void startDrag(pos=(0,0))
+    public void startDrag(float [] pos)
     {
     	this.app.canvas.agentPublisher.agentActionCompleted('User', 'touch_leaves', [str(this.id)]);
         this.beingDragged = true;
@@ -159,15 +159,15 @@ public class MagicLeaves extends EchoesObject
         {
         	branch = 0;
             for leaf in this.tree.leaves
-                if (leaf ==  this.tree.leaves[branch])
-                	= None;//********8what = none?
+                if (leaf == this) 
+                	this.tree.leaves[branch] = null;//********8what = none?
                 branch += 1;
         }
     }           
     public void stopDrag()
     {
     	this.beingDragged = false;
-        h = (float)(this.app.canvas.orthoCoordWidth / this.app.canvas.aspectRatio);
+        float h = (float)(this.app.canvas.orthoCoordWidth / this.app.canvas.aspectRatio);
         this.energy = (this.pos[1] + h/2)/h;
         this.newctrlpoints();
         this.flying = true;
@@ -183,7 +183,8 @@ public class MagicLeaves extends EchoesObject
             
             worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
 
-            this.pos = (worldCoords[0], worldCoords[1], this.pos[2]);
+            this.pos[0] = worldCoords[0];
+            this.pos[1] = worldCoords[1];
     	}
     }
     public void touchLeaves(agent_id=None)
@@ -195,12 +196,12 @@ public class MagicLeaves extends EchoesObject
         	branch = 0;
             for leaf in this.tree.leaves
             {
-            	if (leaf ==  this.tree.leaves[branch])
-                	= None;//****something equal to none
+            	if (leaf ==  this)
+            		this.tree.leaves[branch] = null;//****something equal to none
                 branch += 1;
         	}
         }
-        h = float(this.app.canvas.orthoCoordWidth / this.app.canvas.aspectRatio);
+        h = (float)(this.app.canvas.orthoCoordWidth / this.app.canvas.aspectRatio);
         this.energy = (this.pos[1] + h/2)/h;
         this.newctrlpoints();
         this.flying = true;
@@ -233,7 +234,7 @@ public class MagicLeaves extends EchoesObject
         this.energy = 0.0;
         this.flying = false;
 
-        tree.leaves[branch] = ;//*****equsal to? 
+        tree.leaves[branch] = this;//*****equsal to? 
         this.tree = tree;
         if (branch == 0)
         {
@@ -259,9 +260,11 @@ public class MagicLeaves extends EchoesObject
             dy = 0.26;
             this.orientation = -0.5;
         }
-        this.pos = (tree.pos[0]+tree.size*dx, tree.pos[1]+tree.size*dy, tree.pos[2]);
+        this.pos[0] = tree.pos[0]+tree.size*dx;
+        this.pos[1] = tree.pos[1]+tree.size*dy;
+        this.pos[2] = tree.pos[2];
     }                   
-    public void remove(fadeOut, fadingFrames)
+    public void remove(boolean fadeOut, int fadingFrames)
     {
     	super.remove(fadeOut, fadingFrames);            
     }

@@ -1,5 +1,4 @@
 package agents;
-
 import java.util.*;
 //*****callback, Queue and preCall problem
 //Translation from Py May 9th
@@ -17,7 +16,9 @@ public class EchoesAvatar extends EchoesAgent
  // stores joints and target orientations for manual animation
     Hashtable animationTargets  = new Hashtable();  
     float [] pos = {0, 0, 0};
-    
+    Deque motionQueue = new LinkedList();
+    Deque animationQueue = new LinkedList();
+    Deque speechQueue = new LinkedList();
     //public classdocs
     //EchoesAvatar(avatar="agents/Paul/Paul", autoAdd=true, props={"type" "Paul"}, scale=0.0275, callback=None
     public EchoesAvatar(String avatar, boolean autoAdd, Map<String, String> props ,float scale, Object callback)
@@ -64,13 +65,11 @@ public class EchoesAvatar extends EchoesAgent
         this.blinkingTimer = null;// # blinking
         
         // callback to determine end of motions and manually animate joint movements
-        this.tcb = PiavcaTimeCallback(str(id()), )
-        this.avatar.registerCallback (this.tcb)
+        this.tcb = PiavcaTimeCallback(str(id()), );
+        this.avatar.registerCallback (this.tcb);
         
         // queues for smoothly stacking up motions, animations and speech
-        this.motionQueue = deque ();
-        this.animationQueue = deque ();
-        this.speechQueue = deque ();
+        
         this.cancelMotions = 0;
         
         this.scale = scale;
@@ -168,7 +167,7 @@ public class EchoesAvatar extends EchoesAgent
         qi = QueueItem(this.relaxPosture, isFinal=true, action_id=action_id);
         qi.preCall = ("setPosition", pos);
         qi.playDirect = true;
-        this.motionQueue.append(qi);//******have to do something about Queue thing
+        this.motionQueue.add(qi);//******have to do something about Queue thing
     }    
     //setDepthLayer(String layer="front", int action_id = -1)
     public void setDepthLayer(String layer, int action_id)
@@ -191,20 +190,21 @@ public class EchoesAvatar extends EchoesAgent
         	wi.callback = ("turnTo", turnTo);
         }
         wi.preCall = ("walkTo", [x,z,wi,r,action_id]);//****what is this?
-        this.motionQueue.append(wi);
-        this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id));
+        this.motionQueue.add(wi);
+        this.motionQueue.add(QueueItem(r, isFinal=true, action_id=action_id));
         return true; 
     }  
-    public void walkToObject(id, distance = 1.5, action_id = -1)
+    //walkToObject(id, distance = 1.5, action_id = -1)
+    public void walkToObject(id, float distance, int action_id)
     {
     	try
     	{
     		o = this.app.canvas.objects[int(id)];
     	}
-        catch ()//****which exception?
+        catch (Exception e)//****which exception?
         {
-            Logger.warning("Avatar no valid object to go to")
-            return false
+            Logger.warning("Avatar no valid object to go to");
+            return false;
         }
         if (this.isAt(id, distance)) 
         {    // make sure actionCompleted is called shortly after this albeit not moving
@@ -218,8 +218,8 @@ public class EchoesAvatar extends EchoesAgent
         /*
          * Here motionQueue is a list and so append will work...but how to do it in Java? 
          */
-        this.motionQueue.append(wi);//***********How to handle queues? 
-        this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id));
+        this.motionQueue.add(wi);//***********How to handle queues? 
+        this.motionQueue.add(QueueItem(r, isFinal=true, action_id=action_id));
         return true; 
     }
     public double getDistance(int id)
@@ -308,8 +308,8 @@ public class EchoesAvatar extends EchoesAgent
         this.orientation = orientation;
         if (relaxAfter)
         {    
-        	this.motionQueue.append(QueueItem(this.startstep)); 
-            this.motionQueue.append(QueueItem(this.relaxPosture, isFinal= not intermediate, action_id=action_id)); 
+        	this.motionQueue.add(QueueItem(this.startstep)); 
+            this.motionQueue.add(QueueItem(this.relaxPosture, isFinal= not intermediate, action_id=action_id)); 
         }
     }
     //lookAtObject(int targetId, Object speech=None, speed=1.0, hold=0.0, action_id = -1)
@@ -339,8 +339,8 @@ public class EchoesAvatar extends EchoesAgent
                 qi.callback = ("hold_posture", [hold, qi]);
             tqi = QueueItem(None, isFinal=false);
             tqi.preCall=("turn_towardsTarget", [tqi, target]);
-            this.motionQueue.append(tqi);
-            this.motionQueue.append(qi);
+            this.motionQueue.add(tqi);
+            this.motionQueue.add(qi);
             return true;
     	}
         else
@@ -369,8 +369,8 @@ public class EchoesAvatar extends EchoesAgent
         qi.speech = speech;
         tqi = QueueItem(None, isFinal=false);
         tqi.preCall=("turn_towardsTarget", [tqi, target]);
-        this.motionQueue.append(tqi);//****do something about append in queue
-        this.motionQueue.append(qi);
+        this.motionQueue.add(tqi);//****do something about append in queue
+        this.motionQueue.add(qi);
         return true;
     }
     //lookAtPoint(x, y, z, speech=None, speed=1.0, hold=0.0, action_id = -1, intermediate=false)
@@ -393,8 +393,8 @@ public class EchoesAvatar extends EchoesAgent
         qi.speech = speech;        
         tqi = QueueItem(None, isFinal=false);
         tqi.preCall=("turn_towardsTarget", [tqi, target]);
-        this.motionQueue.append(tqi);
-        this.motionQueue.append(qi);
+        this.motionQueue.add(tqi);
+        this.motionQueue.add(qi);
         return true;
     }
     //turnToChild(action_id = -1)
@@ -403,7 +403,7 @@ public class EchoesAvatar extends EchoesAgent
     	//*******preCall has a tuple and a list...what to do?
     	qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", ["child", action_id])); // the motion is set up just before he actually needs to walk
         qi.action_id = action_id;
-        this.motionQueue.append(qi);//do something about append 
+        this.motionQueue.add(qi);//do something about append 
         return true; 
     }
     //turnTo(targetId, action_id = -1)
@@ -423,7 +423,7 @@ public class EchoesAvatar extends EchoesAgent
         //****again preCall has a tuple and list
     	qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", [target, action_id])) // the motion is set up just before he actually needs to walk
         qi.action_id = action_id;
-        this.motionQueue.append(qi); 
+        this.motionQueue.add(qi); 
         return true ;
     }
     //turnToPoint(x, z, action_id = -1)
@@ -433,7 +433,7 @@ public class EchoesAvatar extends EchoesAgent
     	qi = QueueItem(this.relaxPosture, isFinal=true, preCall = ("turnTo", [x,z, action_id])) # the motion is set up just before he actually needs to walk
         qi.action_id = action_id;
         //*****something about the append
-    	this.motionQueue.append(qi); 
+    	this.motionQueue.add(qi); 
         return true ;
     }
     //popBubble(targetId, action_id = 1)
@@ -484,8 +484,8 @@ public class EchoesAvatar extends EchoesAgent
         tqi = QueueItem(None, isFinal=false);
         //******the preCall problem
         tqi.preCall=("turn_towardsTarget", [tqi, target]);
-        this.motionQueue.append(tqi);//*****append problem
-        this.motionQueue.append(qi);
+        this.motionQueue.add(tqi);//*****append problem
+        this.motionQueue.add(qi);
         return true;
     }
     //pointAtPoint(x, y, z, hand="right", speed=1.0, hold=0.0, action_id = -1)
@@ -519,14 +519,14 @@ public class EchoesAvatar extends EchoesAgent
         //***********preCall prob
         tqi.preCall=("turn_towardsTarget", [tqi, target]);
         //*****append problem
-        this.motionQueue.append(tqi);
-        this.motionQueue.append(qi);
+        this.motionQueue.add(tqi);
+        this.motionQueue.add(qi);
         return true;
     }
     //resetPosture(action_id = -1)
     public boolean resetPosture(int action_id)
     {
-    	this.motionQueue.append(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id));
+    	this.motionQueue.add(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id));
         return true;
     }
     //gestureAnim(name, relaxAfter=true, orientation=None, speech=None, speed=1.0, hold=0.0, action_id = -1)
@@ -551,14 +551,14 @@ public class EchoesAvatar extends EchoesAgent
         }
         if (relaxAfter)
         {
-        	this.motionQueue.append(m);
-            this.motionQueue.append(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id));
+        	this.motionQueue.add(m);
+            this.motionQueue.add(QueueItem(this.relaxPosture, isFinal=true, action_id=action_id));
         }
         else
         {    
         	m.isFinal = true;
             m.action_id = action_id;
-            this.motionQueue.append(m);
+            this.motionQueue.add(m);
         }
         return true;
     }
@@ -585,9 +585,9 @@ public class EchoesAvatar extends EchoesAgent
             	original[jid] = this.avatar.getJointOrientation(jid);
                 animationTargets = dict();//****animationTargets is a dictionary
                 animationTargets[jid] = original[jid] * Piavca.Quat(-math.pi/2, Piavca.Vec.XAxis());
-                this.animationQueue.append(QueueItem(animationTargets, preCall=preCall));
+                this.animationQueue.add(QueueItem(animationTargets, preCall=preCall));
                 //***append prob
-                this.animationQueue.append(QueueItem(original, isFinal=true, action_id=action_id));
+                this.animationQueue.add(QueueItem(original, isFinal=true, action_id=action_id));
                 jid = this.avatar.next(jid);
             }
         }
@@ -609,7 +609,7 @@ public class EchoesAvatar extends EchoesAgent
                 return false;
             }
             at = ActionTimer(duration, action_id, speech=true);
-            this.speechQueue.append(QueueItem(file, timer=at, action_id=action_id));
+            this.speechQueue.add(QueueItem(file, timer=at, action_id=action_id));
             return true;
     	}
         Logger.warning("Could not say anything, sound is not available");
@@ -628,7 +628,7 @@ public class EchoesAvatar extends EchoesAgent
         	}
             at = ActionTimer(duration, action_id, speech=true);
             //*****queue
-            this.speechQueue.appendleft(QueueItem(file, timer=at, action_id=action_id));
+            this.speechQueue.addFirst(QueueItem(file, timer=at, action_id=action_id));
             return true;
     	}
         Logger.warning("Could not say anything, sound is not available");
@@ -701,8 +701,8 @@ public class EchoesAvatar extends EchoesAgent
         qidown = QueueItem(mdown, callback = ("attach_flowerR", flower));
         qidown.preCall = ("check_at", [id, action_id]);
         qidown.speech = speech;
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id = action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id = action_id));
         return true; 
     }
     //touchObject(id=None, speech=None, action_id = -1, walkTo=false)
@@ -750,8 +750,8 @@ public class EchoesAvatar extends EchoesAgent
         qidown = QueueItem(mdown, callback = ("touch_object", object));        
         qidown.preCall = ("check_at", [id, action_id]);
         qidown.speech = speech;
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id = action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id = action_id));
         return true;         
     }
     //touchFlower(id=None, target="Bubble", speech=None, action_id = -1)
@@ -782,8 +782,8 @@ public class EchoesAvatar extends EchoesAgent
         qidown = QueueItem(mdown, callback = ("touch_flower", [flower, target]));
         qidown.preCall = ("check_at", [id, action_id]);
         qidown.speech = speech;
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id = action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id = action_id));
         return true;
     }
     //putdownFlower(action_id = -1, walkTo=-1)
@@ -820,8 +820,8 @@ public class EchoesAvatar extends EchoesAgent
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, 0.7);
         mup = Piavca.SubMotion(mput, 0.7, endtime);
-        this.motionQueue.append(QueueItem(mdown, callback = ("detach_flowerR", flower)));
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(QueueItem(mdown, callback = ("detach_flowerR", flower)));
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;
     }
     
@@ -877,8 +877,8 @@ public class EchoesAvatar extends EchoesAgent
         mup = Piavca.SubMotion(mput, 0.7, endtime);
         qidown = QueueItem(mdown, callback = ("detach_flowerInPotR", [pot, flower]));
         qidown.preCall = ("check_at", [id, action_id]);
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;         
     }
     //putFlowerInBasket(id=None, action_id = -1, walkTo=false)
@@ -936,8 +936,8 @@ public class EchoesAvatar extends EchoesAgent
         mup = Piavca.SubMotion(mput, 0.7, endtime);
         qidown = QueueItem(mdown, callback = ("detach_flowerInBasketR", [basket, flower]));
         qidown.preCall = ("check_at", [id, action_id]);
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;         
     }
     //stackPot(id=None, action_id = -1, walkTo = false)
@@ -1010,8 +1010,8 @@ public class EchoesAvatar extends EchoesAgent
         mup = Piavca.SubMotion(mpick, endtime*cut, endtime);
         qidown = QueueItem(mdown, isFinal=false, callback=("detach_potOnStackR", [pot, targetpot]));
         qidown.preCall = ("check_at", [id, action_id]);
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));        
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));        
         return true;         
     }
     //pickupPot(id=None, speech=None, action_id = -1, walkTo=false)
@@ -1072,8 +1072,8 @@ public class EchoesAvatar extends EchoesAgent
         qidown = QueueItem(mdown, callback = ("attach_potR", pot));
         qidown.preCall = ("check_at", [id, action_id]);
         qidown.speech = speech;
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true ;       
     }
     //putdownPot(action_id = -1, walkTo = -1)
@@ -1116,8 +1116,8 @@ public class EchoesAvatar extends EchoesAgent
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, endtime*0.7);
         mup = Piavca.SubMotion(mput, endtime*0.7, endtime);
-        this.motionQueue.append(QueueItem(mdown, callback = ("detach_potR", None)));
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(QueueItem(mdown, callback = ("detach_potR", None)));
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;       
     }
     //pickupBasket(id=None, speech=None, action_id = -1, walkTo=false)
@@ -1179,8 +1179,8 @@ public class EchoesAvatar extends EchoesAgent
         qidown = QueueItem(mdown, callback = ("attach_potR", basket));
         qidown.preCall = ("check_at", [id, action_id]);
         qidown.speech = speech;        
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;        
     }
     //putdownBasket(action_id = -1, walkTo = -1)
@@ -1225,8 +1225,8 @@ public class EchoesAvatar extends EchoesAgent
         mdown = Piavca.SubMotion(mput, 0.0, endtime*0.7);
         mup = Piavca.SubMotion(mput, endtime*0.7, endtime);
         qidown = QueueItem(mdown, callback = ("detach_potR", None));
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;       
     }
     //pickupBall(id=None, speech=None, action_id = -1, walkTo=false)
@@ -1287,8 +1287,8 @@ public class EchoesAvatar extends EchoesAgent
         qidown = QueueItem(mdown, callback = ("attach_potR", ball));
         qidown.preCall = ("check_at", [id, action_id]);
         qidown.speech = speech;
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;        
     }
     //putdownBall(action_id = -1, walkTo = -1)
@@ -1332,8 +1332,8 @@ public class EchoesAvatar extends EchoesAgent
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, endtime*0.7);
         mup = Piavca.SubMotion(mput, endtime*0.7, endtime);
-        this.motionQueue.append(QueueItem(mdown, callback = ("detach_potR", None)));
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(QueueItem(mdown, callback = ("detach_potR", None)));
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));
         return true;       
     }
     //putBallIntoContainer(id=None, action_id = -1, walkTo = false)
@@ -1387,8 +1387,8 @@ public class EchoesAvatar extends EchoesAgent
         mup = Piavca.SubMotion(mpick, endtime*cut, endtime);
         qidown = QueueItem(mdown, isFinal=false, callback=("put_ballContainer", [ball, container]));
         qidown.preCall = ("check_at", [id, action_id]);
-        this.motionQueue.append(qidown);
-        this.motionQueue.append(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));        
+        this.motionQueue.add(qidown);
+        this.motionQueue.add(QueueItem(mup, isFinal=true, playDirect=true, action_id=action_id));        
         return true;         
     }
     //throwBall(action_id = -1, cloudId = None)
@@ -1418,8 +1418,8 @@ public class EchoesAvatar extends EchoesAgent
         mup = Piavca.SubMotion(mpick, 0.0, endtime/2);
         mdown = Piavca.SubMotion(mpick, endtime/2, endtime);
         qiup = QueueItem(mup, callback = ("throw_ball", ball));
-        this.motionQueue.append(qiup);
-        this.motionQueue.append(QueueItem(mdown, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qiup);
+        this.motionQueue.add(QueueItem(mdown, isFinal=true, playDirect=true, action_id=action_id));
         return true;    
     }
     //makeRain(id=None, action_id = -1, walkTo = false)
@@ -1459,8 +1459,8 @@ public class EchoesAvatar extends EchoesAgent
         mdown = Piavca.SubMotion(mpick, endtime/2, endtime);
         qiup = QueueItem(mup, callback = ("make_rain", cloud));
         qiup.preCall = ("check_at", [id, action_id]);
-        this.motionQueue.append(qiup);
-        this.motionQueue.append(QueueItem(mdown, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qiup);
+        this.motionQueue.add(QueueItem(mdown, isFinal=true, playDirect=true, action_id=action_id));
         return true;   
     }
     //touchLeaves(id=None, action_id = -1)
@@ -1505,8 +1505,8 @@ public class EchoesAvatar extends EchoesAgent
         mdown = Piavca.SubMotion(mpick, endtime/2, endtime);
         qiup = QueueItem(mup, callback = ("touch_leaves", leaf));
         qiup.preCall = ("check_at", [id, action_id]);
-        this.motionQueue.append(qiup);
-        this.motionQueue.append(QueueItem(mdown, isFinal=true, playDirect=true, action_id=action_id));
+        this.motionQueue.add(qiup);
+        this.motionQueue.add(QueueItem(mdown, isFinal=true, playDirect=true, action_id=action_id));
         return true;    
     }
     //attachObjectToHand(object, right=true)
@@ -1558,7 +1558,7 @@ public class EchoesAvatar extends EchoesAgent
         mask.setAllMask(false);
         motion = Piavca.MaskedMotion(Piavca.ZeroMotion(), mask);
         qi = QueueItem(motion, preCall = ("attach_cloud", cloudId));
-        this.motionQueue.append(qi);
+        this.motionQueue.add(qi);
         return true;
     }
     
@@ -1566,7 +1566,7 @@ public class EchoesAvatar extends EchoesAgent
     public void detachCloud(action_id = -1)
     {
     	qi = QueueItem(this.relaxPosture, preCall = ("detach_cloud", None));
-        this.motionQueue.append(qi);
+        this.motionQueue.add(qi);
         return true;
     }
     //click(pos)

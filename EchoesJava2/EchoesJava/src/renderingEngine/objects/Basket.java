@@ -4,39 +4,39 @@ import java.util.Map;
 public class Basket extends EchoesObject
 {
     //public classdocs
+	float size = (float) 0.6;
+    float [] pos = {0,0,0};   
+    boolean publishRegion = true;
+    boolean canBeDraged = true;        
+    boolean fallTodefaultHeight = true;
+    boolean falling = false;
     //Basket(autoAdd=true, props={"type" "Basket"}, fadeIn = false, fadingFrames = 100, callback = None)
     public Basket(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, Object callback)
     {  
         super(autoAdd, props, fadeIn, fadingFrames, callback);
        
-        this.size = 0.6
-        this.pos = (0,0,0)   
-        this.publishRegion = true
+        this.defaultHeight = this.app.canvas.getRegionCoords("ground")[0][1];
+               
+        this.avatarTCB = null;
         
-        this.canBeDraged = true        
-        this.defaultHeight = this.app.canvas.getRegionCoords("ground")[0][1]
-        this.fallTopublic voidaultHeight = true
-        this.falling = false
-        this.avatarTCB = None
-        
-        this.stack = None
-        this.flowers = []
-        this.numflowers = 0
+        this.stack = null;
+        this.flowers = [];
+        this.numflowers = 0;
 
-        this.player = None
+        this.player = null;
 
-        this.textures = []
-        this.sizes = []
-        this.shapes = []
-        this.texshape = [(0, 0), (1, 0), (1, 1), (0, 1)]        
+        this.textures = [];
+        this.sizes = [];
+        this.shapes = [];
+        this.texshape = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};        
         loadTexture("visual/images/basket-top.png");
         loadTexture("visual/images/basket-bottom.png");
-        oy = (this.sizes[0][1] + this.sizes[1][1]) * 0.96
-        w = this.sizes[0][0] / oy
-        h = 1.0-2.0*this.sizes[0][1]/oy
-        this.shapes.append([(-w, h), (w, h), (w, 1), (-w, 1)])
-        h = -1.0+2.0*this.sizes[1][1]/oy
-        this.shapes.append([(-w, -1), (w, -1), (w, h), (-w, h)])
+        oy = (this.sizes[0][1] + this.sizes[1][1]) * 0.96;
+        w = this.sizes[0][0] / oy;
+        h = 1.0-2.0*this.sizes[0][1]/oy;
+        this.shapes.append([(-w, h), (w, h), (w, 1), (-w, 1)]);
+        h = -1.0+2.0*this.sizes[1][1]/oy;
+        this.shapes.append([(-w, -1), (w, -1), (w, h), (-w, h)]);
     }
     
     public void setAttr(String item, String value)
@@ -160,7 +160,7 @@ public class Basket extends EchoesObject
         canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_flower", str(flower.id));
         if (flower.beingDragged)
         {
-        	this.app.canvas.agentPublisher.agentActionCompleted('User', 'flower_placeInBasket', [str(this.id), str(flower.id)]);
+        	this.app.canvas.agentPublisher.agentActionCompleted("User", "flower_placeInBasket", [str(this.id), str(flower.id)]);
         }
     }
     
@@ -239,7 +239,7 @@ public class Basket extends EchoesObject
     public void drag(float [] newXY)
     {
     	if (this.interactive && this.canBeDraged)
-            //# Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
+    	{    //# Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
             projection = glGetDoublev(GL2.GL_PROJECTION_MATRIX);
             modelview = glGetDoublev(GL2.GL_MODELVIEW_MATRIX);
             viewport = glGetIntegerv(GL2.GL_VIEWPORT);
@@ -257,6 +257,8 @@ public class Basket extends EchoesObject
                 	this.pos = [worldCoords[0]+this.worldDragOffset[0], worldCoords[1]+this.worldDragOffset[1], this.pos[2]];                
                 }
                 this.locationChanged = true;
+            }
+    	}
     }          
     public void attachToJoint(float [] jpos, Object jori, avatarTCB)
     {

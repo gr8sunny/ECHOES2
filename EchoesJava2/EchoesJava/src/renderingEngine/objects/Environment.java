@@ -23,8 +23,8 @@ public class Bee extends EchoesObject
     
     private float [][] shape = {{-1, -1}, {1, -1}, {1, 1}, {-1, 1}};
     private float [][] texshape = {{1, 0}, {1, 1}, {0, 1}, {0, 0}};
-    private float maxSize = 1.5;
-    private float speed = 0.002;
+    private float maxSize = (float) 1.5;
+    private float speed = (float) 0.002;
     private boolean moving = true;
     private boolean floatingXY = true;
     private boolean floatingSound = false;
@@ -32,15 +32,15 @@ public class Bee extends EchoesObject
     private boolean canBeDraged = true;
 
 
-	public void Bee(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, boolean randomSize, Object callback)
+	public Bee(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, boolean randomSize, Object callback)
     {       
         super(autoAdd, props, fadeIn, fadingFrames, callback);
         //super(Bee, ).initBezierVars();
         
         if (randomSize)
-            this.size = 0.15 + Math.random() * 0.1;
+            this.size = (float) (0.15 + Math.random() * 0.1);
         else
-            this.size = 0.3; 
+            this.size = (float) 0.3; 
             
         loadTexture("visual/images/bee.png");        
         
@@ -50,7 +50,7 @@ public class Bee extends EchoesObject
         if (sound.EchoesAudio.soundPresent)
             this.buzz = sound.EchoesAudio.playSound("buzz.wav", loop=true, vol=0.0);
         else
-            this.buzz = None;
+            this.buzz = null;
     }               
     public void setAttr(String item, String value)
     {
@@ -59,7 +59,8 @@ public class Bee extends EchoesObject
     public void renderObj()
     {     
      //   overwriting the render method to draw the bubble
-        oldpos = this.pos
+        float [] oldpos = new float[3];
+        oldpos = this.pos;
         if (this.moving && !this.beingDragged)
         {
         	this.pos = this.nextBezierPos(this.floatingXY);

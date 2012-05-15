@@ -197,7 +197,7 @@ public class Utils
 	            target = Piavca.Vec(echoesAvatar.pos[0], 0, 10);
 	        target -= Piavca.Vec(0,0,echoesAvatar.zOffset);        
 	        target = target/echoesAvatar.scale;
-	        target -= echoesAvatar.avatar.getJointBasePosition(echoesAvatar.jointIdByName['Bip01 Head'], Piavca.WORLD_COORD);
+	        target -= echoesAvatar.avatar.getJointBasePosition(echoesAvatar.jointIdByName.get("Bip01 Head"), Piavca.WORLD_COORD);
 	        target = echoesAvatar.avatar.getRootOrientation().inverse().transform(target);
 	        target = echoesAvatar.forwardOrientation.inverse().transform(target);
 	        motion.setTarget(target);
@@ -210,7 +210,8 @@ public class Utils
 	        	if (target.id in echoesAvatar.app.canvas.objects)
 	                target = Piavca.Vec(target.pos[0],target.pos[1],target.pos[2]-echoesAvatar.zOffset);
 	            else
-	            {    echoesAvatar.app.canvas.agentActionCompleted(action_id, false);
+	            {
+	            	echoesAvatar.app.canvas.agentActionCompleted(action_id, false);
 	                echoesAvatar.cancelMotions = 1;
 	                return;
 	            }
