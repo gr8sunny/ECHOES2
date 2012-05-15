@@ -65,14 +65,17 @@ public class Stack
     }     
     public void checkAlignment()
     {
-    	prevPot = None;
-        for pot in this.pots
+    	Pot prevPot = null;
+        for(Pot pot : this.pots)
         {
         	if (prevPot)
         	{
-        		x, y, z = pot.pos;
-                if (abs(x - prevPot.pos[0]) > prevPot.size / 1.5)
-                    x = prevPot.pos[0] + random.uniform(-0.1,0.1);
+        		float x, y, z;
+        		x = pot.pos[0];
+        		y = pot.pos[1];
+        		z = pot.pos[2];
+                if (Math.abs(x - prevPot.pos[0]) > prevPot.size / 1.5)
+                    x = (float) (prevPot.pos[0] + (-0.1) + (0.1 - (-0.1))*Math.random());//returns random no. between a range- a + (b-a) * random()
                 if (isinstance(pot, objects.Plants.Pot) && isinstance(prevPot, objects.Plants.Pot))
                     y = prevPot.pos[1] + prevPot.size + pot.size * 0.37;
                 else// # the upper pot is really a basket
@@ -90,7 +93,7 @@ public class Stack
     	Logger.trace("info", "replacing stack with tree"); 
         tree = LifeTree(this.app, true, fadeIn=true);//****set default params
         int size = 0 ;
-        for pot in this.pots
+        for(Pot pot : this.pots)
             size += pot.size;
         size += 2.5;
         tree.size = size;

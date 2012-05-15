@@ -6,7 +6,8 @@ public class ActionTimer(threading.Thread)
 {     
 	//ActionTimer(seconds, avatar, int action_id=-1, speech=false)
 	//*****avatar, seconds...which class?
-    public void ActionTimer(seconds, avatar, int action_id, boolean speech)
+    boolean speech;	
+	public ActionTimer(seconds, avatar, int action_id, boolean speech)
     {    
     	this.runTime = seconds;
         this.app = avatar.app;       
@@ -21,8 +22,8 @@ public class ActionTimer(threading.Thread)
     {
     	if (this.speech)
     	{
-    		weight = 0.0;
-    	    for(int i=0;i < (int(2*this.runTime));i++)
+    		float weight = 0.0;
+    	    for(int i=0;i < (int)(2*this.runTime);i++)
     	    {    
     	    	time.sleep(0.5);
     	        if (weight == 0.0)

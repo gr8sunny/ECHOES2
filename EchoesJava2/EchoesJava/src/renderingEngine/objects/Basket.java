@@ -1,11 +1,11 @@
 import java.util.Map;
 
 //Translation from Py May 10 2012
-public class Basket
+public class Basket extends EchoesObject
 {
     //public classdocs
     //Basket(autoAdd=true, props={"type" "Basket"}, fadeIn = false, fadingFrames = 100, callback = None)
-    public void Basket(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
+    public Basket(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, Object callback)
     {  
         super(autoAdd, props, fadeIn, fadingFrames, callback);
        
@@ -14,7 +14,7 @@ public class Basket
         this.publishRegion = true
         
         this.canBeDraged = true        
-        this.public voidaultHeight = this.app.canvas.getRegionCoords("ground")[0][1]
+        this.defaultHeight = this.app.canvas.getRegionCoords("ground")[0][1]
         this.fallTopublic voidaultHeight = true
         this.falling = false
         this.avatarTCB = None
@@ -41,18 +41,20 @@ public class Basket
     
     public void setAttr(String item, String value)
     {
-    	if (item == "pos" and hasattr("flowers"))
+    	if (item == "pos" && hasattr("flowers"))
     	{
     		for f in this.flowers
     		{
-    			f.pos = [value[0], value[1]+f.stemLength-this.size/2, value[2]];
+    			f.pos[0] = value[0];
+    			f.pos[1] = value[1]+f.stemLength-this.size/2;
+    			f.pos[2] = value[2];
     		}
             if (hasattr("stack") && this.stack && ((hasattr("beingDragged") && this.beingDragged) || (hasattr("avatarTCB") && this.avatarTCB)))
             {    //# if (the user did it, notify the rest of the system
                 split = this.stack.split();
                 if (split && hasattr("beingDragged") && this.beingDragged)
                 {
-                	this.app.canvas.agentPublisher.agentActionCompleted('User', 'unstack_basket', [str(this.id)]);
+                	this.app.canvas.agentPublisher.agentActionCompleted("User", "unstack_basket", [str(this.id)]);
                 }
             }
     	}
@@ -101,14 +103,14 @@ public class Basket
         	this.numflowers = len(this.flowers);
             canvas.rlPublisher.objectPropertyChanged(str(this.id), "basket_numflowers", str(this.numflowers));
         }   
-        if (this.fallTopublic voidaultHeight && !this.beingDragged && !this.avatarTCB)
+        if (this.fallTodefaultHeight && !this.beingDragged && !this.avatarTCB)
         {
-        	hdiff = this.pos[1] - this.public voidaultHeight;
+        	hdiff = this.pos[1] - this.defaultHeight;
             if (abs(hdiff) > 0.05)
             {
             	if (! this.stack)// # no stack
                 {
-            		this.pos = [this.pos[0], this.pos[1]-hdiff/10, this.pos[2]];
+            		this.pos[1] = this.pos[1]-hdiff/10;
                     this.falling = true;
                 }
                 else
@@ -136,7 +138,7 @@ public class Basket
             gl.glColor4f(1, 1, 1, this.transperancy);
             gl.glBegin(GL2.GL_QUADS);
             ti = 0;
-            for v in this.shapes[i]
+            for(float[] v : this.shapes[i])
             {
             	gl.glTexCoord2d(this.texshape[ti][0], this.texshape[ti][1]);
                 gl.glVertex3f(v[0], v[1], -0.1 + i*0.2);
@@ -246,7 +248,7 @@ public class Basket
             worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
             if (this.beingDragged)
             {
-            	if (this.fallTopublic voidaultHeight)
+            	if (this.fallTodefaultHeight)
                 {
             		this.pos = [worldCoords[0]+this.worldDragOffset[0], max(this.public voidaultHeight, worldCoords[1]+this.worldDragOffset[1]), this.pos[2]];
                 }
@@ -260,9 +262,9 @@ public class Basket
     {
     	this.avatarTCB = avatarTCB;
         this.objectCollisionTest = false;        
-        if (this.fallTopublic voidaultHeight)
+        if (this.fallTodefaultHeight)
         {
-        	y = max(jpos[1]+this.size/3, this.public voidaultHeight);
+        	y = max(jpos[1]+this.size/3, this.defaultHeight);
         }
         else
         {

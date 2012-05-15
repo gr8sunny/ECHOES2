@@ -2,12 +2,15 @@
 
 package renderingEngine.agents;
 
+import java.util.HashMap;
+
 
 public class QueueItem
 {
 	//__init__ (item, isFinal=false, callback=None, preCall=None, playDirect=false, timer=None, speech=None, action_id = -1)
 	//****callback, preCall etc. objects of which class?
-    public void QueueItem(item, boolean isFinal, callback=None, preCall=None, boolean playDirect, timer=None, Object speech, int action_id)
+	//HashMap<String, HashMap<String, Integer>> preCall = new HashMap();
+    public void QueueItem(item, boolean isFinal, Object callback, Object preCall, boolean playDirect, timer=None, Object speech, int action_id)
     {
     	this.item = item;
         this.isFinal = isFinal;

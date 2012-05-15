@@ -28,14 +28,14 @@ import agents.x;
 
 public class Bill extends EchoesAgent
 {
-  private boolean collisionTest =false;
+	private boolean collisionTest =false;
   
   // ={"type" "Bill"}
-  public Bill(boolean autoAdd, Map<String, String> props)
-  {
-     super(app, autoAdd, props);
-     this.avatar = Piavca.Avatar("agents/Bill/bill");
-  }
+	public Bill(boolean autoAdd, Map<String, String> props)
+	{
+		super(autoAdd, props);
+		this.avatar = Piavca.Avatar("agents/Bill/bill");
+	}
     
     public void remove()
     {

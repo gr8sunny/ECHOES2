@@ -25,11 +25,11 @@ public class Pot extends EchoesObject
     	super(autoAdd, properties, fadeIn, fadingFrames, callback);
         this.size = (float) (0.3 + Math.random()*0.2);
         this.pos[0] = -1;
-        this.pos[1] = -2.5;
-        this.pos[2] = 0.1; 
+        this.pos[1] = (float) -2.5;
+        this.pos[2] = (float) 0.1; 
                        
-        this.public voidaultHeight = this.app.canvas.getRegionCoords("ground")[0][1]
-        this.fallTopublic voidaultHeight = true
+        this.public voidaultHeight = canvas.getRegionCoords("ground")[0][1];
+        this.fallTopublic voidaultHeight = true;
     //    # basic shape in two strips [x,y, colour shade value]
         
         //# a random neutral shade
@@ -108,7 +108,7 @@ public class Pot extends EchoesObject
             this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", str(value.id));
             value.pos = [this.pos[0], this.pos[1]+value.stemLength+this.size/2, this.pos[2]-0.01];
             value.inCollision = this.id;
-            value.pot = ;//****equal to what?
+            value.pot = this;//****equal to what?
             
             Logger.trace("info", "Flower put into pot" + str(this.id) );
             if (value.beingDragged)
@@ -126,7 +126,7 @@ public class Pot extends EchoesObject
                     this.app.canvas.agentPublisher.agentActionCompleted('User', 'unstack_pot', [str(this.id)]);
                 if (this.stack)// # the stack might be removed if (its the only pot left
                     for pot in this.stack.pots
-                        if (pot != )//*******?? 
+                        if (pot != this)//*******?? 
                         {
                         	dx = this.pos[0]-pot.pos[0];
                             dy = this.pos[1]-pot.pos[1];
@@ -181,16 +181,17 @@ public class Pot extends EchoesObject
         	return;// # in case rendering is called before the object is fully built
         
         if (this.stack)
-        {    if (this.stack.pots[len(this.stack.pots)-1] == )//*****?? 
-                if (this.hasOnTopthis.hasOnTop = null)///*****blank if, something wrong here
-            else
+        {    if (this.stack.pots[len(this.stack.pots)-1] == this)//*****?? 
+                if (this.hasOnTop)
+                	this.hasOnTop = null;///*****blank if, something wrong here            else
                 if (!this.hasOnTop)
                 {
                 	i = this.stack.pots.index();
                     this.hasOnTop = this.stack.pots[i+1].id;
                 }
-            if (this.stack.pots[0] == )//********?? 
-                if (this.isOnTopOfthis.isOnTopOf = null;//*******blank if, something wrong here also
+            if (this.stack.pots[0] == this)//********?? 
+                if (this.isOnTopOf)
+                	this.isOnTopOf = null;//*******blank if, something wrong here also
             else
                 if (! this.isOnTopOf)
                 {
@@ -198,21 +199,23 @@ public class Pot extends EchoesObject
                     this.isOnTopOf = this.stack.pots[i-1].id;
                 }
         }
-        if (this.fallTopublic voidaultHeight && !this.beingDragged && !this.avatarTCB)
+        if (this.fallTodefaultHeight && !this.beingDragged && !this.avatarTCB)
         {    
-        	hdiff = this.pos[1] - this.public voidaultHeight;
+        	hdiff = this.pos[1] - this.defaultHeight;
             if (abs(hdiff) > 0.05)
             {
             	if (! this.stack)// # no stack
                 {
-            		this.pos = [this.pos[0], this.pos[1]-hdiff/10, this.pos[2]];
+            		this.pos[1] = this.pos[1]-hdiff/10;
                     this.falling = true;
                 }         
-                else if (==this.stack.pots[0])// # lowest of stack //*******?==??        
+                else if (this == this.stack.pots[0])// # lowest of stack //*******?==??        
                 {
-                	for pot in this.stack.pots
+                	for(Pot pot : this.stack.pots)
                   	{
-                		pot.pos = [pot.pos[0], pot.pos[1]-hdiff/10, pot.pos[2]];
+                		pot.pos[0] = pot.pos[0];
+                		pot.pos[1] = pot.pos[1]-hdiff/10;
+                		pot.pos[2] = pot.pos[2];
                   	    pot.falling = true;
                 	}
                 }
@@ -226,10 +229,10 @@ public class Pot extends EchoesObject
         gl.glTranslate(this.pos[0], this.pos[1], this.pos[2]);
         gl.glScalef(this.size, this.size, this.size);
         c = this.basecolour;
-        for rectangle in this.shape
+        for(float[] rectangle : this.shape)
         {
         	gl.glBegin( GL2.GL2.GL_QUADS );
-            for v in rectangle
+            for(float[] v : rectangle)
             {
             	gl.glColor4f(c[0]*v[2], c[1]*v[2], c[2]*v[2], c[3]*this.transperancy);
                 gl.glVertex(v[0],v[1], this.pos[2]);
@@ -238,7 +241,7 @@ public class Pot extends EchoesObject
             gl.glLineWidth(3.0);
             gl.glBegin( GL2.GL2.GL_LINE_STRIP );
             gl.glColor4f(this.linecolour[0], this.linecolour[1], this.linecolour[2], this.linecolour[3]*this.transperancy);            
-            for v in rectangle
+            for(float[] v : rectangle)
                 gl.glVertex(v[0],v[1], this.pos[2]);
             gl.glEnd();
             gl.glLineWidth(1.0);
@@ -268,7 +271,7 @@ public class Pot extends EchoesObject
         
        // pass
     }
-    public void startDrag(newXY)
+    public void startDrag(float []newXY)
     {
     	if (this.avatarTCB)
            this.avatarTCB.detachObject();
@@ -287,10 +290,10 @@ public class Pot extends EchoesObject
         if (this.publishGrowStarted)
         {
         	this.publishGrowStarted = false;
-            this.app.canvas.agentPublisher.agentActionCompleted('User', 'flower_grow', [str(this.id), str(this.flower.id), str(this.growPond)]);
+            this.app.canvas.agentPublisher.agentActionCompleted("User", "flower_grow", [str(this.id), str(this.flower.id), str(this.growPond)]);
         }
     }
-    public void drag(newXY)
+    public void drag(float [] newXY)
     {
     	if (this.interactive && this.canBeDraged)
       	{    //# Based on http//web.iiit.ac.in/~vkrishna/data/unproj.html
@@ -302,7 +305,7 @@ public class Pot extends EchoesObject
             worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
             if (this.beingDragged)
             {
-            	if (this.fallTopublic voidaultHeight)
+            	if (this.fallTodefaultHeight)
             		this.pos = [worldCoords[0]+this.worldDragOffset[0], max(this.public voidaultHeight, worldCoords[1]+this.worldDragOffset[1]), this.pos[2]];
                 else
                     this.pos = [worldCoords[0]+this.worldDragOffset[0], worldCoords[1]+this.worldDragOffset[1], this.pos[2]];                
@@ -310,12 +313,12 @@ public class Pot extends EchoesObject
             }
     	}
     }           
-    public void attachToJoint(jpos, jori, avatarTCB)
+    public void attachToJoint(float[] jpos, Object jori, avatarTCB)
     {
     	this.avatarTCB = avatarTCB;
         this.objectCollisionTest = false;        
-        if (this.fallTopublic voidaultHeight)
-            y = max(jpos[1], this.public voidaultHeight);
+        if (this.fallTodefaultHeight)
+            y = max(jpos[1], this.defaultHeight);
         else
             y = jpos[1];
         this.pos[0] = jpos[0]; 
@@ -328,18 +331,18 @@ public class Pot extends EchoesObject
         this.objectCollisionTest = true;        
     }
     
-    public void stackUp(pot)
+    public void stackUp(Pot pot)
     {
     	if (! this.stack && ! pot.stack)
     	{
     		this.stack = pot.stack = Stack(this.app);
-    	    this.stack.pots = [pot];
+    	    this.stack.pots = {pot};
     	}
         else if (this.stack && pot.stack)
         {
         	newstack = Stack(this.app);
             newstack.pots = this.stack.pots + pot.stack.pots;
-            for pot in newstack.pots
+            for (Pot pot : newstack.pots)
                 pot.stack = newstack;
         }
         else if (this.stack || pot.stack)

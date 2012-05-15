@@ -1,91 +1,95 @@
 package agents;
+
+import java.util.*;
+//*****callback, Queue and preCall problem
 //Translation from Py May 9th
 //class file created out of PiavcaAvatars.java
 public class EchoesAvatar extends EchoesAgent
 {    
+	boolean collisionTest = true;
+    boolean showBoundary = false;
+    boolean publishVisibility = true;
+    boolean visible = false;
+    Hashtable jointBaseOrientations = new Hashtable();
+    Hashtable jointIdByName = new Hashtable();
+    Hashtable facialExpressions = new Hashtable();
+    Hashtable expressionTargets = new Hashtable();
+ // stores joints and target orientations for manual animation
+    Hashtable animationTargets  = new Hashtable();  
+    float [] pos = {0, 0, 0};
+    
     //public classdocs
     //EchoesAvatar(avatar="agents/Paul/Paul", autoAdd=true, props={"type" "Paul"}, scale=0.0275, callback=None
-    public void EchoesAvatar(String avatar, boolean autoAdd=true, Map<String, String> properties ,float scale, Object callback)
+    public EchoesAvatar(String avatar, boolean autoAdd, Map<String, String> props ,float scale, Object callback)
     {    
-        super(autoAdd, properties)
-        
-        this.collisionTest = true
-        this.showBoundary = false
-        this.publishVisibility = true
-        this.visible = false
-
-        this.app.canvas.renderPiavca = false #dont render Paul until I have positioned him at the start
-        this.avatar = Piavca.Avatar(avatar)
-        this.repositioner = Piavca.Reposition()
-        this.repositioner.setRotateAboutUp(false)
-        this.repositioner.setMaintainUp(true) # if (false it locks the up position (presumably from the motion)
-        this.repositioner.setUpDirection(Piavca.Vec(0,1,0))        
-        
-        this.jointBaseOrientations = dict()
-        this.jointIdByName = dict()
+        super(autoAdd, props);
+            
+        canvas.renderPiavca = false;// #dont render Paul until I have positioned him at the start
+        this.avatar = Piavca.Avatar(avatar);
+        this.repositioner = Piavca.Reposition();
+        this.repositioner.setRotateAboutUp(false);
+        this.repositioner.setMaintainUp(true); //# if (false it locks the up position (presumably from the motion)
+        this.repositioner.setUpDirection(Piavca.Vec(0,1,0));        
+               
         jid = this.avatar.begin()
         while( jid != this.avatar.end())
         {
-        	this.jointBaseOrientations[jid] = this.avatar.getJointOrientation(jid);
-            this.jointIdByName[this.avatar.getJointName(jid)] = jid;
+        	this.jointBaseOrientations.put(jid, this.avatar.getJointOrientation(jid));
+            this.jointIdByName.put(this.avatar.getJointName(jid), jid);
             jid = this.avatar.next(jid);
         }
         // those have to be listed in the avatars cfg file in this order
         String [] expressionNames = {"Happy", "Sad", "Laugh", "OpenMouth", "ClosedEyes", "Blink", "Grin", "Aggressive"};
-        this.facialExpressions = dict()
-        this.expressionTargets = dict()  
+          
         i = 0
         fid = this.avatar.beginExpression()
         // there is a bug in nextExpression that never produces the last number...
-        while fid != this.avatar.endExpression() and fid != 10000 and i < 15
-            try
-                name = expressionNames[i]
-            except
-                name = "Unknown" + str(i)
-            this.facialExpressions[name] = fid
-            this.expressionTargets[name] = 0.0
-            fid = this.avatar.nextExpression(fid)
-            i += 1
-             
+        while( fid != this.avatar.endExpression() && fid != 10000 && i < 15)
+        {
+        	try
+                name = expressionNames[i];
+            catch(Exception e)
+                name = "Unknown" + str(i);
+            this.facialExpressions[name] = fid;
+            this.expressionTargets[name] = 0.0;
+            fid = this.avatar.nextExpression(fid);
+            i += 1;
+        }    
         // Current value motion to receive updates on facial expressions
-        this.facialExpMotion = Piavca.CurrentValueMotion()
+        this.facialExpMotion = Piavca.CurrentValueMotion();
 
-        this.playing = false # pre-recorded motions playing
-        this.animating = false # manual animation
-        this.speaking = false # using speech
-        this.blinkingTimer = None # blinking
+        this.playing = false;// # pre-recorded motions playing
+        this.animating = false;// # manual animation
+        this.speaking = false;// # using speech
+        this.blinkingTimer = null;// # blinking
         
         // callback to determine end of motions and manually animate joint movements
         this.tcb = PiavcaTimeCallback(str(id()), )
         this.avatar.registerCallback (this.tcb)
         
-        // stores joints and target orientations for manual animation
-        this.animationTargets = dict()  
-
         // queues for smoothly stacking up motions, animations and speech
-        this.motionQueue = deque ()
-        this.animationQueue = deque ()
-        this.speechQueue = deque ()
-        this.cancelMotions = 0
+        this.motionQueue = deque ();
+        this.animationQueue = deque ();
+        this.speechQueue = deque ();
+        this.cancelMotions = 0;
         
-        this.scale = scale
-        this.forwardOrientation = Piavca.Quat(-math.pi/2, Piavca.Vec.XAxis()) * Piavca.Quat(-math.pi/2, Piavca.Vec.ZAxis())
-        this.zOffset = 3.0
+        this.scale = scale;
+        this.forwardOrientation = Piavca.Quat(-math.pi/2, Piavca.Vec.XAxis()) * Piavca.Quat(-math.pi/2, Piavca.Vec.ZAxis());
+        this.zOffset = 3.0;
         
-        w = Piavca.getMotion("walking")
-        this.walking = Piavca.SubMotion(w, 0.0, 4.2)
-        this.startstep = Piavca.SubMotion(w, 0.0, 0.5)
-        this.step = Piavca.SubMotion(w, 3.2, 4.2)
-        this.walkingDistance = this.getPlaneMotionDistance(this.walking, this.walking.getStartTime(), this.walking.getEndTime()) 
-        this.stepDistance = this.getPlaneMotionDistance(this.step, this.walking.getStartTime(), this.walking.getEndTime())
-        this.relaxPosture = Piavca.MotionPosture(w)
+        w = Piavca.getMotion("walking");
+        this.walking = Piavca.SubMotion(w, 0.0, 4.2);
+        this.startstep = Piavca.SubMotion(w, 0.0, 0.5);
+        this.step = Piavca.SubMotion(w, 3.2, 4.2);
+        this.walkingDistance = this.getPlaneMotionDistance(this.walking, this.walking.getStartTime(), this.walking.getEndTime()); 
+        this.stepDistance = this.getPlaneMotionDistance(this.step, this.walking.getStartTime(), this.walking.getEndTime());
+        this.relaxPosture = Piavca.MotionPosture(w);
 
-        this.pos = (0,0,0)
-        this.startPostion()
-        this.floorheight = None
-        this.blinking(true)
+        this.startPostion();
+        this.floorheight = null;
+        this.blinking(true);
 
-        this.app.canvas.rlPublisher.agentAdded(str(this.id), dict())
+        canvas.rlPublisher.agentAdded(str(this.id), dict());
         //******************this is using ice :O
         if (callback)
         {
@@ -127,19 +131,20 @@ public class EchoesAvatar extends EchoesAgent
         this.avatar.playMotionDirect(this.repositioner);
         this.playing = true;
     }       
-    public void updatePos(adjustY=true)
+    //updatePos(adjustY=true)
+    public void updatePos(boolean adjustY)
     {
     	rp = this.avatar.getRootPosition() * this.scale;
         if (adjustY)
         {
         	if (! this.floorheight)
             {
-            	this.floorheight = (this.avatar.getJointBasePosition(this.jointIdByName["Bip01 L Foot"], Piavca.WORLD_COORD) * this.scale)[1]
+            	this.floorheight = (this.avatar.getJointBasePosition(this.jointIdByName.get("Bip01 L Foot"), Piavca.WORLD_COORD) * this.scale)[1];
             }
-            currentFootHeight = (this.avatar.getJointBasePosition(this.jointIdByName["Bip01 L Foot"], Piavca.WORLD_COORD) * this.scale)[1]
-            dy = this.floorheight - currentFootHeight
+            currentFootHeight = (this.avatar.getJointBasePosition(this.jointIdByName.get("Bip01 L Foot"), Piavca.WORLD_COORD) * this.scale)[1];
+            dy = this.floorheight - currentFootHeight;
     //        print this.floorheight, currentFootHeight, "adjusting by", dy
-            this.pos = [rp.X(), rp.Y() + dy, rp.Z() + this.zOffset] # make the avatar re-adjust its y position at the next motion
+            this.pos = [rp.X(), rp.Y() + dy, rp.Z() + this.zOffset]; //# make the avatar re-adjust its y position at the next motion
         }
         else 
         {
@@ -152,16 +157,18 @@ public class EchoesAvatar extends EchoesAgent
     	this.orientation = Piavca.Quat(0, Piavca.Vec.ZAxis());
         this.setPosition((-6,-0.5,-5));
     }    
-    public void setPosition(pos, action_id = -1)
+    //action_id = -1
+    public void setPosition(float [] pos, int action_id)
     {
-    	if (len(pos) < 3) // assuming that it is xz, if (y is not given (avatar remains at original height)
+    	if (pos.length < 3) // assuming that it is xz, if (y is not given (avatar remains at original height)
         {
-        	pos = (pos[0], this.pos[1], pos[1])
+        	pos[1] = this.pos[1]
+        	pos[2] = pos[1];
         }
         qi = QueueItem(this.relaxPosture, isFinal=true, action_id=action_id);
         qi.preCall = ("setPosition", pos);
         qi.playDirect = true;
-        this.motionQueue.append(qi);
+        this.motionQueue.append(qi);//******have to do something about Queue thing
     }    
     //setDepthLayer(String layer="front", int action_id = -1)
     public void setDepthLayer(String layer, int action_id)
@@ -171,22 +178,22 @@ public class EchoesAvatar extends EchoesAgent
                 
     public void isMoving()
     {
-    	m = this.repositioner.getMotion()
-        return !m.finished()
+    	m = this.repositioner.getMotion();
+        return !m.finished();
     }
     
-    public void walkTo(x, z, turnTo=None, action_id = -1)
+    public void walkTo(float x, float z, turnTo=None, action_id = -1)
     {
     	r = this.relaxPosture;
-        wi = QueueItem(None); // the motion is set up just before he actually needs to walk
+        wi = QueueItem(null); // the motion is set up just before he actually needs to walk
         if (turnTo)
         {
         	wi.callback = ("turnTo", turnTo);
         }
-        wi.preCall = ("walkTo", [x,z,wi,r,action_id])
-        this.motionQueue.append(wi) 
-        this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id))
-        return true 
+        wi.preCall = ("walkTo", [x,z,wi,r,action_id]);//****what is this?
+        this.motionQueue.append(wi);
+        this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id));
+        return true; 
     }  
     public void walkToObject(id, distance = 1.5, action_id = -1)
     {
@@ -206,13 +213,13 @@ public class EchoesAvatar extends EchoesAgent
             return true;
         }
         r = this.relaxPosture;
-        wi = QueueItem(None); // the motion is set up just before he actually needs to walk
-        wi.preCall = ("walkTo", [o,distance,wi,r,action_id])
+        wi = QueueItem(null); // the motion is set up just before he actually needs to walk
+        wi.preCall = ("walkTo", [o,distance,wi,r,action_id]);
         /*
          * Here motionQueue is a list and so append will work...but how to do it in Java? 
          */
         this.motionQueue.append(wi);//***********How to handle queues? 
-        this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id))
+        this.motionQueue.append(QueueItem(r, isFinal=true, action_id=action_id));
         return true; 
     }
     public double getDistance(int id)
@@ -314,40 +321,44 @@ public class EchoesAvatar extends EchoesAgent
       	 */
     	boolean targetIdinObjects=false;
     	
-    	if (targetId in this.app.canvas.objects)
-            target = this.app.canvas.objects[targetId]
+    	if (canvas.objects.contains(targetId))
+    	{
+    		target = canvas.objects[targetId];
             //*****jointIdByName is dictionary->convert to HashTable http://www.java-samples.com/showtutorial.php?tutorialid=375
-            mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec())
-            mh.setForwardDirection(Piavca.Vec.YAxis())
-            mh.setLocal(true)
-            mask = Piavca.MotionMask()
-            mask.setAllMask(false)
-            mask.setMask(this.jointIdByName['Bip01 Head'], true)
-            masked_mh = Piavca.MaskedMotion(mh, mask)
-            qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id)
-            qi.speech = speech
-            qi.preCall = ("lookatTarget", (mh, target, action_id))
+            mh = Piavca.PointAt(this.jointIdByName.get("Bip01 Head"), Piavca.Vec());
+            mh.setForwardDirection(Piavca.Vec.YAxis());
+            mh.setLocal(true);
+            mask = Piavca.MotionMask();
+            mask.setAllMask(false);
+            mask.setMask(this.jointIdByName.get("Bip01 Head"), true);
+            masked_mh = Piavca.MaskedMotion(mh, mask);
+            qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id);
+            qi.speech = speech;
+            qi.preCall = ("lookatTarget", (mh, target, action_id));
             if (hold > 0.0)
-                qi.callback = ("hold_posture", [hold, qi])
-            tqi = QueueItem(None, isFinal=false)
-            tqi.preCall=("turn_towardsTarget", [tqi, target])
-            this.motionQueue.append(tqi)
-            this.motionQueue.append(qi)
-            return true
+                qi.callback = ("hold_posture", [hold, qi]);
+            tqi = QueueItem(None, isFinal=false);
+            tqi.preCall=("turn_towardsTarget", [tqi, target]);
+            this.motionQueue.append(tqi);
+            this.motionQueue.append(qi);
+            return true;
+    	}
         else
-            Logger.warning( "Avatar.lookAt no such object id in scene - " + str(targetId))
-            return false
+        {
+        	Logger.warning( "Avatar.lookAt no such object id in scene - " + str(targetId));
+            return false;
+        }
     }
     //lookAtChild(speech=None, speed=1.0, hold=0.0, action_id = -1)
     public void lookAtChild(Object speech, float speed, float hold, int action_id)
     {
     	String target = "child";
-        mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec());//*****dictionary here also
+        mh = Piavca.PointAt(this.jointIdByName.get("Bip01 Head"), Piavca.Vec());//*****dictionary here also
         mh.setForwardDirection(Piavca.Vec.YAxis());
         mh.setLocal(true);
         mask = Piavca.MotionMask();
         mask.setAllMask(false);
-        mask.setMask(this.jointIdByName['Bip01 Head'], true);
+        mask.setMask(this.jointIdByName.get("Bip01 Head"), true);
         masked_mh = Piavca.MaskedMotion(mh, mask);
         qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=true, action_id=action_id);
         qi.preCall = ("lookatTarget", (mh, target, action_id));
@@ -366,12 +377,12 @@ public class EchoesAvatar extends EchoesAgent
     public boolean lookAtPoint(float x, float y, float z, Object speech, float speed, float hold, int action_id, boolean intermediate)
     {
     	target = Piavca.Vec(x, y, z);
-        mh = Piavca.PointAt(this.jointIdByName['Bip01 Head'], Piavca.Vec());//****dictionary here also
+        mh = Piavca.PointAt(this.jointIdByName.get("Bip01 Head"), Piavca.Vec());//****dictionary here also
         mh.setForwardDirection(Piavca.Vec.YAxis());
         mh.setLocal(true);
         mask = Piavca.MotionMask();
         mask.setAllMask(false);
-        mask.setMask(this.jointIdByName['Bip01 Head'], true);//*****dictionary
+        mask.setMask(this.jointIdByName.get("Bip01 Head"), true);//*****dictionary
         masked_mh = Piavca.MaskedMotion(mh, mask);
         qi = QueueItem(Piavca.ScaleMotionSpeed(masked_mh, speed), isFinal=not intermediate, action_id=action_id);
         qi.preCall = ("lookatTarget", (mh, target, action_id));
@@ -402,7 +413,7 @@ public class EchoesAvatar extends EchoesAgent
         Object target;//****Don't know for sure if this will solve it
     	if (targetId in this.app.canvas.objects)//****put a loop again for this?
     	{
-    		target = this.app.canvas.objects[targetId];
+    		target = canvas.objects[targetId];
     	}
         else
         {
@@ -433,9 +444,9 @@ public class EchoesAvatar extends EchoesAgent
     //pointAt(targetId, hand="right", action_id = -1, speed=1.0, hold=0.0, postAction=None)
     public void pointAt(int targetId, String hand, int action_id, float speed, float hold, Object postAction)
     {
-    	if (targetId in this.app.canvas.objects //*******the In problem
+    	if (this.app.canvas.objects.contains(targetId)) //*******the In problem
     	{
-    		target = this.app.canvas.objects[targetId];
+    		target = canvas.objects[targetId];
     	}
         else
         {
@@ -444,11 +455,11 @@ public class EchoesAvatar extends EchoesAgent
         }
         if (hand=="right")
         {
-        	jid = this.jointIdByName['Bip01 R UpperArm'];//****the dictionary problem
+        	jid = this.jointIdByName.get("Bip01 R UpperArm");//****the dictionary problem
         }
         else
         {
-        	jid = this.jointIdByName['Bip01 L UpperArm']; //****dictionary prob
+        	jid = this.jointIdByName.get("Bip01 L UpperArm"); //****dictionary prob
         }
         mh = Piavca.PointAt(jid, Piavca.Vec(0,0,0));
         mh.setForwardDirection(Piavca.Vec.XAxis());
@@ -482,11 +493,11 @@ public class EchoesAvatar extends EchoesAgent
     {
     	if (hand=="right")
     	{
-    		jid = this.jointIdByName['Bip01 R UpperArm'];//****dictionary problem
+    		jid = this.jointIdByName.get("Bip01 R UpperArm");//****dictionary problem
     	}
         else
         {
-        	jid = this.jointIdByName['Bip01 L UpperArm'];//*****dictionary prob
+        	jid = this.jointIdByName.get("Bip01 L UpperArm");//*****dictionary prob
         }
         target = Piavca.Vec(x, y, z);
         mh = Piavca.PointAt(jid, target);
@@ -529,7 +540,7 @@ public class EchoesAvatar extends EchoesAgent
     	}
         else 
         {
-        	preCall = None;//****
+        	preCall = null;//****
         }
         m = QueueItem(Piavca.ScaleMotionSpeed(Piavca.getMotion(name), speed), preCall=preCall);
         m.speech = speech;        
@@ -562,7 +573,7 @@ public class EchoesAvatar extends EchoesAgent
     	}
         else 
         {
-        	preCall = None;//****None?
+        	preCall = null;//****None?
         }
         if (type=="all") // going through all the joints, for debugging purposes only
         {    
@@ -605,7 +616,7 @@ public class EchoesAvatar extends EchoesAgent
         return false;
     }
     //sayPreRecordedNow(file, action_id = -1)
-    public void sayPreRecordedNow(file, action_id)
+    public void sayPreRecordedNow(String file, int action_id)
     {   
     	if (sound.EchoesAudio.soundPresent)
     	{   
@@ -629,16 +640,21 @@ public class EchoesAvatar extends EchoesAgent
     	if (expression == "Neutral")
       	{   
     		//***in problem
-    		for name in this.expressionTargets.keys()
-            {
-      			this.expressionTargets[name] = 0.0;
+    		Set set = expressionTargets.keySet(); // get set-view of keys
+    		// get iterator
+    		Iterator itr = set.iterator();
+    		String name;
+    		while(itr.hasNext()) 
+    		{
+    			name = (String) itr.next(); 
+    			this.expressionTargets.put(name) = 0.0;
             }
       	}
         else
         {   
-        	if (expression in this.expressionTargets)
+        	if (this.expressionTargets.contains(expression))
         	{
-        		this.expressionTargets[expression] = weight;
+        		this.expressionTargets.put(expression) = weight;
         	}
             else
             {    
@@ -653,7 +669,7 @@ public class EchoesAvatar extends EchoesAgent
     {   
     	if (!id)
       	{   
-    		for tid, object in this.app.canvas.objects.items()
+    		for tid, object in canvas.objects.items()
     		{    
     			if (isinstance(object, objects.Plants.EchoesFlower))
     		    {
@@ -667,17 +683,17 @@ public class EchoesAvatar extends EchoesAgent
         	Logger.warning("Avatar no flower to pick, doing nothing");
             return false;
         }
-        flower = this.app.canvas.objects[id];
+        flower = canvas.objects[id];
         if (walkTo && !(flower.overAgent && flower.beingDragged))
         {    
         	this.walkToObject(id);
         }
-        else if (not this.isAt(id)  and not (flower.overAgent and flower.beingDragged))
+        else if (! this.isAt(id)  && !(flower.overAgent && flower.beingDragged))
         {
         	Logger.warning("Avatar flower too far away, doing nothing");
             return false;
         }
-        mpick = Piavca.getMotion('pick_up_flower');
+        mpick = Piavca.getMotion("pick_up_flower");
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
         mdown = Piavca.SubMotion(mpick, 0.0, 0.7);
@@ -709,22 +725,22 @@ public class EchoesAvatar extends EchoesAgent
         object = this.app.canvas.objects[id];
         if (object.pos[1] < this.low)
         {
-        	mpick = Piavca.getMotion('touch_floor');
+        	mpick = Piavca.getMotion("touch_floor");
             cut = 0.5;
         }
         else if (object.pos[1] < this.knee)
         {
-        	mpick = Piavca.getMotion('touch_knee');
+        	mpick = Piavca.getMotion("touch_knee");
             cut = 0.5;
         }
         else if (object.pos[1] < this.waist)
         {
-        	mpick = Piavca.getMotion('touch_waist');
+        	mpick = Piavca.getMotion("touch_waist");
             cut = 0.5;
         }
         else
         {
-        	mpick = Piavca.getMotion('touch_head');
+        	mpick = Piavca.getMotion("touch_head");
             cut = 0.5;
         }
         mpick.setStartTime(0.0);
@@ -758,7 +774,7 @@ public class EchoesAvatar extends EchoesAgent
     	    return false;
     	}
         flower = this.app.canvas.objects[id];
-        mpick = Piavca.getMotion('spinning_flower_stepforward');
+        mpick = Piavca.getMotion("spinning_flower_stepforward");
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
         mdown = Piavca.SubMotion(mpick, 0.0, 1.3);
@@ -799,7 +815,7 @@ public class EchoesAvatar extends EchoesAgent
             	this.walkTo(flowerx + 1, this.pos[2]);
             }
         }
-        mput = Piavca.getMotion('pick_up_flower');
+        mput = Piavca.getMotion("pick_up_flower");
         mput.setStartTime(0.0);
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, 0.7);
@@ -829,8 +845,13 @@ public class EchoesAvatar extends EchoesAgent
             return false;
         }
         flower = null;
-        for object in this.tcb.attachedObjects
-        {
+        Set set = this.tcb.attachedObjects.keySet(); // get set-view of keys
+        // get iterator
+        Iterator itr = set.iterator();
+        while(itr.hasNext()) {
+        	object = (String) itr.next(); 
+       // for object in this.tcb.attachedObjects
+        //{
         	if (isinstance(object, objects.Plants.EchoesFlower))
         	{
         		flower = object;
@@ -849,7 +870,7 @@ public class EchoesAvatar extends EchoesAgent
         }
 
         pot = this.app.canvas.objects[id];
-        mput = Piavca.getMotion('pick_up_flower')
+        mput = Piavca.getMotion("pick_up_flower");
         mput.setStartTime(0.0);
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, 0.7);
@@ -879,10 +900,17 @@ public class EchoesAvatar extends EchoesAgent
             return false;
         }
         flower = null;
-        for object in this.tcb.attachedObjects
+        set = this.tcb.attachedObjects.keySet(); // get set-view of keys
+        // get iterator
+        itr = set.iterator();
+        while(itr.hasNext()) 
         {
+        	object = (String) itr.next(); 
+        //for object in this.tcb.attachedObjects
+        //{
         	if (isinstance(object, objects.Plants.EchoesFlower))
-        	{   flower = object;
+        	{
+        		flower = object;
                 break;
         	}
         }
@@ -901,7 +929,7 @@ public class EchoesAvatar extends EchoesAgent
             return false;
         }
         basket = this.app.canvas.objects[id];
-        mput = Piavca.getMotion('pick_up_flower');
+        mput = Piavca.getMotion("pick_up_flower");
         mput.setStartTime(0.0);
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, 0.7);
@@ -931,7 +959,7 @@ public class EchoesAvatar extends EchoesAgent
         d = 1000;
         if (!id)
         {
-        	for tid, object in this.app.canvas.objects.items()
+        	for tid, object in canvas.objects.items()
           	{
         		if (isinstance(object, objects.Plants.Pot) and object != pot and this.getDistance(tid) < d)
         		{
@@ -958,22 +986,22 @@ public class EchoesAvatar extends EchoesAgent
         targetpot = this.app.canvas.objects[id];
         if (targetpot.pos[1] < this.low)
         {
-        	mpick = Piavca.getMotion('pot_down_floor');
+        	mpick = Piavca.getMotion("pot_down_floor");
             cut = 0.4;
         }
         else if (targetpot.pos[1] < this.knee)
         {
-        	mpick = Piavca.getMotion('pot_down_knee');
+        	mpick = Piavca.getMotion("pot_down_knee");
             cut = 0.4;
         }
         else if (targetpot.pos[1] < this.waist)
         {
-        	mpick = Piavca.getMotion('pot_down_waist');
+        	mpick = Piavca.getMotion("pot_down_waist");
             cut = 0.4;
         }
         else
         {
-        	mpick = Piavca.getMotion('pot_down_head');
+        	mpick = Piavca.getMotion("pot_down_head");
             cut = 0.7;
         }
         mpick.setStartTime(0.0);
@@ -1008,33 +1036,33 @@ public class EchoesAvatar extends EchoesAgent
             return false;
         }
         pot = this.app.canvas.objects[id];
-        if (walkTo && not (pot.overAgent and pot.beingDragged)) 
+        if (walkTo && not (pot.overAgent && pot.beingDragged)) 
         {
         	this.walkToObject(id);
         }
-        else if (! this.isAt(id) && !(pot.overAgent and pot.beingDragged))
+        else if (! this.isAt(id) && !(pot.overAgent && pot.beingDragged))
         {
         	Logger.warning("Avatar Not close enough to target pot, not stacking");
             return false;
         }
         if (pot.pos[1] < this.low)
         {
-        	mpick = Piavca.getMotion('pot_up_floor');
+        	mpick = Piavca.getMotion("pot_up_floor");
             cut = 0.4;
         }
         else if (pot.pos[1] < this.knee)
         {
-        	mpick = Piavca.getMotion('pot_up_knee');
+        	mpick = Piavca.getMotion("pot_up_knee");
             cut = 0.4;
         }
         else if (pot.pos[1] < this.waist)
         {
-        	mpick = Piavca.getMotion('pot_up_waist');
+        	mpick = Piavca.getMotion("pot_up_waist");
             cut = 0.4;
         }
         else
         {
-        	mpick = Piavca.getMotion('pot_up_head');
+        	mpick = Piavca.getMotion("pot_up_head");
             cut = 0.7;
         }
         mpick.setStartTime(0.0);
@@ -1049,11 +1077,17 @@ public class EchoesAvatar extends EchoesAgent
         return true ;       
     }
     //putdownPot(action_id = -1, walkTo = -1)
-    public void putdownPot(action_id = -1, walkTo = -1)
+    public void putdownPot(int action_id, int walkTo)
     {    
     	pot = null;
-        for object in this.tcb.attachedObjects
+    	Set set = this.tcb.attachedObjects.keySet(); // get set-view of keys
+        // get iterator
+        Iterator itr = set.iterator();
+        while(itr.hasNext()) 
         {
+        	object = (String) itr.next(); 
+        //for object in this.tcb.attachedObjects
+        //{
         	if (isinstance(object, objects.Plants.Pot))
         	{
         		pot = object;
@@ -1092,7 +1126,7 @@ public class EchoesAvatar extends EchoesAgent
     	d = 1000;
         if (!id)
         {
-        	for tid, object in this.app.canvas.objects.items()
+        	for tid, object in canvas.objects.items()
         	{
         		if (isinstance(object, objects.Environment.Basket) and this.getDistance(tid) < d)
         		{
@@ -1109,7 +1143,7 @@ public class EchoesAvatar extends EchoesAgent
             return false;
         }
         basket = this.app.canvas.objects[id];
-        if (walkTo &&  !(basket.overAgent and basket.beingDragged)) 
+        if (walkTo &&  !(basket.overAgent && basket.beingDragged)) 
         {
         	this.walkToObject(id);
         }
@@ -1120,22 +1154,22 @@ public class EchoesAvatar extends EchoesAgent
         }
         if (basket.pos[1] < this.low)
         {
-        	mpick = Piavca.getMotion('pot_up_floor');
+        	mpick = Piavca.getMotion("pot_up_floor");
             cut = 0.4;
         }
         else if (basket.pos[1] < this.knee)
         {
-        	mpick = Piavca.getMotion('pot_up_knee');
+        	mpick = Piavca.getMotion("pot_up_knee");
             cut = 0.4;
         }
         else if (basket.pos[1] < this.waist)
         {
-        	mpick = Piavca.getMotion('pot_up_waist');
+        	mpick = Piavca.getMotion("pot_up_waist");
             cut = 0.4;
         }
         else
         {
-        	mpick = Piavca.getMotion('pot_up_head');
+        	mpick = Piavca.getMotion("pot_up_head");
             cut = 0.7;
         }
         mpick.setStartTime(0.0);
@@ -1150,11 +1184,18 @@ public class EchoesAvatar extends EchoesAgent
         return true;        
     }
     //putdownBasket(action_id = -1, walkTo = -1)
-    public void putdownBasket(action_id = -1, walkTo = -1)
+    public void putdownBasket(int action_id, int walkTo)
     {
     	basket = null;
-        for object in this.tcb.attachedObjects
-        {   
+    	Set set = this.tcb.attachedObjects.keySet(); // get set-view of keys
+    	// get iterator
+    	String object;
+    	Iterator itr = set.iterator();
+    	while(itr.hasNext()) 
+    	{
+    		object = (String) itr.next(); 
+        //for object in this.tcb.attachedObjects
+        //{   
         	if (isinstance(object, objects.Environment.Basket))
         	{
         		basket = object;
@@ -1178,7 +1219,7 @@ public class EchoesAvatar extends EchoesAgent
             	this.walkTo(basketx + 1, this.pos[2]);
             }
         }
-        mput = Piavca.getMotion('pot_down_floor');
+        mput = Piavca.getMotion("pot_down_floor");
         mput.setStartTime(0.0);
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, endtime*0.7);
@@ -1221,22 +1262,22 @@ public class EchoesAvatar extends EchoesAgent
         }
         if (ball.pos[1] < this.low)
         {
-        	mpick = Piavca.getMotion('pot_up_floor');
+        	mpick = Piavca.getMotion("pot_up_floor");
             cut = 0.4;
         }
         else if (ball.pos[1] < this.knee)
         {
-        	mpick = Piavca.getMotion('pot_up_knee');
+        	mpick = Piavca.getMotion("pot_up_knee");
         	cut = 0.4;
         }
         else if (ball.pos[1] < this.waist)
         {
-        	mpick = Piavca.getMotion('pot_up_waist');
+        	mpick = Piavca.getMotion("pot_up_waist");
             cut = 0.4;
         }
         else
         {
-        	mpick = Piavca.getMotion('pot_up_head');
+        	mpick = Piavca.getMotion("pot_up_head");
             cut = 0.7;
         }
         mpick.setStartTime(0.0);
@@ -1251,11 +1292,18 @@ public class EchoesAvatar extends EchoesAgent
         return true;        
     }
     //putdownBall(action_id = -1, walkTo = -1)
-    public void putdownBall(action_id = -1, walkTo = -1)
+    public void putdownBall(int action_id, int walkTo)
     {
     	ball = null;
-        for object in this.tcb.attachedObjects
-        {
+    	Set set = this.tcb.attachedObjects.keySet(); // get set-view of keys
+    	// get iterator
+    	String object;
+    	Iterator itr = set.iterator();
+    	while(itr.hasNext()) 
+    	{
+    		object = (String) itr.next(); 
+        //for object in this.tcb.attachedObjects
+        //{
         	if (isinstance(object, objects.PlayObjects.Ball))
         	{
         		ball = object;
@@ -1279,7 +1327,7 @@ public class EchoesAvatar extends EchoesAgent
             	this.walkTo(ballx + 1, this.pos[2]);
             }
         }
-        mput = Piavca.getMotion('pot_down_floor');
+        mput = Piavca.getMotion("pot_down_floor");
         mput.setStartTime(0.0);
         endtime = mput.getMotionLength();
         mdown = Piavca.SubMotion(mput, 0.0, endtime*0.7);
@@ -1307,7 +1355,7 @@ public class EchoesAvatar extends EchoesAgent
         }
         if (!id)
         {
-        	for tid, object in this.app.canvas.objects.items()
+        	for tid, object in canvas.objects.items()
         	{
         		if (isinstance(object, objects.Environment.Container))
         		{
@@ -1331,7 +1379,7 @@ public class EchoesAvatar extends EchoesAgent
         	Logger.warning("Avatar Not close enough to target container");
             return false;
         }
-        mpick = Piavca.getMotion('drop_ball');
+        mpick = Piavca.getMotion("drop_ball");
         cut = 0.5;
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
@@ -1364,7 +1412,7 @@ public class EchoesAvatar extends EchoesAgent
         {
         	this.walkToObject(cloudId, distance=2.5);
         }
-        mpick = Piavca.getMotion('touch_above');
+        mpick = Piavca.getMotion("touch_above");
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
         mup = Piavca.SubMotion(mpick, 0.0, endtime/2);
@@ -1404,7 +1452,7 @@ public class EchoesAvatar extends EchoesAgent
         	return false;        
         }
         cloud = this.app.canvas.objects[id];
-        mpick = Piavca.getMotion('touch_above');
+        mpick = Piavca.getMotion("touch_above");
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
         mup = Piavca.SubMotion(mpick, 0.0, endtime/2);
@@ -1435,7 +1483,7 @@ public class EchoesAvatar extends EchoesAgent
         	return false;
         }
         leaf = this.app.canvas.objects[id];
-        if (leaf.flying and leaf.energy > 0)
+        if (leaf.flying && leaf.energy > 0)
         {
         	Logger.warning("Avatar warning MagicLeaves are moving, not attempting to touch them");
             return false;
@@ -1450,7 +1498,7 @@ public class EchoesAvatar extends EchoesAgent
         	Logger.warning("Avatar warning MagicLeaves too low, doing nothing");
         	return false;
         }
-        mpick = Piavca.getMotion('touch_above');
+        mpick = Piavca.getMotion("touch_above");
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
         mup = Piavca.SubMotion(mpick, 0.0, endtime/2);
@@ -1466,11 +1514,11 @@ public class EchoesAvatar extends EchoesAgent
     {  
     	if (right)
     	{
-    		this.tcb.attachObjectToJoint(object, this.jointIdByName['Bip01 R Finger1']);
+    		this.tcb.attachObjectToJoint(object, this.jointIdByName.get("Bip01 R Finger1"));
     	}
         else
         {
-        	this.tcb.attachObjectToJoint(object, this.jointIdByName['Bip01 L Finger1']);
+        	this.tcb.attachObjectToJoint(object, this.jointIdByName.get("Bip01 L Finger1"));
         }
         return true;
     }
@@ -1479,11 +1527,11 @@ public class EchoesAvatar extends EchoesAgent
     {
     	if (right)
     	{
-    		this.tcb.detachObjectFromJoint(this.jointIdByName['Bip01 R Finger1']);
+    		this.tcb.detachObjectFromJoint(this.jointIdByName("Bip01 R Finger1"));
     	}
         else
         {
-        	this.tcb.detachObjectFromJoint(this.jointIdByName['Bip01 L Finger1']);
+        	this.tcb.detachObjectFromJoint(this.jointIdByName("Bip01 L Finger1"));
         }
         return true;
     }
@@ -1542,7 +1590,7 @@ public class EchoesAvatar extends EchoesAgent
         	if (this.blinkingTimer)
         	{
         		this.blinkingTimer.running == false;
-        		this.blinkingTimer = None;
+        		this.blinkingTimer = null;
         	}
         }
         return true;
@@ -1606,7 +1654,7 @@ public class EchoesAvatar extends EchoesAgent
         		this.visible = false; 
         	    this.app.canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible));
         	}
-        	if (not this.visible and abs(this.pos[0]) < 4.5)
+        	if (! this.visible && Math.abs(this.pos[0]) < 4.5)
         	{
         		this.visible = true ;
         	    this.app.canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible));
@@ -1616,7 +1664,7 @@ public class EchoesAvatar extends EchoesAgent
     public void remove()
     {
         // Piavca.Core.getCore().removeAvatar(this.avatar)
-        super(EchoesAvatar, ).remove();
+        super.remove();
     }
 }
 

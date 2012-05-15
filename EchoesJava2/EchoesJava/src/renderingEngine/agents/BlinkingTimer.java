@@ -17,13 +17,14 @@ public class BlinkingTimer extends threading.Thread
     {
     	while(this.running) 
     	{
-    		trackId = this.avatar.facialExpressions["ClosedEyes"];//****Dictionary problem
+    		trackId = this.avatar.facialExpressions.get("ClosedEyes");//****Dictionary problem
             this.avatar.facialExpMotion.setFloatValue(trackId, 1.0);
 //#            Logger.trace("info", "Blinking - eyes closing")
             time.sleep(0.3);
             this.avatar.facialExpMotion.setFloatValue(trackId, 0.0);
 //#            Logger.trace("info", "Blinking - eyes opening")
-            time.sleep(random.randint(2,4));
+            int randomNum = 2 + (int)(Math.random()*4);//generating a random integer in range(2,4)
+            time.sleep(randomNum);
     	}
     }
 }
