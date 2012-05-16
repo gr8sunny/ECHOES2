@@ -12,6 +12,8 @@ public class Andy extends EchoesAvatar
     float high = (float) (-0.8 + 1);
     float walkingDistance;
     float stepDistance;
+	private double scale;
+	private Object floorheight;
 	public Andy(boolean autoAdd, Map<String, String> props, Object callback)
     {    
         super("agents/Andy/Andy", autoAdd, props, (float) 0.055, callback);
@@ -27,12 +29,14 @@ public class Andy extends EchoesAvatar
     	if (layer == "front")
     	{
     		this.scale = 0.055;
-    	    this.setPosition((this.pos[0], -0.8, this.pos[2]), action_id);
+    		float [] tempArray = {this.pos[0], -0.8, this.pos[2]};
+    	    this.setPosition(tempArray, action_id);
     	}
         else if (layer == "back")
         {
         	this.scale = 0.035;
-            this.setPosition((this.pos[0], 0.8, this.pos[2]), action_id);
+        	float [] tempArray = {this.pos[0], 0.8, this.pos[2]};
+            this.setPosition(tempArray, action_id);
         }
         //# these are affected by the scale of the avatar, so make sure they are re-computed
         this.floorheight = null;

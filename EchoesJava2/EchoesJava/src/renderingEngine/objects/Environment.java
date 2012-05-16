@@ -14,6 +14,18 @@ import Logger
 /*Not sure if Cloud extends EchoesObject but seeing the super() call I guessed that should be it
  * 
  */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.nio.*;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
+import echoesEngine.ListenerManager;
+import renderingEngine.BezierMotion;
+import renderingEngine.objects.EchoesObject;
+import renderingEngine.sound.EchoesAudio.*;
+import utils.Interfaces.IAgentListener;
+
 public class Bee extends EchoesObject
 {    
  //   public classdocs
@@ -30,6 +42,8 @@ public class Bee extends EchoesObject
     private boolean floatingSound = false;
     private boolean canBeClicked = true;
     private boolean canBeDraged = true;
+	private float[] dragStartWorld;
+	private float[] dragStartXY;
 
 
 	public Bee(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, boolean randomSize, Object callback)
@@ -63,19 +77,19 @@ public class Bee extends EchoesObject
         oldpos = this.pos;
         if (this.moving && !this.beingDragged)
         {
-        	this.pos = this.nextBezierPos(this.floatingXY);
+        	this.pos = bezierMotion.nextBezierPos(this.floatingXY);
             this.orientation[0] = this.pos[0]-oldpos[0]; 
             this.orientation[1] = this.pos[1]-oldpos[1]; 
             this.orientation[2] = this.pos[2]-oldpos[2];              
-            if (this.removeAtTargetPos && this.bezierIndex > 0.95)
+            if (this.removeAtTargetPos && bezierMotion.bezierIndex > 0.95)
             {
             	this.remove(true, 100);
             }
         }
         if (this.buzz && !this.fadingOut)
         {
-        	vel = Math.hypot(this.orientation[0], this.orientation[1]);
-            this.buzz.mul = min(0.8, vel*200);
+        	float vel = (float)Math.hypot(this.orientation[0], this.orientation[1]);
+            this.buzz.mul = Math.min(0.8, vel*200);
             this.buzz.speed =  1 + (vel*10);
         }
                     
@@ -85,7 +99,7 @@ public class Bee extends EchoesObject
         gl.glEnable( GL2.GL_TEXTURE_2D );
         gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
         gl.glTexParameterf(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
-        gl.glBindTexture(GL2.GL_TEXTURE_2D, this.texture);
+        //gl.glBindTexture(GL2.GL_TEXTURE_2D, this.texture);
         gl.glTranslate(this.pos[0], this.pos[1], this.pos[2]);
         gl.glRotate(math.degrees(math.atan2(this.orientation[1], this.orientation[0])), 0,0,1);
         gl.glScalef(this.size, this.size, this.size);
@@ -120,9 +134,12 @@ public class Bee extends EchoesObject
     }         
     public void newstartpos()
     {
-    	x = canvas.orthoCoordWidth/2 - (Math.random() * canvas.orthoCoordWidth);
-        y = random.choice([-1,1])*canvas.orthoCoordWidth/2/canvas.aspectRatio + this.size * 1.1;
-        this.pos = (x,y,0);
+    	float x = (float) (canvas.orthoCoordWidth/2 - (Math.random() * canvas.orthoCoordWidth));
+        //float y = random.choice([-1,1])*canvas.orthoCoordWidth/2/canvas.aspectRatio + this.size * 1.1;
+    	float y = (float) ((-1 + Math.random())*canvas.orthoCoordWidth/2/canvas.aspectRatio + this.size * 1.1);
+        this.pos[0] = x;
+        this.pos[0] = y;
+        this.pos[0] = 0;
     }   
     //click(agentName, replace=true)
     public void click(agentName, boolean replace)
@@ -146,7 +163,7 @@ public class Bee extends EchoesObject
     	{
     		this.beingDragged = false;
             this.locationChanged = false;
-            this.newctrlpoints();
+            this.newctrlpoints();//****should it be bezierMotion.newCtrlPoints(null)?
     	}
     }
     public void drag(float [] newXY)

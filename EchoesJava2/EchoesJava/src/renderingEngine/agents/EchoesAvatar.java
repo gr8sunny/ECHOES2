@@ -100,7 +100,7 @@ public class EchoesAvatar extends EchoesAgent
     //public void __setattr__(item, value)
     public void setAttr(String item, String value)
     {
-        object.__setattr__(item, value); //********object?
+        //object.__setattr__(item, value); //********object?
         if (item == "scale")
         {
         		this.avatar.setScale(value);
@@ -109,13 +109,13 @@ public class EchoesAvatar extends EchoesAgent
         {
         		this.repositioner.setStartPosition(Piavca.Vec(value[0]/this.scale,value[1]/this.scale,(value[2]-this.zOffset)/this.scale));
         }
-        if (item == "orientation" and hasattr("forwardOrientation"))
+        if (item == "orientation" && hasattr("forwardOrientation"))
         {
         	this.repositioner.setStartOrientation(this.forwardOrientation * value);
         }
     }    
     //playSmoothAtPos(motion, t1=1, t2=0, window=1)
-    public void playSmoothAtPos(motion, t1=1, t2=0, window=1)
+    public void playSmoothAtPos(motion, int t1, int t2, int window)
     {
     	this.repositioner.setMotion(Piavca.OverrideMotion(this.facialExpMotion, motion));
         posture = Piavca.AvatarPosture() ;
@@ -154,7 +154,7 @@ public class EchoesAvatar extends EchoesAgent
     public void startPostion()
     {
     	this.orientation = Piavca.Quat(0, Piavca.Vec.ZAxis());
-        this.setPosition((-6,-0.5,-5));
+        this.setPosition({-6,-0.5,-5},-1);
     }    
     //action_id = -1
     public void setPosition(float [] pos, int action_id)
@@ -411,7 +411,7 @@ public class EchoesAvatar extends EchoesAgent
     {    
     	//target = None
         Object target;//****Don't know for sure if this will solve it
-    	if (targetId in this.app.canvas.objects)//****put a loop again for this?
+    	if (canvas.objects.contains(targetId))//****put a loop again for this?
     	{
     		target = canvas.objects[targetId];
     	}
@@ -665,7 +665,7 @@ public class EchoesAvatar extends EchoesAgent
         return true;
     }
     //pickFlower(id=None, speech=None, action_id = -1, walkTo=false)
-    public boolean pickFlower(id=None, speech=None, int action_id, boolean walkTo)
+    public boolean pickFlower(id, speech, int action_id, boolean walkTo)
     {   
     	if (!id)
       	{   
@@ -755,7 +755,7 @@ public class EchoesAvatar extends EchoesAgent
         return true;         
     }
     //touchFlower(id=None, target="Bubble", speech=None, action_id = -1)
-    public void touchFlower(id=None, target="Bubble", speech=None, action_id = -1)
+    public void touchFlower(id, String target, speech, int action_id)
     {
     	if (!id)
     	{
@@ -773,7 +773,7 @@ public class EchoesAvatar extends EchoesAgent
     		Logger.warning("Avatar no flower to touch, doing nothing"); 
     	    return false;
     	}
-        flower = this.app.canvas.objects[id];
+        flower = canvas.objects[id];
         mpick = Piavca.getMotion("spinning_flower_stepforward");
         mpick.setStartTime(0.0);
         endtime = mpick.getMotionLength();
@@ -882,10 +882,11 @@ public class EchoesAvatar extends EchoesAgent
         return true;         
     }
     //putFlowerInBasket(id=None, action_id = -1, walkTo=false)
-    public boolean putFlowerInBasket(id=None, action_id = -1, walkTo=false) 
+    public boolean putFlowerInBasket(id, int action_id, boolean walkTo) 
     {
     	if (!id)
-    	{    for tid, object in this.app.canvas.objects.items()
+    	{
+    		for tid, object in this.app.canvas.objects.items()
     		{
     			if (isinstance(object, objects.Environment.Basket))
     			{
@@ -928,7 +929,7 @@ public class EchoesAvatar extends EchoesAgent
         	Logger.warning("Avatar Specified (or nearest) basket is too far away; not putting down flower");
             return false;
         }
-        basket = this.app.canvas.objects[id];
+        basket = canvas.objects[id];
         mput = Piavca.getMotion("pick_up_flower");
         mput.setStartTime(0.0);
         endtime = mput.getMotionLength();
@@ -1015,7 +1016,7 @@ public class EchoesAvatar extends EchoesAgent
         return true;         
     }
     //pickupPot(id=None, speech=None, action_id = -1, walkTo=false)
-    public void pickupPot(id=None, speech=None, action_id = -1, walkTo=false)
+    public void pickupPot(id, speech, int action_id, boolean walkTo)
     {    
     	d = 1000;
         if (!id)
@@ -1078,7 +1079,7 @@ public class EchoesAvatar extends EchoesAgent
     }
     //putdownPot(action_id = -1, walkTo = -1)
     public void putdownPot(int action_id, int walkTo)
-    {    
+    {
     	pot = null;
     	Set set = this.tcb.attachedObjects.keySet(); // get set-view of keys
         // get iterator
@@ -1230,7 +1231,7 @@ public class EchoesAvatar extends EchoesAgent
         return true;       
     }
     //pickupBall(id=None, speech=None, action_id = -1, walkTo=false)
-    public void pickupBall(id=None, speech=None, action_id = -1, walkTo=false)
+    public void pickupBall(id, speech, int action_id, boolean walkTo)
     {    
     	d = 1000;
         if (!id)
@@ -1364,7 +1365,7 @@ public class EchoesAvatar extends EchoesAgent
         		}
         	}
         }
-        if (!id || !id in this.app.canvas.objects)
+        if (!id || !(canvas.objects.contains(id)))
         {
         	Logger.warning("Avatar no other pot in scene, doing nothing"); 
         	return false;
@@ -1392,7 +1393,7 @@ public class EchoesAvatar extends EchoesAgent
         return true;         
     }
     //throwBall(action_id = -1, cloudId = None)
-    public void throwBall(action_id = -1, cloudId = None)
+    public void throwBall(int action_id, cloudId)
     {
     	ball = null;
         for object in this.tcb.attachedObjects
@@ -1535,9 +1536,10 @@ public class EchoesAvatar extends EchoesAgent
         }
         return true;
     }
-    public void attachCloud(cloudId=None, action_id = -1)
+    //attachCloud(cloudId=None, action_id = -1)
+    public void attachCloud(cloudId, int action_id)
     {
-    	if (not cloudId)
+    	if (! cloudId)
     	{
     		for tid, object in this.app.canvas.objects.items()
     		{
@@ -1572,7 +1574,7 @@ public class EchoesAvatar extends EchoesAgent
     //click(pos)
     public void click(pos)
     {//#        print "Avatar clicked at", pos
-        this.app.canvas.rlPublisher.userTouchedAgent(str(this.id))
+        canvas.rlPublisher.userTouchedAgent(str(this.id))
     }   
     //blinking(flag=true)
     public void blinking(flag=true)
@@ -1640,7 +1642,7 @@ public class EchoesAvatar extends EchoesAgent
             gl.glLineWidth(1.0);
             gl.glColor4f(1, 0, 0, 1.0);
             gl.glBegin(GL2.GL_LINE_STRIP);
-            for v in contour
+            for(float[] v :contour)
             {
             	gl.glVertex3f(v[0], v[1], this.pos[2]);                        
             }
@@ -1652,12 +1654,12 @@ public class EchoesAvatar extends EchoesAgent
         	if (this.visible and abs(this.pos[0]) > 4.5)
         	{    
         		this.visible = false; 
-        	    this.app.canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible));
+        	    canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible));
         	}
         	if (! this.visible && Math.abs(this.pos[0]) < 4.5)
         	{
         		this.visible = true ;
-        	    this.app.canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible));
+        	    canvas.rlPublisher.agentPropertyChanged(str(this.id), "Visible", str(this.visible));
         	}
         }
     }

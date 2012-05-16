@@ -5,7 +5,9 @@ package renderingEngine.agents;
 
 public class BlinkingTimer extends threading.Thread
 {     
-    public void BlinkingTimer(avatar)//****which class for avatar?
+    private boolean running;
+	private Object avatar;
+	public BlinkingTimer(avatar)//****which class for avatar?
     {
     	this.app = avatar.app;         
         this.avatar = avatar;
@@ -17,7 +19,7 @@ public class BlinkingTimer extends threading.Thread
     {
     	while(this.running) 
     	{
-    		trackId = this.avatar.facialExpressions.get("ClosedEyes");//****Dictionary problem
+    		Object trackId = this.avatar.facialExpressions.get("ClosedEyes");//****Dictionary problem
             this.avatar.facialExpMotion.setFloatValue(trackId, 1.0);
 //#            Logger.trace("info", "Blinking - eyes closing")
             time.sleep(0.3);

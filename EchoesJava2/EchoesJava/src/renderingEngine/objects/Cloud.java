@@ -39,7 +39,7 @@ public class Cloud extends EchoesObject
     private float b_nextcolour = 0;
     this.hitBy = None; //Which class?
     private int hitByFCounter = 0;
-      
+    float [] dropSize = {0, 0};  
     this.avatarTCB = null;//Which class?
     private boolean avatarRain = false;
     //props={"type" "Cloud"}
@@ -54,21 +54,21 @@ public class Cloud extends EchoesObject
 		for (float deg = -90; deg < 135; deg+=10)
 		{
 			shape[pointIndex][0] = (float)(2.5+Math.cos(Math.toRadians(deg)));
-			shape[pointIndex][1] = (float)Math.sin(Math.toRadians(deg);
+			shape[pointIndex][1] = (float)Math.sin(Math.toRadians(deg));
 			pointIndex++;
 		}
 		//this.shape += [(1.8*math.cos(math.radians(deg)), 1+math.sin(math.radians(deg))) for deg in xrange(-45, 225, 10)]
 		for(float deg=-45; deg < 225; deg+=10)
 		{
 			shape[pointIndex][0]=(float)(1.8*Math.cos(Math.toRadians(deg)));
-			shape[pointIndex][1] = (float)(1+Math.sin(Math.toRadians(deg));
+			shape[pointIndex][1] = (float)(1+Math.sin(Math.toRadians(deg)));
 			pointIndex++;
 		}
 		//this.shape += [(math.cos(math.radians(deg))-2.5, math.sin(math.radians(deg))) for deg in xrange(45, 270, 10)]
 		for(float deg=45; deg < 270; deg+=10)
 		{
 			shape[pointIndex][0]=(float)(Math.cos(Math.toRadians(deg))-2.5);
-			shape[pointIndex][1] = (float)(Math.sin(Math.toRadians(deg));
+			shape[pointIndex][1] = (float)(Math.sin(Math.toRadians(deg)));
 			pointIndex++;
 		}
 		//this.shape += [(0,-1)]
@@ -163,7 +163,7 @@ public class Cloud extends EchoesObject
             }
         	this.cv = intArray;
         }
-        setAttr(item, value);
+       // setAttr(item, value);
     }
     //setImage(file='visual/images/Rain-drop.png')
     public void setImage(String file)
@@ -173,15 +173,22 @@ public class Cloud extends EchoesObject
          * Whats the point of doing a try, catch here? Same code in both
          */
         try
-            ix, iy, image = im.size[0], im.size[1], im.tostring("raw", "RGBA", 0, -1)
-        except SystemError
-            ix, iy, image = im.size[0], im.size[1], im.tostring("raw", "RGBX", 0, -1)        
+        {
+        	ix = im.size[0];
+        	iy = im.size[1];
+        	image = im.tostring("raw", "RGBA", 0, -1);
+        }
+        catch (Exception e)
+        {
+        	//ix, iy, image = im.size[0], im.size[1], im.tostring("raw", "RGBX", 0, -1)        
+        }
 
         this.dropTexture = glGenTextures(1);
         gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT,1);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, this.dropTexture);
         gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, 4, ix, iy, 0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, image);
-        this.dropSize = (ix, iy);
+        this.dropSize[0] = ix;
+        this.dropSize[1] = iy;
     }           
     public void renderObj(GL2 gl)
     {    
@@ -216,7 +223,7 @@ public class Cloud extends EchoesObject
             }
             
             foundObject = false;
-            for i, object in this.app.canvas.objects.items()
+            for i, object in canvas.objects.items()
             {    
             	if (this.isUnder(object))
             	{
@@ -228,7 +235,7 @@ public class Cloud extends EchoesObject
                     }
                     else if (isinstance(object, objects.Plants.Pot))
                     {   
-                    	if (((! object.flower or object.flower.canGrow) && (! object.stack or object.stack.top() == object))
+                    	if (((! object.flower || object.flower.canGrow) && (! object.stack or object.stack.top() == object))
                     	{
                     		object.growFlower();
                     	    foundObject = true;
@@ -253,7 +260,9 @@ public class Cloud extends EchoesObject
             {
             	flower = objects.Plants.EchoesFlower(this.app, true, fadeIn=true);
                 flower.size = 0.1;
-                flower.pos = [this.pos[0], this.app.canvas.getRegionCoords("ground")[1][1], this.pos[2]];
+               
+                flower.pos[1] = canvas.getRegionCoords("ground")[1][1];
+                
                 canvas.rlPublisher.objectPropertyChanged(str(this.id), "cloud_flower", str(flower.id));
                 if (! this.avatarRain)
                 {
@@ -347,7 +356,7 @@ public class Cloud extends EchoesObject
 
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glPopMatrix();
-        }
+        
     }
 	//rain(frames=40)
     public void rain(int frames)
@@ -479,7 +488,7 @@ public class Cloud extends EchoesObject
         }
     }
         
-    public void attachToAvatar(apos, aori, avatarTCB=None)
+    public void attachToAvatar(float [] apos, Object aori, boolean avatarTCB)
     {  
     	if (! this.avatarTCB)
       	{ 
@@ -487,11 +496,12 @@ public class Cloud extends EchoesObject
       	    this.xoffset = abs(this.pos[0] - apos[0]);
       	}
         xoff = this.xoffset * math.sin(-aori[2]);
-        this.pos = [apos[0]+xoff, this.pos[1], this.pos[2]];
+        this.pos[0] = apos[0]+xoff;
+                       
     }       
     public void detachFromAvatar()
     {
     	this.avatarTCB = None;
     }
-    
+}
     
