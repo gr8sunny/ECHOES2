@@ -116,7 +116,7 @@ public class Ball extends EchoesObject
                 loadTexture("visual/images/Ball-04.png");
             else// # red is the public voidault
                 loadTexture("visual/images/Ball-02.png");
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_colour", value);
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_colour", value);
      	}
         else if (item == "container")
             //***no idea...
@@ -243,7 +243,7 @@ public class Ball extends EchoesObject
             {
             	sound.EchoesAudio.bounce(Math.abs(this.velocity[1]));
                 if (this.publishBounce)
-                    this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_bounce", "floor");
+                    canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_bounce", "floor");
                 if (this.thrownByAvatar)
                 	this.thrownByAvatar = false;
                 if (this.droppedByAvatar)
@@ -260,19 +260,19 @@ public class Ball extends EchoesObject
                 this.velocity[0] *= -1*this.elasticity;
                 this.pos = (this.left+this.size, this.pos[1], this.pos[2]);
                 if (this.publishBounce)
-                    this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_bounce", "left");
+                    canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_bounce", "left");
         	}
             if (this.pos[0]+this.size > this.right)
             {
             	this.velocity[0] *= -1*this.elasticity;
                 this.pos = (this.right-this.size, this.pos[1], this.pos[2]);
                 if (this.publishBounce)
-                    this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_bounce", "right");
+                    canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_bounce", "right");
             }
         }
-        else if (abs(this.pos[0]) > 5 + this.size)
+        else if (Math.abs(this.pos[0]) > 5 + this.size)
         {
-        	this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_off", "");
+        	canvas.rlPublisher.objectPropertyChanged(str(this.id), "ball_off", "");
             this.remove(false, 100);
         }
     }   
@@ -347,9 +347,11 @@ public class Ball extends EchoesObject
             viewport = glGetIntegerv(GL2.GL_VIEWPORT);
             windowZ = glReadPixels(newXY[0], viewport[3]-newXY[1], 1, 1, GL2.GL_DEPTH_COMPONENT, GL2.GL_FLOAT);
             
-            worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
-            this.velocity = [(worldCoords[0]-this.pos[0])/3, (worldCoords[1]-this.pos[1])/3];
-            this.pos = (worldCoords[0], max(this.floor, worldCoords[1]), this.pos[2]);
+            float [] worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
+            this.velocity[0] = (worldCoords[0]-this.pos[0])/3;
+            this.velocity[1] = (worldCoords[1]-this.pos[1])/3;
+            this.pos[0] = worldCoords[0];
+            this.pos[1] = max(this.floor, worldCoords[1]);
     	}
     }       
                 

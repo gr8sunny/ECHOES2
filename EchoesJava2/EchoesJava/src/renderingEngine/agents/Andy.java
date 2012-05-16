@@ -21,7 +21,8 @@ public class Andy extends EchoesAvatar
     public void startPostion()
     {    
     	this.orientation = Piavca.Quat(0, Piavca.Vec.ZAxis());
-        this.setPosition((6,-0.8,-5));
+        float [] tempArray = {6,(float) -0.8,-5}; 
+    	this.setPosition(tempArray,-1);
     }   
     //setDepthLayer(layer="front", action_id = -1)
     public void setDepthLayer(String layer, int action_id)

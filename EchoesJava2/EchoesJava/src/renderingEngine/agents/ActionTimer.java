@@ -2,15 +2,18 @@
 
 package renderingEngine.agents;
 
-public class ActionTimer(threading.Thread)
+public class ActionTimer//(threading.Thread)
 {     
 	//ActionTimer(seconds, avatar, int action_id=-1, speech=false)
 	//*****avatar, seconds...which class?
-    boolean speech;	
-	public ActionTimer(seconds, avatar, int action_id, boolean speech)
+    boolean speech;
+	private int runTime;
+	private EchoesAvatar avatar;
+	private int action_id;	
+	public ActionTimer(int seconds, EchoesAvatar avatar, int action_id, boolean speech)
     {    
     	this.runTime = seconds;
-        this.app = avatar.app;       
+       // this.app = avatar.app;       
         this.avatar = avatar;        
         this.action_id = action_id;
         this.speech = speech;
@@ -22,22 +25,22 @@ public class ActionTimer(threading.Thread)
     {
     	if (this.speech)
     	{
-    		float weight = 0.0;
+    		float weight = (float) 0.0;
     	    for(int i=0;i < (int)(2*this.runTime);i++)
     	    {    
     	    	time.sleep(0.5);
     	        if (weight == 0.0)
     	        {
-    	        	this.avatar.setFacialExpression("OpenMouth", 1.0);
+    	        	this.avatar.setFacialExpression("OpenMouth", (float) 1.0, -1);
     	            weight = 1.0;
     	        }
                 else
                 {
-                	this.avatar.setFacialExpression("OpenMouth", 0.0);
-                    weight = 0.0;
+                	this.avatar.setFacialExpression("OpenMouth", (float) 0.0, -1);
+                    weight = (float) 0.0;
                 }
     	    }
-            this.avatar.setFacialExpression("OpenMouth", 0.0);
+            this.avatar.setFacialExpression("OpenMouth", (float) 0.0, -1);
     	}
         else
         {
@@ -48,6 +51,6 @@ public class ActionTimer(threading.Thread)
         {
         	this.avatar.speaking = false;
         }
-        this.app.canvas.agentActionCompleted(this.action_id, true);
+        canvas.agentActionCompleted(this.action_id, true);
     }
 }

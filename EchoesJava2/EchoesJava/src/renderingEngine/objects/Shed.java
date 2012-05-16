@@ -50,9 +50,8 @@ public class Shed extends EchoesObject
             ti += 1;
         }
         gl.glEnd();
-        gl.glDisable( GL2.GL_TEXTURE_2D );
-        gl.glDisable( GL2.GL_ALPHA_TEST );
+        gl.glDisable(GL2.GL_TEXTURE_2D);
+        gl.glDisable(GL2.GL_ALPHA_TEST);
         gl.glPopMatrix();
-        
     }
 }

@@ -17,9 +17,13 @@ public class Pot extends EchoesObject
     private String neutralshade;
     private float [] basecolour = new float[4];
     private float [] linecolour = new float[4];
+	private boolean fallTodefaultHeight;
     //**********have to do something about properties and props
+	private Object defaultHeight;
+	private Object flower;
+	private Object stack;
     
-	public void Pot(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
+	public Pot(boolean autoAdd, Map<String, String> properties, boolean fadeIn, int fadingFrames, Object callback)
     {       
         //super(Pot, ).__init__(app, autoAdd, props, fadeIn, fadingFrames, callback)
     	super(autoAdd, properties, fadeIn, fadingFrames, callback);
@@ -28,8 +32,8 @@ public class Pot extends EchoesObject
         this.pos[1] = (float) -2.5;
         this.pos[2] = (float) 0.1; 
                        
-        this.public voidaultHeight = canvas.getRegionCoords("ground")[0][1];
-        this.fallTopublic voidaultHeight = true;
+        this.defaultHeight = canvas.getRegionCoords("ground")[0][1];
+        this.fallTodefaultHeight = true;
     //    # basic shape in two strips [x,y, colour shade value]
         
         //# a random neutral shade
@@ -105,17 +109,18 @@ public class Pot extends EchoesObject
         		Logger.warning("Pot can't have flower in pot that has other pots on top of it");
         		return;
             }
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", str(value.id));
-            value.pos = [this.pos[0], this.pos[1]+value.stemLength+this.size/2, this.pos[2]-0.01];
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", str(value.id));
+            value.pos[1] = this.pos[1]+value.stemLength+this.size/2;
+            value.pos[2] = this.pos[2]-0.01;
             value.inCollision = this.id;
             value.pot = this;//****equal to what?
             
             Logger.trace("info", "Flower put into pot" + str(this.id) );
             if (value.beingDragged)
-                this.app.canvas.agentPublisher.agentActionCompleted('User', 'flower_placeInPot', [str(this.id), str(value.id)]);
+                canvas.agentPublisher.agentActionCompleted("User", "flower_placeInPot", [str(this.id), str(value.id)]);
         }   
         else if (item == "flower" && value == null)
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", "None");
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_flower", "None");
         
         else if (item == "pos" && hasattr("pos")) 
         {
@@ -123,18 +128,24 @@ public class Pot extends EchoesObject
         	{//   # if (the user did it, notify the rest of the system
                 split = this.stack.split();
                 if (split && hasattr("beingDragged") && this.beingDragged)
-                    this.app.canvas.agentPublisher.agentActionCompleted('User', 'unstack_pot', [str(this.id)]);
+                    canvas.agentPublisher.agentActionCompleted("User", "unstack_pot", [str(this.id)]);
                 if (this.stack)// # the stack might be removed if (its the only pot left
-                    for pot in this.stack.pots
+                    for(Pot pot : this.stack.pots)
                         if (pot != this)//*******?? 
                         {
                         	dx = this.pos[0]-pot.pos[0];
                             dy = this.pos[1]-pot.pos[1];
-                            pot.pos = [value[0]-dx, value[1]-dy, pot.pos[2]];
+                            pot.pos[0] = value[0]-dx;
+                            pot.pos[1] = value[1]-dy;
+                            pot.pos[2] = pot.pos[2];
                         }
         	}
             if (hasattr("flower") && this.flower)
-                this.flower.pos = [value[0], value[1]+this.flower.stemLength+this.size/2, value[2]-0.01];
+            {
+            	this.flower.pos[0] = value[0]; 
+            	this.flower.pos[1] = value[1]+this.flower.stemLength+this.size/2; 
+            	this.flower.pos[2] = value[2]-0.01;
+            }
 
             if (hasattr("underCloud"))
                 for oid, o in this.app.canvas.objects.items()
@@ -154,24 +165,24 @@ public class Pot extends EchoesObject
         		this.hasOnTop = null;
                 this.isOnTopOf = null;
                 this.colour = this.neutralshade;
-                this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_stack", "false");
+                canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_stack", "false");
             }
             else
             {
             	this.colour = "dark";
-                this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_stack", "true");
+                canvas.rlPublisher.objectPropertyChanged(str(this.id), "pot_stack", "true");
             }
         }
         else if (item == "underCloud")
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "under_cloud", str(value));
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "under_cloud", str(value));
   
         else if (item == "hasOnTop")
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "has_on_top", str(value));
+        	canvas.rlPublisher.objectPropertyChanged(str(this.id), "has_on_top", str(value));
 
         else if (item == "isOnTopOf")
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "is_on_top_of", str(value));
+        	canvas.rlPublisher.objectPropertyChanged(str(this.id), "is_on_top_of", str(value));
 
-        object.__setattr__(item, value);
+        //object.__setattr__(item, value);
     }   
     public void renderObj(GL2 gl)
     {    
@@ -181,14 +192,17 @@ public class Pot extends EchoesObject
         	return;// # in case rendering is called before the object is fully built
         
         if (this.stack)
-        {    if (this.stack.pots[len(this.stack.pots)-1] == this)//*****?? 
-                if (this.hasOnTop)
-                	this.hasOnTop = null;///*****blank if, something wrong here            else
+        {
+        	if (this.stack.pots[len(this.stack.pots)-1] == this)//*****?? 
+            {
+        		if (this.hasOnTop)
+                  	this.hasOnTop = null;///*****blank if, something wrong here            else
                 if (!this.hasOnTop)
                 {
                 	i = this.stack.pots.index();
                     this.hasOnTop = this.stack.pots[i+1].id;
                 }
+            }
             if (this.stack.pots[0] == this)//********?? 
                 if (this.isOnTopOf)
                 	this.isOnTopOf = null;//*******blank if, something wrong here also
@@ -282,7 +296,9 @@ public class Pot extends EchoesObject
         viewport = glGetIntegerv(GL2.GL2.GL_VIEWPORT);
         windowZ = glReadPixels(newXY[0], viewport[3]-newXY[1], 1, 1, GL2.GL2.GL_DEPTH_COMPONENT, GL2.GL2.GL_FLOAT);
         worldCoords = gluUnProject(newXY[0], viewport[3] - newXY[1], windowZ[0][0], modelview, projection, viewport);
-        this.worldDragOffset = [this.pos[0]-worldCoords[0], this.pos[1]-worldCoords[1], 0] ;
+        this.worldDragOffset[0] = this.pos[0]-worldCoords[0];
+        this.worldDragOffset[1] = this.pos[1]-worldCoords[1];
+        this.worldDragOffset[2] = 0;
     } 
     public void stopDrag()
     {
@@ -306,9 +322,15 @@ public class Pot extends EchoesObject
             if (this.beingDragged)
             {
             	if (this.fallTodefaultHeight)
-            		this.pos = [worldCoords[0]+this.worldDragOffset[0], max(this.public voidaultHeight, worldCoords[1]+this.worldDragOffset[1]), this.pos[2]];
+            	{
+            		this.pos[0] = worldCoords[0]+this.worldDragOffset[0]; 
+            	  	this.pos[1] = max(this.defaultHeight, worldCoords[1]+this.worldDragOffset[1]);
+               	}
                 else
-                    this.pos = [worldCoords[0]+this.worldDragOffset[0], worldCoords[1]+this.worldDragOffset[1], this.pos[2]];                
+                {
+                	this.pos[0] = worldCoords[0]+this.worldDragOffset[0];
+                	this.pos[1] = worldCoords[1]+this.worldDragOffset[1];
+                }
                 this.locationChanged = true;
             }
     	}

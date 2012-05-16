@@ -7,6 +7,15 @@ public class MagicLeaves extends EchoesObject
 	private BezierMotion bezierMotion = new BezierMotion();
 	private float [][] shape = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
 	private float [][] texshape = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+	private float flapamplitude;
+	private float flap;
+	private double energy;
+	private Object tree;
+	private boolean drawCtrlPoints;
+	private boolean flying;
+	private boolean flyingXY;
+	private int orientation;
+	private Object boundingBox;
 	//__init__(autoAdd=true, props={"type" "MagicLeaves"}, fadeIn = false, fadingFrames = 100, callback=None)
     public MagicLeaves(boolean autoAdd, Map<String, String> props, boolean fadeIn, int fadingFrames, Object callback)
     {       
@@ -18,7 +27,7 @@ public class MagicLeaves extends EchoesObject
         this.pos[1] = 0;
         this.pos[2] = 0;
         this.orientation = 0;
-        this.speed = 0.04;
+        this.speed = (float) 0.04;
     
         this.flying = true;
         this.flyingXY = true;
@@ -34,26 +43,26 @@ public class MagicLeaves extends EchoesObject
     
         this.setImage();
          
-        this.tree = None;
+        this.tree = null;
         this.putOnTree();
     }
-    public void setAttr(String item, String value)
+    public void setAttr(String item, float value)
     {
     	if (item == "energy")
     	{
     		this.flapamplitude = 45 * value;
             if (value > 0.8)
-                this.boundingBox = this.app.canvas.getRegionCoords("v-top");
+                this.boundingBox = canvas.getRegionCoords("v-top");
             else if (value > 0.6)
-                this.boundingBox = this.app.canvas.getRegionCoords("v-middle");
+                this.boundingBox = canvas.getRegionCoords("v-middle");
             else if (value > 0.3)
-                this.boundingBox = this.app.canvas.getRegionCoords("v-bottom");
+                this.boundingBox = canvas.getRegionCoords("v-bottom");
             else
-                this.boundingBox = this.app.canvas.getRegionCoords("ground");
+                this.boundingBox = canvas.getRegionCoords("ground");
             this.speed = 0.01 * value;
     	}               
         if (item == "flying")
-            this.app.canvas.rlPublisher.objectPropertyChanged(str(this.id), "leaves_flying", str(value));
+            canvas.rlPublisher.objectPropertyChanged(str(this.id), "leaves_flying", str(value));
 
         setAttr(item, value);
     }
@@ -67,11 +76,13 @@ public class MagicLeaves extends EchoesObject
         	im = PIL.Image.open("visual/images/" + image);
             try                
             {
-            	ix, iy, idata = im.size[0], im.size[1], im.tostring("raw", "RGBA", 0, -1);
+            	ix = im.size[0];
+            	iy = im.size[1];
+            	idata = im.tostring("raw", "RGBA", 0, -1);
             }
-            catch( SystemError e)
+            catch(Exception e) //SystemError e)
             {
-            	ix, iy, idata = im.size[0], im.size[1], im.tostring("raw", "RGBX", 0, -1);        
+            	//ix, iy, idata = im.size[0], im.size[1], im.tostring("raw", "RGBX", 0, -1);        
             }
 
             gl.glPixelStorei(GL2.GL_UNPACK_ALIGNMENT,1);
@@ -96,14 +107,15 @@ public class MagicLeaves extends EchoesObject
         
         if (this.flying && this.interactive)
         {
-        	oldpos = this.pos;
+        	float [] oldpos = {this.pos[0],this.pos[1],this.pos[2]};  
+        	
             this.pos = this.nextBezierPos(this.flyingXY);
             if (this.pos[0]!=oldpos[0] || this.pos[1]!=oldpos[1] || this.pos[2]!=oldpos[2])
-                this.orientation = math.atan2(this.pos[1]-oldpos[1], this.pos[0]-oldpos[0]);  
-            if (this.removeAtTargetPos && this.bezierIndex > 0.95)
+                this.orientation = Math.atan2(this.pos[1]-oldpos[1], this.pos[0]-oldpos[0]);  
+            if (this.removeAtTargetPos && bezierMotion.bezierIndex > 0.95)
                 this.remove();
             
-            this.flap = (this.flap + 0.4) % (2*math.pi);
+            this.flap = (this.flap + 0.4) % (2*Math.PI);
         }
         gl.glTranslate(this.pos[0], this.pos[1], this.pos[2]);
         gl.glScalef(this.size, this.size, this.size);
@@ -151,7 +163,7 @@ public class MagicLeaves extends EchoesObject
     //startDrag(pos=(0,0))
     public void startDrag(float [] pos)
     {
-    	this.app.canvas.agentPublisher.agentActionCompleted('User', 'touch_leaves', [str(this.id)]);
+    	canvas.agentPublisher.agentActionCompleted("User", "touch_leaves", [str(this.id)]);
         this.beingDragged = true;
         this.energy = 0;
         this.flying = false;
@@ -167,7 +179,7 @@ public class MagicLeaves extends EchoesObject
     public void stopDrag()
     {
     	this.beingDragged = false;
-        float h = (float)(this.app.canvas.orthoCoordWidth / this.app.canvas.aspectRatio);
+        float h = (float)(canvas.orthoCoordWidth / canvas.aspectRatio);
         this.energy = (this.pos[1] + h/2)/h;
         this.newctrlpoints();
         this.flying = true;
@@ -187,7 +199,8 @@ public class MagicLeaves extends EchoesObject
             this.pos[1] = worldCoords[1];
     	}
     }
-    public void touchLeaves(agent_id=None)
+    //touchLeaves(agent_id=None)
+    public void touchLeaves(Object agent_id)
     {//#        if (agent_id
     //#            this.app.canvas.agentPublisher.agentActionCompleted('Agent', 'touch_leaves', [str(this.id), str(agent_id)])
 
@@ -201,12 +214,13 @@ public class MagicLeaves extends EchoesObject
                 branch += 1;
         	}
         }
-        h = (float)(this.app.canvas.orthoCoordWidth / this.app.canvas.aspectRatio);
+        h = (float)(canvas.orthoCoordWidth / canvas.aspectRatio);
         this.energy = (this.pos[1] + h/2)/h;
         this.newctrlpoints();
         this.flying = true;
     }    
-    public void putOnTree(id=None, branch=-1)
+    //putOnTree(id=None, int branch=-1)
+    public void putOnTree(Object id, int branch)
     {
     	if (!id)
     	{

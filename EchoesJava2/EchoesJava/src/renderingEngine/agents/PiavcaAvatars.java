@@ -9,9 +9,9 @@ public class Utils
 		if (type == "turnTo")
 		{
 			if (arg.length == 2 && isinstance(arg[0], (float, int))) //#coordinates
-	            echoesAvatar.turnTowardsDirect(arg[0], arg[1], false);
+	            echoesAvatar.turnTowardsDirect(arg[0], arg[1], false, false, -1);
 	        else if (arg[0] == "child")
-	            echoesAvatar.turnTowardsDirect(echoesAvatar.pos[0], 10, false);
+	            echoesAvatar.turnTowardsDirect(echoesAvatar.pos[0], 10, false, false, -1);
 	        else if (isinstance(arg[0], objects.EchoesObject.EchoesObject))
 	        {
 	        	target, action_id = arg;
@@ -25,12 +25,17 @@ public class Utils
 	        }
 		}
 	    else if (type == "walkTo")
-	    {    if (arg.length != 5) 
+	    {
+	    	if (arg.length != 5) 
 	    		return;
 	        boolean withObject = false;
 	        if (isinstance(arg[0], objects.EchoesObject.EchoesObject))
 	        {
-	        	o, di, wi, r, action_id = arg;
+	        	o = arg[0];
+	        	di = arg[1];
+	        	wi = arg[2];
+	        	r = arg[3];
+	        	action_id = arg[4];
 	            wi.callback = ("turnTo", [o.pos[0], o.pos[2]]);
 	            if (echoesAvatar.pos[0] > o.pos[0])
 	                x = o.pos[0] + di;
@@ -40,9 +45,14 @@ public class Utils
 	            withObject = true;
 	        }
 	        else
-	            x, z, wi, r, action_id = arg;
-	
-	        distance = math.hypot(echoesAvatar.pos[0]-x,echoesAvatar.pos[2]-z);
+	        {
+	        	x = arg[0];
+	        	z = arg[1];
+	        	wi = arg[2];
+	        	r = arg[3];
+	        	action_id = arg[4];
+	        }
+	        distance = Math.hypot(echoesAvatar.pos[0]-x,echoesAvatar.pos[2]-z);
 	        if (distance > echoesAvatar.walkingDistance)
 	        {
 	        	Logger.warning("Avatar cannot walk that far in one go, walking full length of animation instead and inserting another walking motion");
@@ -54,11 +64,12 @@ public class Utils
 	                new_wi.preCall = ("walkTo", [x,z,new_wi,echoesAvatar.relaxPosture,action_id]);
 	            wi.action_id = -1;
 	            wi.isFinal = false;
-	            echoesAvatar.motionQueue.appendleft(new_wi);
+	            //echoesAvatar.motionQueue.appendleft(new_wi);
+	            echoesAvatar.motionQueue.addfirst(new_wi);
 	        }
 	        else
 	            w = Piavca.SubMotion(echoesAvatar.walking, 0, echoesAvatar.findMotionEndtime(echoesAvatar.walking, distance));
-	        echoesAvatar.turnTowardsDirect(x,z, relaxAfter=false, intermediate=true);
+	        echoesAvatar.turnTowardsDirect(x,z, false, true, -1);
 	        object = None;
 	        Set set = echoesAvatar.tcb.attachedObjects.keySet(); // get set-view of keys
 	        // get iterator
@@ -96,11 +107,12 @@ public class Utils
 	    else if (type == "setPosition")
 	        echoesAvatar.pos = arg;
 	    else if (type == "attach_flowerR" && isinstance(arg, objects.Plants.EchoesFlower))
-	    {    if (arg.pot)
-	            arg.pot.flower = None;
+	    {
+	    	if (arg.pot)
+	            arg.pot.flower = null;
 	        if (arg.basket)
 	            arg.basket.removeFlower(arg);
-	            arg.basket = None;
+	            arg.basket = null;
 	        echoesAvatar.attachObjectToHand(arg, right=true);
 	    }
 	    else if (type == "detach_flowerR")
